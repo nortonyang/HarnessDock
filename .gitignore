@@ -1,0 +1,14 @@
+.build/
+dist/
+.smoke-npm-cache/
+.smoke-ws/
+.test-dsh-home/
+.swiftpm/
+.DS_Store
+*.xcuserstate
+
+# Local logs and credentials
+logs/
+.env
+.env.*
+!.env.example
