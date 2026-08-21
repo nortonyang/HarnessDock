@@ -15,7 +15,12 @@ struct HarnessWebView: NSViewRepresentable {
         updatedLabel: nil,
         entries: []
     )
+    var themeBackgroundPresentation = ThemeBackgroundPresentation(
+        imageDataURL: nil,
+        dimmingOpacity: 0.62
+    )
     var onBalanceAction: (String) -> Void = { _ in }
+    var onThemeAction: () -> Void = {}
     @Binding var isLoading: Bool
     @Binding var loadError: String?
 
@@ -53,6 +58,7 @@ struct HarnessWebView: NSViewRepresentable {
     func updateNSView(_ webView: WKWebView, context: Context) {
         context.coordinator.parent = self
         context.coordinator.updateBalance(in: webView)
+        context.coordinator.updateThemeBackground(in: webView)
 
         if context.coordinator.lastHomeRequestID != homeRequestID {
             context.coordinator.lastHomeRequestID = homeRequestID
@@ -77,24 +83,56 @@ struct HarnessWebView: NSViewRepresentable {
       const style = document.createElement('style');
       style.id = 'dsh-native-balance-style';
       style.textContent = `
+        html.dsh-has-theme body {
+          --dsh-theme-scrim-color: 12,13,18;
+          min-height:100%;
+          background-color:rgb(12,13,18) !important;
+          background-image:
+            linear-gradient(
+              rgba(var(--dsh-theme-scrim-color), var(--dsh-theme-dimming)),
+              rgba(var(--dsh-theme-scrim-color), var(--dsh-theme-dimming))
+            ),
+            var(--dsh-theme-image) !important;
+          background-position:center !important;
+          background-size:cover !important;
+          background-repeat:no-repeat !important;
+          background-attachment:fixed !important;
+        }
+        html.dsh-has-theme body:not([data-ds-dark-theme]) {
+          --dsh-theme-scrim-color: 246,246,248;
+          background-color:rgb(246,246,248) !important;
+        }
+        html.dsh-has-theme #root,
+        html.dsh-has-theme #root > div,
+        html.dsh-has-theme #root > div > div {
+          background-color:transparent !important;
+        }
+        html.dsh-has-theme .dsh-theme-transparent-surface {
+          background-color:transparent !important;
+          background-image:none !important;
+        }
         #dsh-native-balance {
           position: fixed;
           left: 12px;
           bottom: 48px;
-          width: 256px;
+          width: var(--dsh-balance-expanded-width, 232px);
+          display:flex;
+          flex-direction:column;
+          gap:2px;
           transition: width .18s ease;
           z-index: 2147483646;
           color: #e5e7eb;
           font: 12px -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
         }
         #dsh-native-balance * { box-sizing: border-box; }
+        #dsh-native-theme-button,
         #dsh-native-balance-button {
           width: 100%;
           min-height: 44px;
           display: flex;
           align-items: center;
-          gap: 10px;
-          padding: 6px 14px;
+          gap: 5px;
+          padding: 6px 14px 6px 4px;
           border: 0;
           border-radius: 8px;
           background: transparent;
@@ -106,12 +144,40 @@ struct HarnessWebView: NSViewRepresentable {
           -webkit-appearance: none;
           position: relative;
         }
+        #dsh-native-theme-button {
+          order:-1;
+        }
+        #dsh-native-theme-button:hover,
         #dsh-native-balance-button:hover { background: rgba(255,255,255,.06); }
+        #dsh-native-theme-button:focus-visible,
         #dsh-native-balance-button:focus-visible { outline:2px solid rgba(92,124,250,.72); outline-offset:-2px; }
+        #dsh-native-theme-icon {
+          width:18px;
+          height:18px;
+          flex:0 0 18px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          color:#d0d0d5;
+        }
+        #dsh-native-theme-icon svg { width:16px; height:16px; }
+        #dsh-native-theme-label { min-width:0; flex:1; font-size:13px; font-weight:520; line-height:16px; }
+        #dsh-native-theme-button[data-active="true"] #dsh-native-theme-icon { color:#9aa8ff; }
+        #dsh-native-balance-icon {
+          width:18px;
+          height:18px;
+          flex:0 0 18px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          position:relative;
+        }
         #dsh-native-balance-dot {
-          width: 6px;
-          height: 6px;
-          flex: 0 0 auto;
+          position:absolute;
+          top:-2px;
+          right:-3px;
+          width:5px;
+          height:5px;
           border-radius: 999px;
           background: #8b8b92;
           box-shadow: 0 0 0 2px rgba(139,139,146,.12);
@@ -121,7 +187,7 @@ struct HarnessWebView: NSViewRepresentable {
         #dsh-native-balance[data-tone="warning"] #dsh-native-balance-dot { background:#ff9f0a; box-shadow:0 0 0 2px rgba(255,159,10,.12); }
         #dsh-native-balance[data-tone="error"] #dsh-native-balance-dot { background:#ff453a; box-shadow:0 0 0 2px rgba(255,69,58,.12); }
         #dsh-native-balance-copy { min-width: 0; flex: 1; }
-        #dsh-native-balance-compact-icon { display:none; font-size:15px; font-weight:700; color:#b8b8bd; }
+        #dsh-native-balance-compact-icon { display:block; color:#d0d0d5; font-size:14px; font-weight:650; line-height:1; }
         #dsh-native-balance-title { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:620; line-height:16px; }
         #dsh-native-balance-subtitle { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#8f8f96; font-size:10.5px; line-height:14px; }
         #dsh-native-balance-chevron { color:#6f6f76; font-size:14px; margin-right:2px; transition:transform .16s ease; }
@@ -131,7 +197,7 @@ struct HarnessWebView: NSViewRepresentable {
           position: absolute;
           left: 0;
           bottom: 50px;
-          width: 256px;
+          width: var(--dsh-balance-expanded-width, 232px);
           padding: 13px;
           border: 1px solid rgba(255,255,255,.09);
           border-radius: 13px;
@@ -154,17 +220,19 @@ struct HarnessWebView: NSViewRepresentable {
           backdrop-filter:none;
           -webkit-backdrop-filter:none;
         }
+        #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-theme-button {
+          width:40px;
+          min-height:40px;
+          height:40px;
+          justify-content:center;
+          padding:0;
+          background:transparent;
+        }
+        #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-theme-label { display:none; }
+        #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-theme-button:hover,
         #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-balance-button:hover { background:rgba(255,255,255,.07); }
         #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-balance-copy,
         #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-balance-chevron { display:none; }
-        #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-balance-compact-icon { display:block; }
-        #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-balance-dot {
-          position:absolute;
-          top:5px;
-          right:5px;
-          width:6px;
-          height:6px;
-        }
         .dsh-balance-header { display:flex; align-items:center; justify-content:space-between; margin:0 0 10px; }
         .dsh-balance-heading { font-weight:650; }
         .dsh-balance-close { width:24px; height:24px; border:0; border-radius:7px; padding:0; background:transparent; color:#8e8e95; font:18px/24px -apple-system, sans-serif; cursor:pointer; }
@@ -182,8 +250,11 @@ struct HarnessWebView: NSViewRepresentable {
         .dsh-balance-action-primary:hover { background:rgba(91,108,255,.32); }
         @media (prefers-color-scheme: light) {
           #dsh-native-balance { color:#202124; }
+          #dsh-native-theme-button,
           #dsh-native-balance-button { background:transparent; box-shadow:none; }
+          #dsh-native-theme-button:hover,
           #dsh-native-balance-button:hover { background:rgba(0,0,0,.055); }
+          #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-theme-button:hover,
           #dsh-native-balance[data-sidebar-compact="true"] #dsh-native-balance-button:hover { background:rgba(0,0,0,.06); }
           #dsh-native-balance-subtitle { color:#6e6e73; }
           #dsh-native-balance-panel { border-color:rgba(0,0,0,.09); background:rgba(250,250,252,.98); box-shadow:0 16px 42px rgba(0,0,0,.16); }
@@ -205,6 +276,22 @@ struct HarnessWebView: NSViewRepresentable {
       const panel = document.createElement('div');
       panel.id = 'dsh-native-balance-panel';
 
+      const themeButton = document.createElement('button');
+      themeButton.id = 'dsh-native-theme-button';
+      themeButton.type = 'button';
+      themeButton.dataset.active = 'false';
+      themeButton.setAttribute('aria-label', '主题背景');
+      themeButton.title = '主题背景';
+
+      const themeIcon = document.createElement('span');
+      themeIcon.id = 'dsh-native-theme-icon';
+      themeIcon.setAttribute('aria-hidden', 'true');
+      themeIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.5"/><path d="m5.5 17 4.2-4.2 3.2 3.1 2.2-2.1 3.4 3.2"/></svg>';
+      const themeLabel = document.createElement('span');
+      themeLabel.id = 'dsh-native-theme-label';
+      themeLabel.textContent = '主题背景';
+      themeButton.append(themeIcon, themeLabel);
+
       const button = document.createElement('button');
       button.id = 'dsh-native-balance-button';
       button.type = 'button';
@@ -212,9 +299,14 @@ struct HarnessWebView: NSViewRepresentable {
       const dot = document.createElement('span');
       dot.id = 'dsh-native-balance-dot';
 
+      const icon = document.createElement('span');
+      icon.id = 'dsh-native-balance-icon';
+      icon.setAttribute('aria-hidden', 'true');
+
       const compactIcon = document.createElement('span');
       compactIcon.id = 'dsh-native-balance-compact-icon';
       compactIcon.textContent = '¥';
+      icon.append(compactIcon, dot);
 
       const copy = document.createElement('span');
       copy.id = 'dsh-native-balance-copy';
@@ -227,9 +319,9 @@ struct HarnessWebView: NSViewRepresentable {
       const chevron = document.createElement('span');
       chevron.id = 'dsh-native-balance-chevron';
       chevron.textContent = '›';
-      button.append(dot, compactIcon, copy, chevron);
+      button.append(icon, copy, chevron);
       button.setAttribute('aria-expanded', 'false');
-      root.append(panel, button);
+      root.append(panel, themeButton, button);
       document.body.appendChild(root);
 
       const setExpanded = expanded => {
@@ -247,6 +339,10 @@ struct HarnessWebView: NSViewRepresentable {
         }
         setExpanded(root.dataset.expanded !== 'true');
       });
+      themeButton.addEventListener('click', () => {
+        setExpanded(false);
+        window.webkit.messageHandlers.dshBalance.postMessage('theme');
+      });
 
       document.addEventListener('click', event => {
         if (!root.contains(event.target)) setExpanded(false);
@@ -263,6 +359,21 @@ struct HarnessWebView: NSViewRepresentable {
 
       const collapsedSidebarNames = ['打开侧边栏', 'Open sidebar', 'Expand sidebar', 'Show sidebar'];
       const expandedSidebarNames = ['收起侧边栏', 'Close sidebar', 'Collapse sidebar', 'Hide sidebar'];
+      const expandedSidebarWidth = button => {
+        let candidate = button;
+        let sidebarWidth = null;
+        while (candidate && candidate !== document.body) {
+          const rect = candidate.getBoundingClientRect();
+          if (rect.left <= 3
+              && rect.width >= 180
+              && rect.width <= 360
+              && rect.height >= window.innerHeight * .7) {
+            sidebarWidth = rect.width;
+          }
+          candidate = candidate.parentElement;
+        }
+        return sidebarWidth;
+      };
       const updateSidebarMode = () => {
         let compact = null;
         for (const candidate of document.querySelectorAll('button')) {
@@ -274,6 +385,13 @@ struct HarnessWebView: NSViewRepresentable {
           }
           if (expandedSidebarNames.some(label => name.includes(label))) {
             compact = false;
+            const sidebarWidth = expandedSidebarWidth(candidate);
+            if (sidebarWidth) {
+              root.style.setProperty(
+                '--dsh-balance-expanded-width',
+                `${Math.max(196, Math.round(sidebarWidth) - 24)}px`
+              );
+            }
             break;
           }
         }
@@ -309,7 +427,52 @@ struct HarnessWebView: NSViewRepresentable {
         attributeFilter: ['aria-label', 'title', 'data-state']
       });
       document.addEventListener('click', () => setTimeout(queueSidebarUpdate, 0), true);
+      window.addEventListener('resize', queueSidebarUpdate);
       queueSidebarUpdate();
+
+      let themeSurfaceUpdateQueued = false;
+      const updateThemeSurfaces = () => {
+        const pageRoot = document.getElementById('root');
+        if (!pageRoot) return;
+
+        const enabled = document.documentElement.classList.contains('dsh-has-theme');
+        const viewportArea = Math.max(1, window.innerWidth * window.innerHeight);
+        const candidates = [
+          pageRoot,
+          ...pageRoot.querySelectorAll('div, main, aside, section')
+        ];
+
+        for (const candidate of candidates) {
+          const rect = candidate.getBoundingClientRect();
+          const coversLargeArea = rect.width * rect.height >= viewportArea * .28;
+          const isTallLayoutSurface = rect.width >= 160
+            && rect.height >= window.innerHeight * .72;
+          const shouldBeTransparent = enabled
+            && (candidate === pageRoot || coversLargeArea || isTallLayoutSurface);
+          candidate.classList.toggle(
+            'dsh-theme-transparent-surface',
+            shouldBeTransparent
+          );
+        }
+      };
+      const queueThemeSurfaceUpdate = () => {
+        if (themeSurfaceUpdateQueued) return;
+        themeSurfaceUpdateQueued = true;
+        requestAnimationFrame(() => {
+          themeSurfaceUpdateQueued = false;
+          updateThemeSurfaces();
+        });
+      };
+      new MutationObserver(queueThemeSurfaceUpdate).observe(document.body, {
+        subtree: true,
+        childList: true
+      });
+      document.addEventListener(
+        'click',
+        () => setTimeout(queueThemeSurfaceUpdate, 0),
+        true
+      );
+      window.addEventListener('resize', queueThemeSurfaceUpdate);
 
       const text = (tag, value, className) => {
         const node = document.createElement(tag);
@@ -371,6 +534,30 @@ struct HarnessWebView: NSViewRepresentable {
         actions.append(settings, refresh);
         panel.appendChild(actions);
       };
+
+      window.__dshThemeUpdate = payload => {
+        const imageDataURL = payload.imageDataURL || '';
+        const enabled = imageDataURL.length > 0;
+        document.documentElement.classList.toggle('dsh-has-theme', enabled);
+        themeButton.dataset.active = enabled ? 'true' : 'false';
+        themeButton.setAttribute('aria-label', enabled ? '主题背景，已设置' : '主题背景');
+
+        if (!enabled) {
+          document.body.style.removeProperty('--dsh-theme-image');
+          document.body.style.removeProperty('--dsh-theme-dimming');
+          queueThemeSurfaceUpdate();
+          return;
+        }
+
+        const dimming = Math.min(.85, Math.max(.25, Number(payload.dimmingOpacity) || .62));
+        document.body.style.setProperty('--dsh-theme-image', `url("${imageDataURL}")`);
+        document.body.style.setProperty('--dsh-theme-dimming', String(dimming));
+        queueThemeSurfaceUpdate();
+      };
+      if (window.__dshPendingThemePayload) {
+        window.__dshThemeUpdate(window.__dshPendingThemePayload);
+        window.__dshPendingThemePayload = null;
+      }
     })();
     """#
 
@@ -380,6 +567,7 @@ struct HarnessWebView: NSViewRepresentable {
         var lastHomeRequestID = 0
         var lastReloadRequestID = 0
         private var lastBalanceJSON: String?
+        private var lastThemeBackgroundJSON: String?
 
         init(parent: HarnessWebView) {
             self.parent = parent
@@ -394,7 +582,9 @@ struct HarnessWebView: NSViewRepresentable {
             parent.isLoading = false
             parent.loadError = nil
             lastBalanceJSON = nil
+            lastThemeBackgroundJSON = nil
             updateBalance(in: webView)
+            updateThemeBackground(in: webView)
         }
 
         func userContentController(
@@ -402,11 +592,15 @@ struct HarnessWebView: NSViewRepresentable {
             didReceive message: WKScriptMessage
         ) {
             guard message.name == "dshBalance",
-                  let action = message.body as? String,
-                  action == "settings" || action == "refresh"
+                  let action = message.body as? String
             else {
                 return
             }
+            if action == "theme" {
+                parent.onThemeAction()
+                return
+            }
+            guard action == "settings" || action == "refresh" else { return }
             parent.onBalanceAction(action)
         }
 
@@ -419,6 +613,23 @@ struct HarnessWebView: NSViewRepresentable {
             }
             lastBalanceJSON = json
             webView.evaluateJavaScript("window.__dshBalanceUpdate?.(\(json));")
+        }
+
+        func updateThemeBackground(in webView: WKWebView) {
+            guard let data = try? JSONEncoder().encode(parent.themeBackgroundPresentation),
+                  let json = String(data: data, encoding: .utf8),
+                  json != lastThemeBackgroundJSON
+            else {
+                return
+            }
+            lastThemeBackgroundJSON = json
+            webView.evaluateJavaScript("""
+            window.__dshPendingThemePayload = \(json);
+            if (window.__dshThemeUpdate) {
+              window.__dshThemeUpdate(window.__dshPendingThemePayload);
+              window.__dshPendingThemePayload = null;
+            }
+            """)
         }
 
         func webView(

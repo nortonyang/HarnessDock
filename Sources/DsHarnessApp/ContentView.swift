@@ -5,6 +5,63 @@ struct ContentView: View {
     @EnvironmentObject private var model: AppModel
 
     var body: some View {
+        ZStack {
+            harnessSurface
+                .opacity(model.selectedSurface == .harness ? 1 : 0)
+                .allowsHitTesting(model.selectedSurface == .harness)
+                .accessibilityHidden(model.selectedSurface != .harness)
+
+            if model.hasOpenedDeepSeekChat {
+                DeepSeekChatSurface()
+                    .environmentObject(model)
+                    .opacity(model.selectedSurface == .chat ? 1 : 0)
+                    .allowsHitTesting(model.selectedSurface == .chat)
+                    .accessibilityHidden(model.selectedSurface != .chat)
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Picker(
+                    "主界面",
+                    selection: Binding(
+                        get: { model.selectedSurface },
+                        set: model.selectSurface
+                    )
+                ) {
+                    ForEach(AppSurface.allCases) { surface in
+                        Text(surface.title).tag(surface)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(width: 210)
+            }
+
+            if model.selectedSurface == .chat {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: model.openDeepSeekChatInBrowser) {
+                        Image(systemName: "safari")
+                    }
+                    .help("在 Safari 中打开 DeepSeek Chat")
+                }
+            }
+        }
+        .sheet(isPresented: $model.showLogs) {
+            LogSheet()
+                .environmentObject(model)
+        }
+        .sheet(isPresented: $model.showBalanceSettings) {
+            BalanceSettingsView()
+                .environmentObject(model)
+        }
+        .sheet(isPresented: $model.showThemeSettings) {
+            ThemeSettingsView()
+                .environmentObject(model)
+        }
+    }
+
+    @ViewBuilder
+    private var harnessSurface: some View {
         Group {
             if model.workspaceURL == nil {
                 WelcomeView()
@@ -21,14 +78,53 @@ struct ContentView: View {
                 }
             }
         }
-        .sheet(isPresented: $model.showLogs) {
-            LogSheet()
-                .environmentObject(model)
+    }
+}
+
+private struct DeepSeekChatSurface: View {
+    @EnvironmentObject private var model: AppModel
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            DeepSeekChatWebView(
+                url: model.deepSeekChatURL,
+                reloadRequestID: model.chatReloadRequestID,
+                isLoading: $model.chatWebViewIsLoading,
+                loadError: $model.chatWebViewError
+            )
+
+            if model.chatWebViewIsLoading {
+                ProgressView("正在加载 DeepSeek Chat…")
+                    .controlSize(.small)
+                    .font(.system(size: 10.5))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.regularMaterial, in: Capsule())
+                    .padding(.top, 10)
+            }
+
+            if let error = model.chatWebViewError {
+                HStack(spacing: 9) {
+                    Image(systemName: "wifi.exclamationmark")
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("DeepSeek Chat 加载失败")
+                            .fontWeight(.semibold)
+                        Text(error)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                    Spacer()
+                    Button("Safari", action: model.openDeepSeekChatInBrowser)
+                    Button("重载", action: model.requestSelectedSurfaceReload)
+                        .buttonStyle(.borderedProminent)
+                }
+                .font(.system(size: 11))
+                .padding(12)
+                .background(.regularMaterial)
+                .padding(12)
+            }
         }
-        .sheet(isPresented: $model.showBalanceSettings) {
-            BalanceSettingsView()
-                .environmentObject(model)
-        }
+        .background(Color(nsColor: .textBackgroundColor))
     }
 }
 
@@ -42,7 +138,9 @@ private struct FullBleedHarnessView: View {
                 homeRequestID: model.homeRequestID,
                 reloadRequestID: model.reloadRequestID,
                 balancePresentation: model.balanceWebPresentation,
+                themeBackgroundPresentation: model.themeBackgroundPresentation,
                 onBalanceAction: model.handleBalanceWebAction,
+                onThemeAction: { model.showThemeSettings = true },
                 isLoading: $model.webViewIsLoading,
                 loadError: $model.webViewError
             )
@@ -921,14 +1019,14 @@ private struct WelcomeView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 10)
 
-                Text("选择一个代码项目，桌面端会启动官方 Harness，\n会话、工具、审批和插件仍由 DeepSeek 原生运行时提供。")
+                Text("进入默认工作区，桌面端会启动官方 Harness，\n需要处理现有代码时，可随时切换项目。")
                     .font(.system(size: 14))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
 
-                Button(action: model.chooseWorkspace) {
-                    Label("打开本地项目", systemImage: "folder.badge.plus")
+                Button(action: model.enterDefaultWorkspace) {
+                    Label("进入", systemImage: "arrow.right.circle.fill")
                         .font(.system(size: 14, weight: .semibold))
                         .padding(.horizontal, 18)
                         .padding(.vertical, 10)
@@ -938,7 +1036,7 @@ private struct WelcomeView: View {
                 .padding(.top, 25)
 
                 HStack(spacing: 12) {
-                    FeatureCard(number: "01", title: "选择项目", subtitle: "以本地目录作为工作边界")
+                    FeatureCard(number: "01", title: "直接进入", subtitle: "使用应用专属默认工作区")
                     FeatureCard(number: "02", title: "自动启动", subtitle: "管理 dsh 本地服务与日志")
                     FeatureCard(number: "03", title: "专注工作", subtitle: "在原生窗口中完成任务")
                 }
@@ -1194,6 +1292,149 @@ private struct BalanceSettingsView: View {
             .padding(20)
         }
         .frame(width: 520, height: 390)
+    }
+}
+
+private struct ThemeSettingsView: View {
+    @EnvironmentObject private var model: AppModel
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 11, style: .continuous)
+                        .fill(Color.indigo.opacity(0.12))
+                    Image(systemName: "photo.on.rectangle.angled")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(.indigo)
+                }
+                .frame(width: 40, height: 40)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("主题背景")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("使用一张本地图片个性化 Harness")
+                        .font(.system(size: 10.5))
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+            .padding(18)
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 16) {
+                themePreview
+
+                HStack {
+                    Button(model.hasThemeBackground ? "更换图片…" : "选择图片…") {
+                        model.chooseThemeBackground()
+                    }
+                    .buttonStyle(.borderedProminent)
+
+                    if model.hasThemeBackground {
+                        Button("移除背景", role: .destructive) {
+                            model.removeThemeBackground()
+                        }
+                    }
+
+                    Spacer()
+
+                    Button("完成") {
+                        model.showThemeSettings = false
+                    }
+                    .keyboardShortcut(.cancelAction)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("内容遮罩")
+                            .font(.system(size: 11, weight: .semibold))
+                        Spacer()
+                        Text("\(Int(model.themeBackgroundDimmingOpacity * 100))%")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Slider(
+                        value: Binding(
+                            get: { model.themeBackgroundDimmingOpacity },
+                            set: model.setThemeBackgroundDimmingOpacity
+                        ),
+                        in: 0.25...0.85
+                    )
+                    .disabled(!model.hasThemeBackground)
+
+                    Text("数值越高，背景越暗，聊天内容越清晰。调整会立即应用，无需重新加载会话。")
+                        .font(.system(size: 9.5))
+                        .foregroundStyle(.secondary)
+                }
+
+                if let error = model.themeBackgroundError {
+                    Label(error, systemImage: "exclamationmark.triangle.fill")
+                        .font(.system(size: 10.5))
+                        .foregroundStyle(.orange)
+                }
+
+                HStack(alignment: .top, spacing: 9) {
+                    Image(systemName: "internaldrive")
+                        .foregroundStyle(.secondary)
+                    Text("导入副本仅保存在这台 Mac 的 Application Support 中，不会写入工作区、发送到 Harness 服务或上传到网络。")
+                        .font(.system(size: 10.5))
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(20)
+        }
+        .frame(width: 560, height: 520)
+    }
+
+    @ViewBuilder
+    private var themePreview: some View {
+        if let data = model.themeBackgroundData,
+           let image = NSImage(data: data) {
+            Image(nsImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, minHeight: 210, maxHeight: 210)
+                .clipped()
+                .overlay {
+                    Color.black.opacity(model.themeBackgroundDimmingOpacity)
+                }
+                .overlay(alignment: .bottomLeading) {
+                    Label("当前背景", systemImage: "checkmark.circle.fill")
+                        .font(.system(size: 10.5, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        } else {
+            VStack(spacing: 10) {
+                Image(systemName: "photo.badge.plus")
+                    .font(.system(size: 28, weight: .light))
+                    .foregroundStyle(.tertiary)
+                Text("尚未设置背景图片")
+                    .font(.system(size: 12, weight: .medium))
+                Text("支持 JPEG、PNG、HEIC 等 macOS 可读取的图片")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, minHeight: 210, maxHeight: 210)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.primary.opacity(0.04))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(
+                                Color.primary.opacity(0.1),
+                                style: StrokeStyle(lineWidth: 1, dash: [6, 5])
+                            )
+                    }
+            )
+        }
     }
 }
 

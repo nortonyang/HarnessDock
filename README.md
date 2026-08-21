@@ -16,7 +16,9 @@
 - **原生 macOS 体验**：项目选择、启动状态、错误恢复、日志和常用菜单均由 SwiftUI 提供。
 - **自动启动官方 Harness**：自动定位 `npx`，并以所选项目为工作目录启动 `dsh web`。
 - **沉浸式工作区**：官方 Harness Web UI 直接铺满窗口，外部链接交给系统默认浏览器。
+- **内嵌官方免费聊天**：在标题栏切换 Harness 与 `chat.deepseek.com`，两个页面保持各自的会话状态。
 - **余额一眼可见**：在 Harness 侧边栏显示 DeepSeek CNY/USD 余额，支持刷新、错误提示和折叠态。
+- **自定义主题背景**：从 Mac 导入一张本地图片作为工作区背景，可调整内容遮罩并随时移除。
 - **凭据留在本机**：余额 API Key 可从 `DEEPSEEK_API_KEY` 读取，或存入 macOS 钥匙串，不写入项目文件与 Harness 日志。
 - **可靠的进程管理**：识别并安全附着已有 Harness；退出时清理本应用启动的整棵进程树，减少端口残留。
 
@@ -58,6 +60,10 @@ open dist/DsHarness.app
 4. 如需显示账户余额，点击侧边栏底部的余额入口，将 Key 单独保存到 macOS 钥匙串；也可以在启动应用前设置 `DEEPSEEK_API_KEY`。
 5. 回到官方 UI，确认工作区后开始任务。
 
+如需自定义外观，点击 Harness 左侧栏的 **主题背景**，或按 `⇧⌘T`，选择本地图片并调整内容遮罩。导入副本只保存在当前 Mac 的 Application Support 中。
+
+标题栏可在 **Harness** 与 **Chat** 之间切换，也可以使用 `⌘1` / `⌘2`。Chat 首次打开时才加载 DeepSeek 官方网页，登录 Cookie 由本机 WebKit 保存；应用不会把 Harness 的 API Key、余额或工作区数据传给聊天页面。聊天页中的文件上传由用户主动选择，并直接交给 DeepSeek 官方服务处理。
+
 > [!NOTE]
 > 模型配置、会话、工具审批和插件由官方 Harness 管理。余额功能不会读取 Harness 内部凭据，只使用你明确提供给桌面应用的 Key，并仅请求 DeepSeek 官方的只读 `/user/balance` 接口。
 
@@ -68,7 +74,10 @@ open dist/DsHarness.app
 | 选择项目 | `⌘ O` |
 | 新任务 | `⌘ N` |
 | 重新加载 Harness | `⌘ R` |
+| 切换到 Harness | `⌘ 1` |
+| 切换到免费聊天 | `⌘ 2` |
 | API 余额设置 | `⇧ ⌘ B` |
+| 主题背景 | `⇧ ⌘ T` |
 | 查看 Harness 日志 | `⇧ ⌘ L` |
 
 ## 开发运行
@@ -142,11 +151,17 @@ swift test
 - 依赖本机 Node.js，未捆绑离线运行时。
 - 尚未提供端口设置界面；可通过 `--port` 在调试时覆盖默认端口。
 - 尚无 Developer ID 签名、公证、DMG、自动更新或崩溃上报。
+- 当前构建脚本只输出构建机器自身架构；公开提供 Intel + Apple Silicon 下载前需生成 Universal 2 包。
 - 余额组件通过独立的 WKWebView user script 注入；如果上游彻底调整侧边栏结构，可能需要适配。
 - `kill -9` 等强制退出方式无法执行清理；使用 `⌘ Q` 或应用菜单退出可正常停止进程树。
+
+## 公开发布提醒
+
+当前构建只适合本地测试。公开 GitHub 源码或 Release 前，还需要替换当前由 SF Symbols 生成的 AppIcon、选择本项目许可证、锁定 Harness 版本、脱敏截图，并完成 Developer ID 签名与 Apple 公证。风险分级和逐项发布清单见 [GitHub 公开发布审核](docs/release-readiness.md)。
 
 ## 更多文档
 
 - [macOS 客户端总体规划](docs/development/codex-style-macos/00-master-plan.md)
 - [实施方案](docs/development/codex-style-macos/02-implementation-plan.md)
 - [代码审核报告](docs/development/codex-style-macos/04-review-report.md)
+- [GitHub 公开发布审核](docs/release-readiness.md)

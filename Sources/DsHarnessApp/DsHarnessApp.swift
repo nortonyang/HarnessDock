@@ -37,11 +37,34 @@ struct DsHarnessApp: App {
             }
 
             CommandGroup(after: .toolbar) {
-                Button("重新加载 Harness") {
-                    model.requestReload()
+                Button("切换到 Harness") {
+                    model.selectSurface(.harness)
+                }
+                .keyboardShortcut("1", modifiers: .command)
+
+                Button("切换到 DeepSeek 免费聊天") {
+                    model.selectSurface(.chat)
+                }
+                .keyboardShortcut("2", modifiers: .command)
+
+                Divider()
+
+                Button(model.selectedSurface == .harness
+                       ? "重新加载 Harness"
+                       : "重新加载 DeepSeek Chat") {
+                    model.requestSelectedSurfaceReload()
                 }
                 .keyboardShortcut("r", modifiers: .command)
-                .disabled(model.workspaceURL == nil)
+                .disabled(
+                    model.selectedSurface == .harness
+                        ? model.workspaceURL == nil
+                        : !model.hasOpenedDeepSeekChat
+                )
+
+                Button("在 Safari 中打开 DeepSeek Chat") {
+                    model.openDeepSeekChatInBrowser()
+                }
+                .disabled(model.selectedSurface != .chat)
 
                 Divider()
 
@@ -49,6 +72,11 @@ struct DsHarnessApp: App {
                     model.showBalanceSettings = true
                 }
                 .keyboardShortcut("b", modifiers: [.command, .shift])
+
+                Button("主题背景…") {
+                    model.showThemeSettings = true
+                }
+                .keyboardShortcut("t", modifiers: [.command, .shift])
 
                 Button("查看 Harness 日志") {
                     model.showLogs = true

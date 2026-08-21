@@ -3,6 +3,8 @@ import Combine
 import Darwin
 import DsHarnessCore
 import Foundation
+import ImageIO
+import UniformTypeIdentifiers
 
 enum HarnessStatus: Equatable {
     case idle
@@ -10,6 +12,20 @@ enum HarnessStatus: Equatable {
     case launching
     case running(managed: Bool)
     case failed(String)
+}
+
+enum AppSurface: String, CaseIterable, Identifiable {
+    case harness
+    case chat
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .harness: "Harness"
+        case .chat: "Chat"
+        }
+    }
 }
 
 enum BalanceState: Equatable {
@@ -42,24 +58,54 @@ struct BalanceWebPresentation: Codable, Equatable {
     let entries: [Entry]
 }
 
+struct ThemeBackgroundPresentation: Codable, Equatable {
+    let imageDataURL: String?
+    let dimmingOpacity: Double
+}
+
+private enum ThemeBackgroundError: LocalizedError {
+    case invalidImage
+    case storageUnavailable
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidImage:
+            "无法读取这张图片，请选择有效的 JPEG、PNG、HEIC 或其他常见图片。"
+        case .storageUnavailable:
+            "无法访问应用的本地数据目录。"
+        }
+    }
+}
+
 @MainActor
 final class AppModel: ObservableObject {
+    @Published private(set) var selectedSurface: AppSurface = .harness
+    @Published private(set) var hasOpenedDeepSeekChat = false
     @Published private(set) var workspaceURL: URL?
     @Published private(set) var status: HarnessStatus = .idle
     @Published private(set) var logText = ""
     @Published var webViewIsLoading = false
     @Published var webViewError: String?
+    @Published var chatWebViewIsLoading = false
+    @Published var chatWebViewError: String?
     @Published var showLogs = false
     @Published var showBalanceSettings = false
+    @Published var showThemeSettings = false
     @Published private(set) var homeRequestID = 0
     @Published private(set) var reloadRequestID = 0
+    @Published private(set) var chatReloadRequestID = 0
     @Published private(set) var balanceState: BalanceState = .notConfigured
     @Published private(set) var balanceCredentialSource: BalanceCredentialSource = .none
     @Published private(set) var balanceCredentialError: String?
+    @Published private(set) var themeBackgroundData: Data?
+    @Published private(set) var themeBackgroundDimmingOpacity = 0.62
+    @Published private(set) var themeBackgroundError: String?
 
     let configuration: HarnessConfiguration
+    let deepSeekChatURL = URL(string: "https://chat.deepseek.com/")!
 
     private let workspaceDefaultsKey = "lastWorkspacePath"
+    private let themeDimmingDefaultsKey = "themeBackgroundDimmingOpacity"
     private let balanceClient = DeepSeekBalanceClient()
     private let balanceKeychain = BalanceKeychain()
     private var process: Process?
@@ -78,6 +124,12 @@ final class AppModel: ObservableObject {
 
     init() {
         configuration = HarnessConfiguration(port: Self.portArgument() ?? 3_080)
+        if let savedDimming = UserDefaults.standard.object(
+            forKey: themeDimmingDefaultsKey
+        ) as? Double {
+            themeBackgroundDimmingOpacity = min(max(savedDimming, 0.25), 0.85)
+        }
+        loadThemeBackground()
         updateBalanceCredentialSource()
     }
 
@@ -144,6 +196,19 @@ final class AppModel: ObservableObject {
         }
     }
 
+    var themeBackgroundPresentation: ThemeBackgroundPresentation {
+        ThemeBackgroundPresentation(
+            imageDataURL: themeBackgroundData.map {
+                "data:image/jpeg;base64,\($0.base64EncodedString())"
+            },
+            dimmingOpacity: themeBackgroundDimmingOpacity
+        )
+    }
+
+    var hasThemeBackground: Bool {
+        themeBackgroundData != nil
+    }
+
     func restoreWorkspaceIfNeeded() {
         guard !didRestoreWorkspace else { return }
         didRestoreWorkspace = true
@@ -185,6 +250,75 @@ final class AppModel: ObservableObject {
         setWorkspace(selectedURL)
     }
 
+    func enterDefaultWorkspace() {
+        guard let applicationSupportURL = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first else {
+            let message = "无法访问应用数据目录，不能创建默认工作区。"
+            appendLog(message)
+            status = .failed(message)
+            return
+        }
+
+        let workspaceURL = applicationSupportURL
+            .appendingPathComponent("app.dsharness.desktop", isDirectory: true)
+            .appendingPathComponent("Workspace", isDirectory: true)
+        do {
+            try FileManager.default.createDirectory(
+                at: workspaceURL,
+                withIntermediateDirectories: true
+            )
+            setWorkspace(workspaceURL)
+        } catch {
+            let message = "无法创建默认工作区：\(error.localizedDescription)"
+            appendLog(message)
+            status = .failed(message)
+        }
+    }
+
+    func chooseThemeBackground() {
+        let panel = NSOpenPanel()
+        panel.title = "选择主题背景图片"
+        panel.message = "图片会缩放后保存在本机应用数据目录，不会写入当前项目。"
+        panel.prompt = hasThemeBackground ? "更换背景" : "设为背景"
+        panel.allowedContentTypes = [.image]
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+
+        guard panel.runModal() == .OK, let selectedURL = panel.url else { return }
+
+        do {
+            let data = try Self.normalizedThemeBackgroundData(from: selectedURL)
+            let destination = try themeBackgroundFileURL(createDirectory: true)
+            try data.write(to: destination, options: .atomic)
+            themeBackgroundData = data
+            themeBackgroundError = nil
+        } catch {
+            themeBackgroundError = error.localizedDescription
+        }
+    }
+
+    func setThemeBackgroundDimmingOpacity(_ value: Double) {
+        let normalizedValue = min(max(value, 0.25), 0.85)
+        themeBackgroundDimmingOpacity = normalizedValue
+        UserDefaults.standard.set(normalizedValue, forKey: themeDimmingDefaultsKey)
+    }
+
+    func removeThemeBackground() {
+        do {
+            let fileURL = try themeBackgroundFileURL(createDirectory: false)
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                try FileManager.default.removeItem(at: fileURL)
+            }
+            themeBackgroundData = nil
+            themeBackgroundError = nil
+        } catch {
+            themeBackgroundError = error.localizedDescription
+        }
+    }
+
     func retry() {
         guard let workspaceURL else { return }
         startHarness(in: workspaceURL)
@@ -208,6 +342,28 @@ final class AppModel: ObservableObject {
     func requestReload() {
         reloadRequestID += 1
         webViewError = nil
+    }
+
+    func selectSurface(_ surface: AppSurface) {
+        if surface == .chat {
+            hasOpenedDeepSeekChat = true
+            chatWebViewError = nil
+        }
+        selectedSurface = surface
+    }
+
+    func requestSelectedSurfaceReload() {
+        switch selectedSurface {
+        case .harness:
+            requestReload()
+        case .chat:
+            chatReloadRequestID += 1
+            chatWebViewError = nil
+        }
+    }
+
+    func openDeepSeekChatInBrowser() {
+        NSWorkspace.shared.open(deepSeekChatURL)
     }
 
     func openInBrowser() {
@@ -285,6 +441,69 @@ final class AppModel: ObservableObject {
         default:
             break
         }
+    }
+
+    private func loadThemeBackground() {
+        do {
+            let fileURL = try themeBackgroundFileURL(createDirectory: false)
+            guard FileManager.default.fileExists(atPath: fileURL.path) else { return }
+            let data = try Data(contentsOf: fileURL)
+            guard NSImage(data: data) != nil else {
+                throw ThemeBackgroundError.invalidImage
+            }
+            themeBackgroundData = data
+        } catch ThemeBackgroundError.storageUnavailable {
+            themeBackgroundError = ThemeBackgroundError.storageUnavailable.localizedDescription
+        } catch {
+            themeBackgroundError = error.localizedDescription
+        }
+    }
+
+    private func themeBackgroundFileURL(createDirectory: Bool) throws -> URL {
+        guard let applicationSupportURL = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first else {
+            throw ThemeBackgroundError.storageUnavailable
+        }
+
+        let directoryURL = applicationSupportURL
+            .appendingPathComponent("app.dsharness.desktop", isDirectory: true)
+        if createDirectory {
+            try FileManager.default.createDirectory(
+                at: directoryURL,
+                withIntermediateDirectories: true
+            )
+        }
+        return directoryURL.appendingPathComponent("theme-background.jpg")
+    }
+
+    private static func normalizedThemeBackgroundData(from sourceURL: URL) throws -> Data {
+        guard let source = CGImageSourceCreateWithURL(sourceURL as CFURL, nil) else {
+            throw ThemeBackgroundError.invalidImage
+        }
+
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: 2_560,
+        ]
+        guard let image = CGImageSourceCreateThumbnailAtIndex(
+            source,
+            0,
+            options as CFDictionary
+        ) else {
+            throw ThemeBackgroundError.invalidImage
+        }
+
+        let representation = NSBitmapImageRep(cgImage: image)
+        guard let data = representation.representation(
+            using: .jpeg,
+            properties: [.compressionFactor: 0.86]
+        ) else {
+            throw ThemeBackgroundError.invalidImage
+        }
+        return data
     }
 
     private func setWorkspace(_ url: URL) {
