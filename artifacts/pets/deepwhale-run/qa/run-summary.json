@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "run_dir": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run",
+  "spritesheet": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/final/spritesheet.webp",
+  "validation": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/final/validation.json",
+  "contact_sheet": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/qa/contact-sheet.png",
+  "review": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/qa/review.json",
+  "videos": null,
+  "package": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/package"
+}

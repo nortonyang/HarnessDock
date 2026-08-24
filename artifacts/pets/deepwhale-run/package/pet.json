@@ -1,0 +1,6 @@
+{
+  "id": "deepwhale",
+  "displayName": "DeepWhale",
+  "description": "A tiny deep-sea blue whale companion for DeepSeek Harness.",
+  "spritesheetPath": "spritesheet.webp"
+}

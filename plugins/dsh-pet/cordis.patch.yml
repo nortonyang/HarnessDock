@@ -1,0 +1,5 @@
+# Genuine DSH profile bundle: add one Loader row without replacing any
+# built-in Harness entry. The browser half is discovered through dsh.client.
+- insert:
+    - id: pet
+      name: '@dsharness/pet'

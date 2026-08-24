@@ -28,6 +28,27 @@ enum AppSurface: String, CaseIterable, Identifiable {
     }
 }
 
+enum AppSettingsSection: String, CaseIterable, Identifiable {
+    case apiBalance
+    case themeBackground
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .apiBalance: "API 与余额"
+        case .themeBackground: "主题背景"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .apiBalance: "wallet.pass.fill"
+        case .themeBackground: "photo.on.rectangle.angled"
+        }
+    }
+}
+
 enum BalanceState: Equatable {
     case notConfigured
     case loading
@@ -49,6 +70,17 @@ struct BalanceWebPresentation: Codable, Equatable {
         let toppedUp: String
     }
 
+    struct Pricing: Codable, Equatable {
+        let currentPeriod: String
+        let currentPeriodLabel: String
+        let nextPeriodLabel: String
+        let nextSwitchLabel: String
+        let scheduleLabel: String
+        let unitLabel: String
+        let sourceLabel: String
+        let models: [DeepSeekModelPricing]
+    }
+
     let title: String
     let subtitle: String
     let tone: String
@@ -56,6 +88,7 @@ struct BalanceWebPresentation: Codable, Equatable {
     let error: String?
     let updatedLabel: String?
     let entries: [Entry]
+    let pricing: Pricing?
 }
 
 struct ThemeBackgroundPresentation: Codable, Equatable {
@@ -89,8 +122,8 @@ final class AppModel: ObservableObject {
     @Published var chatWebViewIsLoading = false
     @Published var chatWebViewError: String?
     @Published var showLogs = false
-    @Published var showBalanceSettings = false
-    @Published var showThemeSettings = false
+    @Published private(set) var selectedSettingsSection: AppSettingsSection = .apiBalance
+    @Published private(set) var settingsRequestID = 0
     @Published private(set) var homeRequestID = 0
     @Published private(set) var reloadRequestID = 0
     @Published private(set) var chatReloadRequestID = 0
@@ -144,17 +177,20 @@ final class AppModel: ObservableObject {
         Self.environmentBalanceAPIKey() != nil
     }
 
-    var balanceWebPresentation: BalanceWebPresentation {
+    func balanceWebPresentation(at date: Date = Date()) -> BalanceWebPresentation {
+        let pricing = Self.pricingWebPresentation(at: date)
+
         switch balanceState {
         case .notConfigured:
             return BalanceWebPresentation(
                 title: "配置 API 余额",
-                subtitle: "安全存储在 macOS 钥匙串",
+                subtitle: "安全配置",
                 tone: "neutral",
                 state: "notConfigured",
                 error: nil,
                 updatedLabel: nil,
-                entries: []
+                entries: [],
+                pricing: pricing
             )
         case .loading:
             return BalanceWebPresentation(
@@ -164,7 +200,8 @@ final class AppModel: ObservableObject {
                 state: "loading",
                 error: nil,
                 updatedLabel: nil,
-                entries: []
+                entries: [],
+                pricing: pricing
             )
         case let .failed(message):
             return BalanceWebPresentation(
@@ -174,12 +211,15 @@ final class AppModel: ObservableObject {
                 state: "failed",
                 error: message,
                 updatedLabel: nil,
-                entries: []
+                entries: [],
+                pricing: pricing
             )
         case let .loaded(response, refreshedAt):
             return BalanceWebPresentation(
                 title: response.preferredInfo?.displayTotal ?? "余额已同步",
-                subtitle: response.isAvailable ? "DeepSeek API 余额 · 可用" : "DeepSeek API 余额 · 暂不可用",
+                subtitle: response.isAvailable
+                    ? "API 余额可用"
+                    : "API 暂不可用",
                 tone: response.isAvailable ? "success" : "warning",
                 state: "loaded",
                 error: nil,
@@ -191,9 +231,30 @@ final class AppModel: ObservableObject {
                         granted: $0.displayGranted,
                         toppedUp: $0.displayToppedUp
                     )
-                }
+                },
+                pricing: pricing
             )
         }
+    }
+
+    private static func pricingWebPresentation(at date: Date) -> BalanceWebPresentation.Pricing {
+        let status = DeepSeekAPIPricing.status(at: date)
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = TimeZone(identifier: "Asia/Shanghai")
+        formatter.dateFormat = "EEE HH:mm"
+
+        return BalanceWebPresentation.Pricing(
+            currentPeriod: status.period.rawValue,
+            currentPeriodLabel: "当前\(status.period.displayName)",
+            nextPeriodLabel: status.nextPeriod.displayName,
+            nextSwitchLabel: "\(formatter.string(from: status.nextTransition)) 切换为\(status.nextPeriod.displayName)",
+            scheduleLabel: "工作日 09:00–12:00、14:00–18:00 高峰；其余谷时（北京时间）",
+            unitLabel: "人民币 / 百万 tokens",
+            sourceLabel: "DeepSeek 中文价格表",
+            models: DeepSeekAPIPricing.models
+        )
     }
 
     var themeBackgroundPresentation: ThemeBackgroundPresentation {
@@ -412,7 +473,6 @@ final class AppModel: ObservableObject {
             try balanceKeychain.save(credential)
             balanceCredentialSource = .keychain
             balanceCredentialError = nil
-            showBalanceSettings = false
             refreshBalance()
         } catch {
             balanceCredentialError = error.localizedDescription
@@ -435,12 +495,23 @@ final class AppModel: ObservableObject {
     func handleBalanceWebAction(_ action: String) {
         switch action {
         case "settings":
-            showBalanceSettings = true
+            requestSettings(.apiBalance)
         case "refresh":
             refreshBalance()
+        case "pricing":
+            NSWorkspace.shared.open(DeepSeekAPIPricing.sourceURL)
         default:
             break
         }
+    }
+
+    func requestSettings(_ section: AppSettingsSection = .apiBalance) {
+        selectedSettingsSection = section
+        settingsRequestID += 1
+    }
+
+    func selectSettingsSection(_ section: AppSettingsSection) {
+        selectedSettingsSection = section
     }
 
     private func loadThemeBackground() {
@@ -622,23 +693,46 @@ final class AppModel: ObservableObject {
             return
         }
 
+        let cachedRuntimeURL: URL?
+        if let package = configuration.pinnedPackage {
+            cachedRuntimeURL = ExecutableLocator.locateNpxCachedPackageBinary(
+                "dsh",
+                packagePath: package.path,
+                version: package.version
+            )
+        } else {
+            cachedRuntimeURL = nil
+        }
+        let executableURL = cachedRuntimeURL ?? npxURL
+        let arguments = cachedRuntimeURL == nil
+            ? configuration.npxArguments
+            : configuration.webArguments
+
         appendLog("工作区：\(workspace.path)")
-        appendLog("运行环境：\(npxURL.path)")
-        appendLog("正在启动：npx \(configuration.npxArguments.joined(separator: " "))")
+        if let cachedRuntimeURL {
+            appendLog("已命中版本匹配的本地 DSH 缓存：\(cachedRuntimeURL.path)")
+            appendLog("正在启动：dsh \(arguments.joined(separator: " "))")
+        } else {
+            appendLog("运行环境：\(npxURL.path)")
+            appendLog("正在启动：npx \(arguments.joined(separator: " "))")
+        }
 
         let process = Process()
         let pipe = Pipe()
-        process.executableURL = npxURL
-        process.arguments = configuration.npxArguments
+        process.executableURL = executableURL
+        process.arguments = arguments
         process.currentDirectoryURL = workspace
         process.standardOutput = pipe
         process.standardError = pipe
 
         var environment = ProcessInfo.processInfo.environment
-        environment["PATH"] = ExecutableLocator.pathEnvironment(
+        let nodePath = ExecutableLocator.pathEnvironment(
             for: npxURL,
             inheritedPath: environment["PATH"]
         )
+        environment["PATH"] = cachedRuntimeURL.map {
+            ExecutableLocator.pathEnvironment(for: $0, inheritedPath: nodePath)
+        } ?? nodePath
         // This variable is accepted only as a credential source for the native
         // balance client. Do not expose it to npm, Harness, or Harness plugins.
         environment.removeValue(forKey: "DEEPSEEK_API_KEY")
@@ -675,8 +769,8 @@ final class AppModel: ObservableObject {
         outputPipe = pipe
         status = .launching
 
-        // First run can take minutes while npx downloads the official package,
-        // so allow a generous window and report progress instead of giving up.
+        // A cache miss can still require npx to download the pinned official
+        // package, so allow a generous window and report progress.
         let waitLimit = 3_600  // 30 minutes of 500ms polls
         for attempt in 0..<waitLimit {
             guard !Task.isCancelled else { return }

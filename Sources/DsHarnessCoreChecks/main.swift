@@ -9,15 +9,33 @@ func check(_ condition: @autoclosure () -> Bool, _ message: String) {
     }
 }
 
+func isoDate(_ value: String) -> Date {
+    guard let date = ISO8601DateFormatter().date(from: value) else {
+        fatalError("Invalid test date: \(value)")
+    }
+    return date
+}
+
 let configuration = HarnessConfiguration()
 check(
     configuration.serverURL.absoluteString == "http://127.0.0.1:3080",
     "Default server URL must use the official loopback port"
 )
 check(
+    configuration.webArguments == [
+        "web",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "3080",
+    ],
+    "Direct DSH arguments must launch the official Web UI on the configured port"
+)
+check(
     configuration.npxArguments == [
         "--yes",
-        "@deepseek-ai/dsh",
+        "--prefer-offline",
+        "@deepseek-ai/dsh@0.1.0-rc.6",
         "web",
         "--host",
         "127.0.0.1",
@@ -26,6 +44,62 @@ check(
     ],
     "Default npx arguments must launch the official Web UI on the configured port"
 )
+check(
+    configuration.pinnedPackage?.path == "@deepseek-ai/dsh"
+        && configuration.pinnedPackage?.version == "0.1.0-rc.6",
+    "Default package must expose its pinned path and version"
+)
+
+let minimalPetManifestJSON = Data(#"""
+{
+  "id": "sample-pet",
+  "name": "Sample Pet",
+  "spritesheet": "spritesheet.webp"
+}
+"""#.utf8)
+
+do {
+    let manifest = try JSONDecoder().decode(
+        PetPluginManifest.self,
+        from: minimalPetManifestJSON
+    )
+    try manifest.validate()
+    check(manifest.frameWidth == 192, "Pet manifest must default to 192px frames")
+    check(manifest.frameHeight == 208, "Pet manifest must default to 208px frames")
+    check(manifest.columns == 8, "Pet manifest must default to 8 columns")
+    check(manifest.rows == 9, "Pet manifest must default to 9 rows")
+} catch {
+    failures.append("Pet manifest check failed: \(error)")
+}
+
+let hatchedPetManifestJSON = Data(#"""
+{
+  "id": "deepwhale",
+  "displayName": "DeepWhale",
+  "spritesheetPath": "spritesheet.webp"
+}
+"""#.utf8)
+
+do {
+    let manifest = try JSONDecoder().decode(
+        PetPluginManifest.self,
+        from: hatchedPetManifestJSON
+    )
+    try manifest.validate()
+    check(manifest.name == "DeepWhale", "Hatched pet displayName alias must decode")
+    check(
+        manifest.spritesheet == "spritesheet.webp",
+        "Hatched pet spritesheetPath alias must decode"
+    )
+} catch {
+    failures.append("Hatched pet manifest alias check failed: \(error)")
+}
+
+check(PetAnimationState.idle.layout.row == 0, "Idle pet animation must use row 0")
+check(PetAnimationState.idle.layout.frameCount == 6, "Idle pet animation must use 6 frames")
+check(PetAnimationState.running.layout.row == 7, "Running pet animation must use row 7")
+check(PetAnimationState.failed.layout.frameCount == 8, "Failed pet animation must use 8 frames")
+check(PetAnimationState.review.layout.row == 8, "Review pet animation must use row 8")
 
 let balanceJSON = Data(#"""
 {
@@ -60,6 +134,48 @@ do {
 } catch {
     failures.append("Balance decoding check failed: \(error)")
 }
+
+check(
+    DeepSeekAPIPricing.period(at: isoDate("2026-08-24T00:59:59Z")) == .offPeak,
+    "Pricing must be off-peak before the first weekday interval"
+)
+check(
+    DeepSeekAPIPricing.period(at: isoDate("2026-08-24T01:00:00Z")) == .peak,
+    "Pricing must enter peak at 01:00 UTC on weekdays"
+)
+check(
+    DeepSeekAPIPricing.period(at: isoDate("2026-08-24T04:00:00Z")) == .offPeak,
+    "Pricing must return off-peak at 04:00 UTC"
+)
+check(
+    DeepSeekAPIPricing.period(at: isoDate("2026-08-24T06:00:00Z")) == .peak,
+    "Pricing must enter the second peak interval at 06:00 UTC"
+)
+check(
+    DeepSeekAPIPricing.period(at: isoDate("2026-08-24T10:00:00Z")) == .offPeak,
+    "Pricing must return off-peak at 10:00 UTC"
+)
+check(
+    DeepSeekAPIPricing.period(at: isoDate("2026-08-22T07:00:00Z")) == .offPeak,
+    "Pricing must remain off-peak during weekends"
+)
+
+let weekendTransition = DeepSeekAPIPricing.nextTransition(
+    after: isoDate("2026-08-21T10:00:00Z")
+)
+check(
+    weekendTransition == isoDate("2026-08-24T01:00:00Z"),
+    "Friday after peak must transition next on Monday at 01:00 UTC"
+)
+check(DeepSeekAPIPricing.models.count == 2, "Pricing must match the Chinese V4 model table")
+check(
+    DeepSeekAPIPricing.models.first?.peak.cacheHitInput == "¥0.02",
+    "V4 Flash peak cache-hit price must match the Chinese official table"
+)
+check(
+    DeepSeekAPIPricing.models.first { $0.id == "deepseek-v4-pro" }?.peak.output == "¥6.00",
+    "V4 Pro peak output price must match the Chinese official table"
+)
 
 let temporaryDirectory = FileManager.default.temporaryDirectory
     .appending(path: UUID().uuidString, directoryHint: .isDirectory)
@@ -96,6 +212,59 @@ do {
     check(rejected == nil, "Executable locator must reject a non-executable file")
 } catch {
     failures.append("Temporary executable check failed: \(error)")
+}
+
+// A Finder launch must honor the user's npm cache from ~/.npmrc and only
+// select a runtime whose package.json matches the pinned version.
+do {
+    let fixture = FileManager.default.temporaryDirectory
+        .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+    defer { try? FileManager.default.removeItem(at: fixture) }
+
+    let home = fixture.appending(path: "home", directoryHint: .isDirectory)
+    let cache = fixture.appending(path: "npm-cache", directoryHint: .isDirectory)
+    let nodeModules = cache.appending(
+        path: "_npx/cache-key/node_modules",
+        directoryHint: .isDirectory
+    )
+    let packageDirectory = nodeModules.appending(
+        path: "@deepseek-ai/dsh",
+        directoryHint: .isDirectory
+    )
+    let binaryDirectory = nodeModules.appending(path: ".bin", directoryHint: .isDirectory)
+    try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(at: packageDirectory, withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(at: binaryDirectory, withIntermediateDirectories: true)
+    try Data("cache=\(cache.path)\n".utf8).write(to: home.appending(path: ".npmrc"))
+    try Data(#"{"version":"0.1.0-rc.6"}"#.utf8).write(
+        to: packageDirectory.appending(path: "package.json")
+    )
+    let cachedBinary = binaryDirectory.appending(path: "dsh")
+    try Data("#!/bin/sh\nexit 0\n".utf8).write(to: cachedBinary)
+    try FileManager.default.setAttributes(
+        [.posixPermissions: 0o755],
+        ofItemAtPath: cachedBinary.path
+    )
+
+    let located = ExecutableLocator.locateNpxCachedPackageBinary(
+        "dsh",
+        packagePath: "@deepseek-ai/dsh",
+        version: "0.1.0-rc.6",
+        environment: ["HOME": home.path]
+    )
+    check(
+        located?.standardizedFileURL == cachedBinary.standardizedFileURL,
+        "Cached npm runtime locator must honor ~/.npmrc and match the pinned package"
+    )
+    let wrongVersion = ExecutableLocator.locateNpxCachedPackageBinary(
+        "dsh",
+        packagePath: "@deepseek-ai/dsh",
+        version: "0.1.0-rc.5",
+        environment: ["HOME": home.path]
+    )
+    check(wrongVersion == nil, "Cached npm runtime locator must reject another version")
+} catch {
+    failures.append("Cached npm runtime check failed: \(error)")
 }
 
 // A Finder-launched GUI app inherits a minimal PATH; nvm-installed Node must

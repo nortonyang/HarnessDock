@@ -16,7 +16,10 @@ let package = Package(
         .target(name: "DsHarnessCore"),
         .executableTarget(
             name: "DsHarnessApp",
-            dependencies: ["DsHarnessCore"]
+            dependencies: ["DsHarnessCore"],
+            resources: [
+                .copy("Resources/Pets"),
+            ]
         ),
         .executableTarget(
             name: "DsHarnessCoreChecks",

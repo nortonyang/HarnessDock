@@ -3,11 +3,13 @@ import SwiftUI
 @main
 struct DsHarnessApp: App {
     @StateObject private var model = AppModel()
+    @StateObject private var petPlugin = PetPluginController()
 
     var body: some Scene {
         WindowGroup("DS Harness") {
             ContentView()
                 .environmentObject(model)
+                .environmentObject(petPlugin)
                 .frame(minWidth: 980, minHeight: 680)
                 .onAppear {
                     model.restoreWorkspaceIfNeeded()
@@ -68,13 +70,19 @@ struct DsHarnessApp: App {
 
                 Divider()
 
-                Button("API 余额设置…") {
-                    model.showBalanceSettings = true
+                Button("Chat 原生宠物…") {
+                    petPlugin.showSettings = true
+                }
+                .keyboardShortcut("p", modifiers: [.command, .shift])
+                .disabled(model.selectedSurface != .chat)
+
+                Button("API 与余额设置…") {
+                    model.requestSettings(.apiBalance)
                 }
                 .keyboardShortcut("b", modifiers: [.command, .shift])
 
                 Button("主题背景…") {
-                    model.showThemeSettings = true
+                    model.requestSettings(.themeBackground)
                 }
                 .keyboardShortcut("t", modifiers: [.command, .shift])
 
@@ -84,6 +92,11 @@ struct DsHarnessApp: App {
                 .keyboardShortcut("l", modifiers: [.command, .shift])
                 .disabled(model.logText.isEmpty)
             }
+        }
+
+        Settings {
+            AppSettingsView()
+                .environmentObject(model)
         }
     }
 }

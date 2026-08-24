@@ -1,0 +1,12 @@
+{
+  "deepwhale": {
+    "source": "artifacts/pets/deepwhale-run/package/spritesheet.webp",
+    "bytes": 1906770,
+    "sha256": "ebc6e64d252a957cd4bfe1573baa6fbc61310f5142c3e9b1269141049735151e"
+  },
+  "marina": {
+    "source": "artifacts/pets/marina-run/package/spritesheet.webp",
+    "bytes": 2418958,
+    "sha256": "3f74cea48fa8f855db1c663551d369aabddb81e21610ca4c4bffd3ccb8962ce4"
+  }
+}

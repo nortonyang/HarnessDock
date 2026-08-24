@@ -10,7 +10,8 @@ struct HarnessConfigurationTests {
         #expect(configuration.serverURL.absoluteString == "http://127.0.0.1:3080")
         #expect(configuration.npxArguments == [
             "--yes",
-            "@deepseek-ai/dsh",
+            "--prefer-offline",
+            "@deepseek-ai/dsh@0.1.0-rc.6",
             "web",
             "--host",
             "127.0.0.1",

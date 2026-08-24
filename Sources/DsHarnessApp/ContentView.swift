@@ -1,11 +1,14 @@
 import AppKit
+import DsHarnessCore
 import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var petPlugin: PetPluginController
+    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomTrailing) {
             harnessSurface
                 .opacity(model.selectedSurface == .harness ? 1 : 0)
                 .allowsHitTesting(model.selectedSurface == .harness)
@@ -18,31 +21,46 @@ struct ContentView: View {
                     .allowsHitTesting(model.selectedSurface == .chat)
                     .accessibilityHidden(model.selectedSurface != .chat)
             }
+
+            if model.selectedSurface == .chat,
+               petPlugin.isEnabled,
+               let package = petPlugin.selectedPackage {
+                PetOverlayView(
+                    package: package,
+                    applicationState: petAnimationState
+                )
+                .padding(.trailing, 20)
+                .padding(.bottom, 14)
+                .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .bottomTrailing)))
+                .zIndex(10)
+            }
         }
+        .animation(.easeOut(duration: 0.18), value: petPlugin.isEnabled)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Picker(
-                    "主界面",
+                SurfaceSwitcher(
                     selection: Binding(
                         get: { model.selectedSurface },
                         set: model.selectSurface
                     )
-                ) {
-                    ForEach(AppSurface.allCases) { surface in
-                        Text(surface.title).tag(surface)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 210)
+                )
             }
 
-            if model.selectedSurface == .chat {
-                ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
+                if model.selectedSurface == .chat {
                     Button(action: model.openDeepSeekChatInBrowser) {
                         Image(systemName: "safari")
                     }
                     .help("在 Safari 中打开 DeepSeek Chat")
+                }
+
+                if model.selectedSurface == .chat {
+                    Button {
+                        petPlugin.showSettings = true
+                    } label: {
+                        Image(systemName: "pawprint.fill")
+                    }
+                    .help("Chat 原生宠物")
                 }
             }
         }
@@ -50,13 +68,12 @@ struct ContentView: View {
             LogSheet()
                 .environmentObject(model)
         }
-        .sheet(isPresented: $model.showBalanceSettings) {
-            BalanceSettingsView()
-                .environmentObject(model)
+        .sheet(isPresented: $petPlugin.showSettings) {
+            PetPluginSettingsView()
+                .environmentObject(petPlugin)
         }
-        .sheet(isPresented: $model.showThemeSettings) {
-            ThemeSettingsView()
-                .environmentObject(model)
+        .onChange(of: model.settingsRequestID) {
+            openSettings()
         }
     }
 
@@ -77,6 +94,103 @@ struct ContentView: View {
                     FailureView(message: message)
                 }
             }
+        }
+    }
+
+    private var petAnimationState: PetAnimationState {
+        switch model.selectedSurface {
+        case .chat:
+            if model.chatWebViewError != nil {
+                return .failed
+            }
+            return model.chatWebViewIsLoading ? .running : .idle
+        case .harness:
+            if model.webViewError != nil {
+                return .failed
+            }
+            switch model.status {
+            case .locatingRuntime, .launching:
+                return .running
+            case .running:
+                return model.webViewIsLoading ? .running : .idle
+            case .idle:
+                return .waiting
+            case .failed:
+                return .failed
+            }
+        }
+    }
+}
+
+private struct SurfaceSwitcher: View {
+    @Binding var selection: AppSurface
+    @Namespace private var selectionBackground
+
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(AppSurface.allCases) { surface in
+                let isSelected = selection == surface
+
+                Button {
+                    selection = surface
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: iconName(for: surface))
+                            .font(.system(size: 10.5, weight: .semibold))
+                        Text(surface.title)
+                            .font(.system(size: 12.5, weight: .semibold))
+                    }
+                    .foregroundStyle(isSelected ? Color.white : Color.secondary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 24)
+                    .contentShape(Rectangle())
+                    .background {
+                        if isSelected {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.indigo.opacity(0.82),
+                                            Color.purple.opacity(0.68)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .matchedGeometryEffect(
+                                    id: "surface-selection",
+                                    in: selectionBackground
+                                )
+                                .shadow(color: Color.indigo.opacity(0.18), radius: 4, y: 1)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+                .help("切换到 \(surface.title)")
+                .accessibilityValue(isSelected ? "已选择" : "")
+            }
+        }
+        .padding(3)
+        .frame(width: 190, height: 30)
+        .background {
+            RoundedRectangle(cornerRadius: 11, style: .continuous)
+                .fill(Color.primary.opacity(0.055))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 11, style: .continuous)
+                .stroke(Color.primary.opacity(0.10), lineWidth: 1)
+        }
+        .animation(.easeInOut(duration: 0.16), value: selection)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("主界面")
+    }
+
+    private func iconName(for surface: AppSurface) -> String {
+        switch surface {
+        case .harness:
+            "terminal"
+        case .chat:
+            "message.fill"
         }
     }
 }
@@ -133,17 +247,19 @@ private struct FullBleedHarnessView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            HarnessWebView(
-                url: model.configuration.serverURL,
-                homeRequestID: model.homeRequestID,
-                reloadRequestID: model.reloadRequestID,
-                balancePresentation: model.balanceWebPresentation,
-                themeBackgroundPresentation: model.themeBackgroundPresentation,
-                onBalanceAction: model.handleBalanceWebAction,
-                onThemeAction: { model.showThemeSettings = true },
-                isLoading: $model.webViewIsLoading,
-                loadError: $model.webViewError
-            )
+            TimelineView(.periodic(from: .now, by: 60)) { context in
+                HarnessWebView(
+                    url: model.configuration.serverURL,
+                    homeRequestID: model.homeRequestID,
+                    reloadRequestID: model.reloadRequestID,
+                    balancePresentation: model.balanceWebPresentation(at: context.date),
+                    themeBackgroundPresentation: model.themeBackgroundPresentation,
+                    onBalanceAction: model.handleBalanceWebAction,
+                    onThemeAction: { model.requestSettings(.themeBackground) },
+                    isLoading: $model.webViewIsLoading,
+                    loadError: $model.webViewError
+                )
+            }
 
             if model.webViewIsLoading {
                 ProgressView()
@@ -442,7 +558,7 @@ private struct BalanceRailButton: View {
 
     private func activate() {
         if case .notConfigured = model.balanceState {
-            model.showBalanceSettings = true
+            model.requestSettings()
         } else {
             showingDetails.toggle()
         }
@@ -566,7 +682,7 @@ private struct BalanceCard: View {
 
     private func activate() {
         if case .notConfigured = model.balanceState {
-            model.showBalanceSettings = true
+            model.requestSettings()
         } else {
             showingDetails.toggle()
         }
@@ -638,7 +754,7 @@ private struct BalanceToolbarButton: View {
 
     private func activate() {
         if case .notConfigured = model.balanceState {
-            model.showBalanceSettings = true
+            model.requestSettings()
         } else {
             showingDetails.toggle()
         }
@@ -690,7 +806,7 @@ private struct BalanceDetailPopover: View {
             HStack {
                 Button("余额设置") {
                     dismiss()
-                    model.showBalanceSettings = true
+                    model.requestSettings()
                 }
                 Spacer()
                 Button(action: model.refreshBalance) {
@@ -708,7 +824,7 @@ private struct BalanceDetailPopover: View {
     private var balanceContent: some View {
         switch model.balanceState {
         case .notConfigured:
-            Text("配置 DeepSeek API Key 后即可在这里查看开放平台账户余额。")
+            Text("请在“设置 → API 与余额”中配置 DeepSeek API Key。")
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
         case .loading:
@@ -1185,10 +1301,10 @@ private struct LogPreview: View {
     }
 }
 
-private struct BalanceSettingsView: View {
+struct AppSettingsView: View {
     @EnvironmentObject private var model: AppModel
-    @Environment(\.dismiss) private var dismiss
     @State private var apiKey = ""
+    @State private var isEditingAPIKey = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -1196,59 +1312,86 @@ private struct BalanceSettingsView: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 11, style: .continuous)
                         .fill(Color.indigo.opacity(0.12))
-                    Image(systemName: "wallet.pass.fill")
+                    Image(systemName: "gearshape.fill")
                         .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(.indigo)
                 }
                 .frame(width: 40, height: 40)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("配置 DeepSeek API Key")
+                    Text("设置")
                         .font(.system(size: 16, weight: .semibold))
-                    Text("连接开放平台账户并读取余额")
+                    Text("管理 DS Harness 的本机配置")
                         .font(.system(size: 10.5))
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
-
-                Button("完成") { dismiss() }
-                    .keyboardShortcut(.cancelAction)
             }
             .padding(18)
 
+            settingsSectionPicker
+
             Divider()
 
-            VStack(alignment: .leading, spacing: 16) {
-                if model.hasEnvironmentBalanceAPIKey {
-                    Label {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(model.balanceCredentialSource == .keychain
-                                 ? "环境变量已由钥匙串覆盖"
-                                 : "当前使用环境变量")
-                                .font(.system(size: 12, weight: .semibold))
-                            Text("DEEPSEEK_API_KEY 已随应用启动环境提供；保存下方 Key 后将优先使用钥匙串。")
-                                .font(.system(size: 10.5))
-                                .foregroundStyle(.secondary)
-                        }
-                    } icon: {
-                        Image(systemName: "terminal.fill")
-                            .foregroundStyle(.green)
+            Group {
+                if model.selectedSettingsSection == .apiBalance {
+                    VStack(alignment: .leading, spacing: 16) {
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("API 与余额")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("连接 DeepSeek 开放平台账户并读取余额")
+                            .font(.system(size: 10.5))
+                            .foregroundStyle(.secondary)
                     }
+                } icon: {
+                    Image(systemName: "wallet.pass.fill")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(.indigo)
                 }
 
-                VStack(alignment: .leading, spacing: 7) {
-                    Text(model.balanceCredentialSource == .keychain ? "替换 API Key" : "API Key")
-                        .font(.system(size: 11, weight: .semibold))
+                if hasConfiguredAPIKey && !isEditingAPIKey {
+                    HStack(alignment: .top, spacing: 12) {
+                        Label {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(credentialStatusTitle)
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text(credentialStatusDetail)
+                                    .font(.system(size: 10.5))
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: credentialStatusIcon)
+                                .foregroundStyle(.green)
+                        }
 
-                    SecureField("sk-…", text: $apiKey)
-                        .textFieldStyle(.roundedBorder)
+                        Spacer(minLength: 12)
 
-                    Text(model.balanceCredentialSource == .keychain
-                         ? "已在钥匙串中保存一项凭据；现有 Key 不会回显。"
-                         : "保存后写入 macOS 钥匙串并优先使用，不进入项目文件或 Harness 日志。")
-                        .font(.system(size: 9.5))
-                        .foregroundStyle(.secondary)
+                        Button("更换 API Key") {
+                            apiKey = ""
+                            isEditingAPIKey = true
+                        }
+                    }
+                    .padding(12)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(Color.green.opacity(0.07))
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(isEditingAPIKey ? "输入新的 API Key" : "API Key")
+                            .font(.system(size: 11, weight: .semibold))
+
+                        SecureField("sk-…", text: $apiKey)
+                            .textFieldStyle(.roundedBorder)
+
+                        Text(isEditingAPIKey
+                             ? "现有 Key 不会回显；保存后，新 Key 将写入 macOS 钥匙串并优先使用。"
+                             : "保存后写入 macOS 钥匙串并优先使用，不进入项目文件或 Harness 日志。")
+                            .font(.system(size: 9.5))
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 HStack(alignment: .top, spacing: 9) {
@@ -1269,62 +1412,132 @@ private struct BalanceSettingsView: View {
                 Spacer(minLength: 0)
 
                 HStack {
-                    if model.balanceCredentialSource == .keychain {
+                    if model.balanceCredentialSource == .keychain && !isEditingAPIKey {
                         Button("移除已保存的 Key", role: .destructive) {
                             model.removeBalanceAPIKey()
                             apiKey = ""
+                            isEditingAPIKey = false
+                        }
+                    }
+
+                    if hasConfiguredAPIKey && isEditingAPIKey {
+                        Button("取消更换") {
+                            apiKey = ""
+                            isEditingAPIKey = false
                         }
                     }
 
                     Spacer()
 
                     Button("刷新余额", action: model.refreshBalance)
-                        .disabled(model.balanceCredentialSource == .none)
+                        .disabled(!hasConfiguredAPIKey)
 
-                    Button("保存并刷新") {
-                        model.saveBalanceAPIKey(apiKey)
+                    if !hasConfiguredAPIKey || isEditingAPIKey {
+                        Button("保存并刷新") {
+                            model.saveBalanceAPIKey(apiKey)
+                            if model.balanceCredentialError == nil {
+                                apiKey = ""
+                                isEditingAPIKey = false
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+                    }
+                    .padding(20)
+                } else {
+                    ThemeSettingsPane()
+                        .environmentObject(model)
                 }
             }
-            .padding(20)
         }
-        .frame(width: 520, height: 390)
+        .frame(width: 620, height: 590)
+    }
+
+    private var settingsSectionPicker: some View {
+        HStack(spacing: 8) {
+            ForEach(AppSettingsSection.allCases) { section in
+                let isSelected = model.selectedSettingsSection == section
+
+                Button {
+                    model.selectSettingsSection(section)
+                } label: {
+                    Label(section.title, systemImage: section.systemImage)
+                        .font(.system(size: 11.5, weight: .semibold))
+                        .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 32)
+                        .contentShape(Rectangle())
+                        .background {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(isSelected
+                                      ? Color.accentColor.opacity(0.13)
+                                      : Color.primary.opacity(0.035))
+                        }
+                }
+                .buttonStyle(.plain)
+                .accessibilityValue(isSelected ? "已选择" : "")
+            }
+        }
+        .padding(.horizontal, 18)
+        .padding(.bottom, 14)
+    }
+
+    private var hasConfiguredAPIKey: Bool {
+        model.balanceCredentialSource != .none
+    }
+
+    private var credentialStatusTitle: String {
+        switch model.balanceCredentialSource {
+        case .none:
+            "尚未配置 API Key"
+        case .environment:
+            "已配置 · 环境变量"
+        case .keychain:
+            "已配置 · macOS 钥匙串"
+        }
+    }
+
+    private var credentialStatusDetail: String {
+        switch model.balanceCredentialSource {
+        case .none:
+            ""
+        case .environment:
+            "已从启动环境读取 DEEPSEEK_API_KEY，无需再次输入。"
+        case .keychain where model.hasEnvironmentBalanceAPIKey:
+            "当前优先使用钥匙串；启动环境中的 DEEPSEEK_API_KEY 已被覆盖。"
+        case .keychain:
+            "Key 已安全保存在 macOS 钥匙串中，现有内容不会回显。"
+        }
+    }
+
+    private var credentialStatusIcon: String {
+        model.balanceCredentialSource == .environment ? "terminal.fill" : "key.fill"
     }
 }
 
-private struct ThemeSettingsView: View {
+private struct ThemeSettingsPane: View {
     @EnvironmentObject private var model: AppModel
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 11, style: .continuous)
-                        .fill(Color.indigo.opacity(0.12))
+            VStack(alignment: .leading, spacing: 16) {
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("主题背景")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("使用一张本地图片个性化 Harness")
+                            .font(.system(size: 10.5))
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
                     Image(systemName: "photo.on.rectangle.angled")
-                        .font(.system(size: 17, weight: .medium))
+                        .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(.indigo)
                 }
-                .frame(width: 40, height: 40)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("主题背景")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text("使用一张本地图片个性化 Harness")
-                        .font(.system(size: 10.5))
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-            }
-            .padding(18)
-
-            Divider()
-
-            VStack(alignment: .leading, spacing: 16) {
                 themePreview
 
                 HStack {
@@ -1339,12 +1552,6 @@ private struct ThemeSettingsView: View {
                         }
                     }
 
-                    Spacer()
-
-                    Button("完成") {
-                        model.showThemeSettings = false
-                    }
-                    .keyboardShortcut(.cancelAction)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
@@ -1388,7 +1595,6 @@ private struct ThemeSettingsView: View {
             }
             .padding(20)
         }
-        .frame(width: 560, height: 520)
     }
 
     @ViewBuilder
