@@ -23,6 +23,8 @@
 | P1 | 当前 profile 链接开发仓库，安装应用后仍有路径依赖 | 插件已嵌入 app Resources，真实 profile 已重绑到应用副本 | 已修复 |
 | P1 | 未锁版本的 npx 启动解析到新 rc.2，依赖重建卡住且内存升至约 2.3 GB | 锁定 rc.6；优先直接运行版本匹配的 `_npx` 缓存，缺失时才以 `--prefer-offline` 回退 npx | 已修复 |
 | P2 | 左侧停靠沿用了右侧精灵朝向，导致头部被藏在窗口外、尾部露在内容区 | 只镜像左侧 overlay 内的精灵，保留容器向左裁切 | 已修复 |
+| P2 | 三边停靠仅做固定比例直线裁切，角色像被切半而不像躲在边框后探头 | 加深缩回位移；左右头部向内倾斜，探出时站直；拖动时复位姿态 | 已修复 |
+| P2 | 交互状态表与图集清单错位：悬停播放 failed、拖动播放 waiting，jumping 多循环一个透明空格 | 按 manifest 改为 waiting 6/6、jumping 4/5、running 7/6，并补精确断言 | 已修复 |
 
 ## 验收标准检查
 
@@ -39,6 +41,8 @@
 | US-609 | 通过 | `npm pack --dry-run --json` 通过，仅 6 个必要文件，压缩 4,352,020 bytes；README 已说明 npm/GitHub 与官方上游 PR 的区别 |
 | US-610 | 通过 | app 内含 6 个发布文件且签名有效；profile link 指向 `/Applications`；重启后 3080 返回 200，启动图含 `@dsharness/pet` |
 | US-611 | 通过 | 左侧 selector 只对子级 sprite 应用 `scaleX(-1)`；右/底边无镜像；插件检查、应用构建和 3080 实际脚本核验通过 |
+| US-612 | 通过 | 左右静止为 22° 朝内探头、探出减到 6°，底部缩回保留头部；三边真实 Harness 截图、拖动复位和本机部署通过 |
+| US-613 | 通过 | manifest 与运行脚本均为 waiting 6/6、jumping 4/5、running 7/6；点击落到悬停、移开回待机、拖动吸附后回落均已实机复核 |
 
 ## 完成度
 
@@ -52,6 +56,8 @@
 | 交互动作与发布就绪 | 100% | hover/click/drag 状态、事件穿透、npm pack 与发布说明 |
 | 本机应用部署 | 100% | `/Applications/DsHarness.app`、应用内插件文件、profile link、固定版本直启进程与 3080 启动图均已核验 |
 | 左侧朝向与藏身修复 | 100% | 左侧只镜像精灵并保留负向位移，右侧、底部和设置预览不受影响；本地应用已重新部署 |
+| 三边藏身姿态 | 100% | 左右探头倾角、底部下沉、探出与拖动复位已通过插件检查和本地应用截图审核 |
+| 交互动作协调修复 | 100% | 动作行/帧数精确断言、完整周期计时、真实 hover/click/drag 回落与 3080 运行脚本证据 |
 
 ## 增量验证结果
 
@@ -64,6 +70,8 @@
 - `dsh plugin --profile web list`：`@dsharness/pet` 链接到应用 `Contents/Resources/Plugins/dsh-pet`。
 - 本地 3080：HTTP 200；`__DSH_BOOT__` 含 `@dsharness/pet`，运行进程直接使用已验证的 rc.6 缓存。
 - 左侧回归：`npm --prefix plugins/dsh-pet run check` 通过；运行中的 `/plugins/@dsharness/pet/client.js` 已包含左侧 `scaleX(-1)` 规则。
+- 动作协调回归：运行中的插件脚本确认 clicked=`row 4/5 帧/150ms`、hovering=`row 6/6 帧/260ms`、dragging=`row 7/6 帧/140ms`；短反馈按 `frames × interval` 完整周期结束。
+- 本地应用实机：底边点击后自然落到 waiting 悬停，移开回 idle 藏身；拖动到右边后完成挥手并回悬停/待机，未出现 failed 串行或透明闪空。
 
 ## 视觉生成与修复记录
 

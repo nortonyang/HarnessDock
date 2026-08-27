@@ -123,6 +123,7 @@ struct ContentView: View {
 }
 
 private struct SurfaceSwitcher: View {
+    @EnvironmentObject private var model: AppModel
     @Binding var selection: AppSurface
     @Namespace private var selectionBackground
 
@@ -166,8 +167,8 @@ private struct SurfaceSwitcher: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .help("切换到 \(surface.title)")
-                .accessibilityValue(isSelected ? "已选择" : "")
+                .help(model.localized("切换到 %@", surface.title))
+                .accessibilityValue(isSelected ? model.localized("已选择") : "")
             }
         }
         .padding(3)
@@ -203,6 +204,7 @@ private struct DeepSeekChatSurface: View {
             DeepSeekChatWebView(
                 url: model.deepSeekChatURL,
                 reloadRequestID: model.chatReloadRequestID,
+                language: model.appLanguage,
                 isLoading: $model.chatWebViewIsLoading,
                 loadError: $model.chatWebViewError
             )
@@ -273,7 +275,7 @@ private struct FullBleedHarnessView: View {
             if let error = model.webViewError {
                 HStack(spacing: 9) {
                     Image(systemName: "wifi.exclamationmark")
-                    Text("页面加载失败：\(error)")
+                    Text(model.localized("页面加载失败：%@", error))
                         .lineLimit(1)
                     Spacer()
                     Button("重载", action: model.requestReload)
@@ -459,10 +461,10 @@ private struct SidebarView: View {
 
     private var serviceStatusHelp: String {
         switch model.status {
-        case .idle: "Harness 未启动"
-        case .locatingRuntime, .launching: "Harness 启动中"
-        case .running: "Harness 已连接"
-        case .failed: "Harness 需要处理"
+        case .idle: model.localized("Harness 未启动")
+        case .locatingRuntime, .launching: model.localized("Harness 启动中")
+        case .running: model.localized("Harness 已连接")
+        case .failed: model.localized("Harness 需要处理")
         }
     }
 
@@ -690,19 +692,21 @@ private struct BalanceCard: View {
 
     private var title: String {
         switch model.balanceState {
-        case .notConfigured: "配置 API 余额"
-        case .loading: "正在查询余额"
-        case let .loaded(response, _): response.preferredInfo?.displayTotal ?? "余额已同步"
-        case .failed: "余额查询失败"
+        case .notConfigured: model.localized("配置 API 余额")
+        case .loading: model.localized("正在查询余额")
+        case let .loaded(response, _): response.preferredInfo?.displayTotal ?? model.localized("余额已同步")
+        case .failed: model.localized("余额查询失败")
         }
     }
 
     private var subtitle: String {
         switch model.balanceState {
-        case .notConfigured: "Key 安全存储在钥匙串"
-        case .loading: "DeepSeek 开放平台"
-        case let .loaded(response, _): response.isAvailable ? "DeepSeek API · 可用" : "DeepSeek API · 暂不可用"
-        case .failed: "点击查看原因或重新配置"
+        case .notConfigured: model.localized("Key 安全存储在钥匙串")
+        case .loading: model.localized("DeepSeek 开放平台")
+        case let .loaded(response, _): response.isAvailable
+            ? model.localized("DeepSeek API · 可用")
+            : model.localized("DeepSeek API · 暂不可用")
+        case .failed: model.localized("点击查看原因或重新配置")
         }
     }
 
@@ -762,10 +766,10 @@ private struct BalanceToolbarButton: View {
 
     private var label: String {
         switch model.balanceState {
-        case .notConfigured: "配置余额"
-        case .loading: "余额"
-        case let .loaded(response, _): response.preferredInfo?.displayTotal ?? "余额"
-        case .failed: "余额异常"
+        case .notConfigured: model.localized("配置余额")
+        case .loading: model.localized("余额")
+        case let .loaded(response, _): response.preferredInfo?.displayTotal ?? model.localized("余额")
+        case .failed: model.localized("余额异常")
         }
     }
 
@@ -866,7 +870,9 @@ private struct BalanceDetailPopover: View {
                     Circle()
                         .fill(response.isAvailable ? Color.green : Color.orange)
                         .frame(width: 6, height: 6)
-                    Text(response.isAvailable ? "账户余额可用" : "账户余额暂不可用")
+                    Text(response.isAvailable
+                         ? model.localized("账户余额可用")
+                         : model.localized("账户余额暂不可用"))
                     Spacer()
                     Text(refreshedAt, style: .time)
                 }
@@ -878,9 +884,9 @@ private struct BalanceDetailPopover: View {
 
     private var credentialSourceLabel: String {
         switch model.balanceCredentialSource {
-        case .none: "尚未配置"
-        case .environment: "凭据来自 DEEPSEEK_API_KEY"
-        case .keychain: "凭据保存在 macOS 钥匙串"
+        case .none: model.localized("尚未配置")
+        case .environment: model.localized("凭据来自 DEEPSEEK_API_KEY")
+        case .keychain: model.localized("凭据保存在 macOS 钥匙串")
         }
     }
 }
@@ -891,7 +897,7 @@ private struct BalanceBreakdown: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(label)
+            Text(LocalizedStringKey(label))
                 .font(.system(size: 9))
                 .foregroundStyle(.secondary)
             Text(amount)
@@ -935,11 +941,13 @@ private struct ServiceCard: View {
 
     private var statusTitle: String {
         switch model.status {
-        case .idle: "Harness 未启动"
-        case .locatingRuntime: "正在检查环境"
-        case .launching: "Harness 启动中"
-        case let .running(managed): managed ? "Harness 已连接" : "已连接现有服务"
-        case .failed: "Harness 需要处理"
+        case .idle: model.localized("Harness 未启动")
+        case .locatingRuntime: model.localized("正在检查环境")
+        case .launching: model.localized("Harness 启动中")
+        case let .running(managed): managed
+            ? model.localized("Harness 已连接")
+            : model.localized("已连接现有服务")
+        case .failed: model.localized("Harness 需要处理")
         }
     }
 
@@ -948,15 +956,15 @@ private struct ServiceCard: View {
             .replacingOccurrences(of: "http://", with: "")
         switch model.status {
         case .idle:
-            return "选择项目后自动启动"
+            return model.localized("选择项目后自动启动")
         case .locatingRuntime:
-            return "查找 Node.js 与 npx"
+            return model.localized("查找 Node.js 与 npx")
         case .launching:
             return portLabel
         case .running:
-            return "本机回环连接 · \(model.configuration.port)"
+            return model.localized("本机回环连接 · %@", String(model.configuration.port))
         case .failed:
-            return "打开日志查看原因"
+            return model.localized("打开日志查看原因")
         }
     }
 
@@ -1012,7 +1020,7 @@ private struct WorkspaceView: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(model.projectName ?? "欢迎")
+                Text(model.projectName ?? model.localized("欢迎"))
                     .font(.system(size: 13, weight: .semibold))
                 if let workspaceURL = model.workspaceURL {
                     Text(workspaceURL.path)
@@ -1087,7 +1095,7 @@ private struct WorkspaceView: View {
             if let error = model.webViewError {
                 HStack(spacing: 9) {
                     Image(systemName: "wifi.exclamationmark")
-                    Text("页面加载失败：\(error)")
+                    Text(model.localized("页面加载失败：%@", error))
                         .lineLimit(1)
                     Spacer()
                     Button("重载", action: model.requestReload)
@@ -1184,9 +1192,9 @@ private struct FeatureCard: View {
             Text(number)
                 .font(.system(size: 10, weight: .bold, design: .monospaced))
                 .foregroundStyle(Color.indigo)
-            Text(title)
+            Text(LocalizedStringKey(title))
                 .font(.system(size: 13, weight: .semibold))
-            Text(subtitle)
+            Text(LocalizedStringKey(subtitle))
                 .font(.system(size: 10.5))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -1248,7 +1256,7 @@ private struct FailureView: View {
             VStack(spacing: 7) {
                 Text("Harness 没有启动")
                     .font(.system(size: 21, weight: .semibold))
-                Text(message)
+                Text(model.localized(message))
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -1335,7 +1343,8 @@ struct AppSettingsView: View {
             Divider()
 
             Group {
-                if model.selectedSettingsSection == .apiBalance {
+                switch model.selectedSettingsSection {
+                case .apiBalance:
                     VStack(alignment: .leading, spacing: 16) {
                 Label {
                     VStack(alignment: .leading, spacing: 2) {
@@ -1380,15 +1389,17 @@ struct AppSettingsView: View {
                     }
                 } else {
                     VStack(alignment: .leading, spacing: 7) {
-                        Text(isEditingAPIKey ? "输入新的 API Key" : "API Key")
+                        Text(model.localized(isEditingAPIKey ? "输入新的 API Key" : "API Key"))
                             .font(.system(size: 11, weight: .semibold))
 
                         SecureField("sk-…", text: $apiKey)
                             .textFieldStyle(.roundedBorder)
 
-                        Text(isEditingAPIKey
-                             ? "现有 Key 不会回显；保存后，新 Key 将写入 macOS 钥匙串并优先使用。"
-                             : "保存后写入 macOS 钥匙串并优先使用，不进入项目文件或 Harness 日志。")
+                        Text(model.localized(
+                            isEditingAPIKey
+                                ? "现有 Key 不会回显；保存后，新 Key 将写入 macOS 钥匙串并优先使用。"
+                                : "保存后写入 macOS 钥匙串并优先使用，不进入项目文件或 Harness 日志。"
+                        ))
                             .font(.system(size: 9.5))
                             .foregroundStyle(.secondary)
                     }
@@ -1447,8 +1458,11 @@ struct AppSettingsView: View {
                 }
                     }
                     .padding(20)
-                } else {
+                case .themeBackground:
                     ThemeSettingsPane()
+                        .environmentObject(model)
+                case .language:
+                    LanguageSettingsPane()
                         .environmentObject(model)
                 }
             }
@@ -1464,7 +1478,7 @@ struct AppSettingsView: View {
                 Button {
                     model.selectSettingsSection(section)
                 } label: {
-                    Label(section.title, systemImage: section.systemImage)
+                    Label(model.localized(section.title), systemImage: section.systemImage)
                         .font(.system(size: 11.5, weight: .semibold))
                         .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
                         .frame(maxWidth: .infinity)
@@ -1492,11 +1506,11 @@ struct AppSettingsView: View {
     private var credentialStatusTitle: String {
         switch model.balanceCredentialSource {
         case .none:
-            "尚未配置 API Key"
+            model.localized("尚未配置 API Key")
         case .environment:
-            "已配置 · 环境变量"
+            model.localized("已配置 · 环境变量")
         case .keychain:
-            "已配置 · macOS 钥匙串"
+            model.localized("已配置 · macOS 钥匙串")
         }
     }
 
@@ -1505,16 +1519,111 @@ struct AppSettingsView: View {
         case .none:
             ""
         case .environment:
-            "已从启动环境读取 DEEPSEEK_API_KEY，无需再次输入。"
+            model.localized("已从启动环境读取 DEEPSEEK_API_KEY，无需再次输入。")
         case .keychain where model.hasEnvironmentBalanceAPIKey:
-            "当前优先使用钥匙串；启动环境中的 DEEPSEEK_API_KEY 已被覆盖。"
+            model.localized("当前优先使用钥匙串；启动环境中的 DEEPSEEK_API_KEY 已被覆盖。")
         case .keychain:
-            "Key 已安全保存在 macOS 钥匙串中，现有内容不会回显。"
+            model.localized("Key 已安全保存在 macOS 钥匙串中，现有内容不会回显。")
         }
     }
 
     private var credentialStatusIcon: String {
         model.balanceCredentialSource == .environment ? "terminal.fill" : "key.fill"
+    }
+}
+
+private struct LanguageSettingsPane: View {
+    @EnvironmentObject private var model: AppModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Label {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("应用语言")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text("选择 DS Harness 原生界面的显示语言")
+                        .font(.system(size: 10.5))
+                        .foregroundStyle(.secondary)
+                }
+            } icon: {
+                Image(systemName: "globe")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(.indigo)
+            }
+
+            VStack(spacing: 8) {
+                ForEach(AppLanguage.allCases) { language in
+                    Button {
+                        model.setAppLanguage(language)
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: model.appLanguage == language
+                                  ? "checkmark.circle.fill"
+                                  : "circle")
+                                .font(.system(size: 15))
+                                .foregroundStyle(model.appLanguage == language
+                                                 ? Color.accentColor
+                                                 : Color.secondary)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(model.localized(language.titleKey))
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text(model.localized(languageDetailKey(language)))
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+                        }
+                        .padding(.horizontal, 14)
+                        .frame(height: 58)
+                        .contentShape(Rectangle())
+                        .background {
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(model.appLanguage == language
+                                      ? Color.accentColor.opacity(0.11)
+                                      : Color.primary.opacity(0.035))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityValue(model.appLanguage == language
+                                        ? model.localized("已选择")
+                                        : "")
+                }
+            }
+
+            HStack(alignment: .top, spacing: 9) {
+                Image(systemName: "checkmark.arrow.trianglehead.counterclockwise")
+                    .foregroundStyle(.secondary)
+                Text("切换后立即应用并自动保存，无需重启应用或重新加载当前会话。")
+                    .font(.system(size: 10.5))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(alignment: .top, spacing: 9) {
+                Image(systemName: "safari")
+                    .foregroundStyle(.secondary)
+                Text("DeepSeek Chat 与官方 Harness 网页拥有各自的语言设置，本选项只控制 DS Harness 的原生按钮、菜单和设置界面。")
+                    .font(.system(size: 10.5))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(20)
+    }
+
+    private func languageDetailKey(_ language: AppLanguage) -> String {
+        switch language {
+        case .system:
+            "随 macOS 的首选语言自动选择中文或英文"
+        case .simplifiedChinese:
+            "始终显示简体中文"
+        case .english:
+            "Always display the interface in English"
+        }
     }
 }
 
@@ -1541,7 +1650,7 @@ private struct ThemeSettingsPane: View {
                 themePreview
 
                 HStack {
-                    Button(model.hasThemeBackground ? "更换图片…" : "选择图片…") {
+                    Button(model.localized(model.hasThemeBackground ? "更换图片…" : "选择图片…")) {
                         model.chooseThemeBackground()
                     }
                     .buttonStyle(.borderedProminent)

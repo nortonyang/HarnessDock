@@ -14,7 +14,29 @@ struct HarnessWebView: NSViewRepresentable {
         error: nil,
         updatedLabel: nil,
         entries: [],
-        pricing: nil
+        pricing: nil,
+        labels: BalanceWebPresentation.Labels(
+            language: "zh-Hans",
+            themeBackground: "主题背景",
+            themeBackgroundConfigured: "主题背景，已设置",
+            balanceHeading: "DeepSeek API 余额",
+            peakPeriod: "高峰期",
+            offPeakPeriod: "谷时",
+            collapseBalanceDetails: "收起余额明细",
+            collapse: "收起",
+            grantedPrefix: "赠送",
+            toppedUpPrefix: "充值",
+            loadingBalance: "正在向 DeepSeek 查询余额…",
+            sessionTokens: "当前会话 tokens",
+            noUsage: "暂无用量",
+            input: "输入",
+            output: "输出",
+            viewModelPricing: "查看模型价格",
+            cacheHit: "命中",
+            cacheMiss: "未命中",
+            configureAPIKey: "配置 API Key",
+            refresh: "刷新"
+        )
     )
     var themeBackgroundPresentation = ThemeBackgroundPresentation(
         imageDataURL: nil,
@@ -417,6 +439,29 @@ struct HarnessWebView: NSViewRepresentable {
       root.dataset.expanded = 'false';
       root.dataset.sidebarCompact = 'false';
 
+      const labels = {
+        language: 'zh-Hans',
+        themeBackground: '主题背景',
+        themeBackgroundConfigured: '主题背景，已设置',
+        balanceHeading: 'DeepSeek API 余额',
+        peakPeriod: '高峰期',
+        offPeakPeriod: '谷时',
+        collapseBalanceDetails: '收起余额明细',
+        collapse: '收起',
+        grantedPrefix: '赠送',
+        toppedUpPrefix: '充值',
+        loadingBalance: '正在向 DeepSeek 查询余额…',
+        sessionTokens: '当前会话 tokens',
+        noUsage: '暂无用量',
+        input: '输入',
+        output: '输出',
+        viewModelPricing: '查看模型价格',
+        cacheHit: '命中',
+        cacheMiss: '未命中',
+        configureAPIKey: '配置 API Key',
+        refresh: '刷新'
+      };
+
       const panel = document.createElement('div');
       panel.id = 'dsh-native-balance-panel';
 
@@ -424,8 +469,8 @@ struct HarnessWebView: NSViewRepresentable {
       themeButton.id = 'dsh-native-theme-button';
       themeButton.type = 'button';
       themeButton.dataset.active = 'false';
-      themeButton.setAttribute('aria-label', '主题背景');
-      themeButton.title = '主题背景';
+      themeButton.setAttribute('aria-label', labels.themeBackground);
+      themeButton.title = labels.themeBackground;
 
       const themeIcon = document.createElement('span');
       themeIcon.id = 'dsh-native-theme-icon';
@@ -433,7 +478,7 @@ struct HarnessWebView: NSViewRepresentable {
       themeIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.5"/><path d="m5.5 17 4.2-4.2 3.2 3.1 2.2-2.1 3.4 3.2"/></svg>';
       const themeLabel = document.createElement('span');
       themeLabel.id = 'dsh-native-theme-label';
-      themeLabel.textContent = '主题背景';
+      themeLabel.textContent = labels.themeBackground;
       themeButton.append(themeIcon, themeLabel);
 
       const button = document.createElement('button');
@@ -580,7 +625,8 @@ struct HarnessWebView: NSViewRepresentable {
       queueSidebarUpdate();
 
       const settingsGuideStorageKey = 'dsh-settings-guide-seen-v3';
-      const settingsGuideSteps = [
+      const settingsGuideStepsByLanguage = {
+        'zh-Hans': [
         {
           section: '先认识这页',
           title: '设置只决定 Harness 怎么工作',
@@ -655,7 +701,106 @@ struct HarnessWebView: NSViewRepresentable {
           targetLabels: ['模型', 'Models'],
           targetZone: 'sidebar'
         }
-      ];
+        ],
+        en: [
+          {
+            section: 'Start here',
+            title: 'Settings control how Harness works',
+            body: 'These settings configure the coding agent, not DeepSeek Chat. Defaults usually affect new sessions, while language and appearance update the interface directly.',
+            tips: [
+              'Keep the defaults when you are unsure; you can return at any time.',
+              'Use “Open config file” only after you are familiar with the configuration format.'
+            ],
+            recommendation: 'Recommended: start with General, Permissions, and Models.',
+            targetLabels: ['通用设置', 'General'],
+            targetZone: 'sidebar'
+          },
+          {
+            section: 'Default workflow',
+            title: 'Agent preset: choose the habits for new sessions',
+            body: 'A preset combines the agent’s default behaviors. Standard mode works well for most development tasks; running sessions usually keep the preset they started with.',
+            tips: [
+              'Standard mode is a good default for reading code, editing files, and running checks.',
+              'Create or switch presets only when you need a specialized workflow.'
+            ],
+            recommendation: 'Recommended: keep Standard mode at first.',
+            targetLabels: ['Agent 预设', 'Agent preset'],
+            targetZone: 'main'
+          },
+          {
+            section: 'Most important safety control',
+            title: 'Permissions decide what the agent can access',
+            body: 'Permissions control the scope for reading files, editing code, and running tools. Broader access is convenient, but requires more confidence in the project and instructions.',
+            tips: [
+              'Workspace Write allows normal read and write work inside the current workspace.',
+              'Stricter modes are safer, but may prevent some automatic edits or checks.',
+              'Choose broader access only when you understand why it is needed.'
+            ],
+            recommendation: 'Recommended: use Workspace Write for everyday projects.',
+            targetLabels: ['权限', 'Permissions'],
+            targetZone: 'main'
+          },
+          {
+            section: 'Interface preferences',
+            title: 'Language and appearance affect only the experience',
+            body: 'Language changes interface text. Light, dark, and system appearance affect only visuals—not model capability, pricing, or file permissions.',
+            tips: [
+              'Choose the language that makes the settings easiest to understand.',
+              'Follow System tracks the macOS light and dark appearance.'
+            ],
+            recommendation: 'Recommended: your preferred language + Follow System.',
+            targetLabels: ['外观', 'Appearance'],
+            targetZone: 'main'
+          },
+          {
+            section: 'While the agent is busy',
+            title: 'Enter key behavior: send now or queue a message',
+            body: 'This setting applies only while the agent is running. Queueing adds a message after the current work and avoids accidental interruption; Cmd/Ctrl+Enter uses the alternate behavior.',
+            tips: [
+              'Queue non-urgent context to keep the current task stable.',
+              'Use the alternate behavior when you need to redirect the current work immediately.'
+            ],
+            recommendation: 'Recommended: keep Queue Send at first.',
+            targetLabels: ['繁忙时 Enter 键行为', 'Enter key behavior while busy'],
+            targetZone: 'main'
+          },
+          {
+            section: 'Other sections',
+            title: 'Models, plugins, and agent presets have different jobs',
+            body: 'Models choose the service Harness calls. Plugins add capabilities. Agent presets store reusable workflows. All three are independent from DeepSeek Chat login.',
+            tips: [
+              'Models: choose or configure the model Harness actually uses.',
+              'Plugins: extend tools and interface; enable only trusted sources.',
+              'Agent presets: manage reusable defaults for different tasks.'
+            ],
+            recommendation: 'Recommended: confirm a model works first; add plugins and custom presets as needed.',
+            targetLabels: ['模型', 'Models'],
+            targetZone: 'sidebar'
+          }
+        ]
+      };
+      const settingsGuideSteps = [...settingsGuideStepsByLanguage['zh-Hans']];
+      const settingsGuideCopyByLanguage = {
+        'zh-Hans': {
+          dialogLabel: 'Harness 设置快速上手',
+          launcher: '？ 新手引导',
+          launcherLabel: '打开 Harness 设置新手引导',
+          later: '稍后再看',
+          previous: '上一步',
+          next: '下一步',
+          done: '完成'
+        },
+        en: {
+          dialogLabel: 'Harness Settings Quick Start',
+          launcher: '? Quick Start',
+          launcherLabel: 'Open the Harness settings quick start',
+          later: 'Later',
+          previous: 'Previous',
+          next: 'Next',
+          done: 'Done'
+        }
+      };
+      const settingsGuideCopy = { ...settingsGuideCopyByLanguage['zh-Hans'] };
       let settingsGuideRoot = null;
       let settingsGuideLauncher = null;
       let settingsGuideStep = 0;
@@ -746,7 +891,9 @@ struct HarnessWebView: NSViewRepresentable {
         const previous = settingsGuideRoot.querySelector('[data-guide-action="previous"]');
         const next = settingsGuideRoot.querySelector('[data-guide-action="next"]');
         previous.disabled = settingsGuideStep === 0;
-        next.textContent = settingsGuideStep === settingsGuideSteps.length - 1 ? '完成' : '下一步';
+        next.textContent = settingsGuideStep === settingsGuideSteps.length - 1
+          ? settingsGuideCopy.done
+          : settingsGuideCopy.next;
         const progress = settingsGuideRoot.querySelector('.dsh-settings-guide-progress');
         progress.replaceChildren(...settingsGuideSteps.map((_value, index) => {
           const dot = document.createElement('span');
@@ -782,7 +929,7 @@ struct HarnessWebView: NSViewRepresentable {
         overlay.id = 'dsh-settings-guide-root';
         overlay.setAttribute('role', 'dialog');
         overlay.setAttribute('aria-modal', 'true');
-        overlay.setAttribute('aria-label', 'Harness 设置快速上手');
+        overlay.setAttribute('aria-label', settingsGuideCopy.dialogLabel);
         overlay.innerHTML = `
           <div id="dsh-settings-guide-backdrop"></div>
           <div id="dsh-settings-guide-highlight"></div>
@@ -794,11 +941,14 @@ struct HarnessWebView: NSViewRepresentable {
             <div class="dsh-settings-guide-recommendation"></div>
             <div class="dsh-settings-guide-footer">
               <div class="dsh-settings-guide-progress" aria-hidden="true"></div>
-              <button class="dsh-settings-guide-action" data-guide-action="skip" type="button">稍后再看</button>
-              <button class="dsh-settings-guide-action" data-guide-action="previous" type="button">上一步</button>
-              <button class="dsh-settings-guide-action dsh-settings-guide-action-primary" data-guide-action="next" type="button">下一步</button>
+              <button class="dsh-settings-guide-action" data-guide-action="skip" type="button"></button>
+              <button class="dsh-settings-guide-action" data-guide-action="previous" type="button"></button>
+              <button class="dsh-settings-guide-action dsh-settings-guide-action-primary" data-guide-action="next" type="button"></button>
             </div>
           </section>`;
+        overlay.querySelector('[data-guide-action="skip"]').textContent = settingsGuideCopy.later;
+        overlay.querySelector('[data-guide-action="previous"]').textContent = settingsGuideCopy.previous;
+        overlay.querySelector('[data-guide-action="next"]').textContent = settingsGuideCopy.next;
         for (const eventName of ['pointerdown', 'mousedown', 'click']) {
           overlay.addEventListener(eventName, event => event.stopPropagation());
         }
@@ -839,8 +989,8 @@ struct HarnessWebView: NSViewRepresentable {
           const launcher = document.createElement('button');
           launcher.id = 'dsh-settings-guide-launcher';
           launcher.type = 'button';
-          launcher.textContent = '？ 新手引导';
-          launcher.setAttribute('aria-label', '打开 Harness 设置新手引导');
+          launcher.textContent = settingsGuideCopy.launcher;
+          launcher.setAttribute('aria-label', settingsGuideCopy.launcherLabel);
           launcher.setAttribute('aria-expanded', 'false');
           launcher.addEventListener('click', openSettingsGuide);
           configButton.parentElement?.insertBefore(launcher, configButton);
@@ -851,6 +1001,27 @@ struct HarnessWebView: NSViewRepresentable {
           window.setTimeout(() => {
             if (settingsGuideLauncher?.isConnected) openSettingsGuide();
           }, 260);
+        }
+      };
+      const updateSettingsGuideLanguage = language => {
+        const resolvedLanguage = language === 'en' ? 'en' : 'zh-Hans';
+        settingsGuideSteps.splice(
+          0,
+          settingsGuideSteps.length,
+          ...settingsGuideStepsByLanguage[resolvedLanguage]
+        );
+        Object.assign(settingsGuideCopy, settingsGuideCopyByLanguage[resolvedLanguage]);
+        if (settingsGuideLauncher) {
+          settingsGuideLauncher.textContent = settingsGuideCopy.launcher;
+          settingsGuideLauncher.setAttribute('aria-label', settingsGuideCopy.launcherLabel);
+        }
+        if (settingsGuideRoot) {
+          settingsGuideRoot.setAttribute('aria-label', settingsGuideCopy.dialogLabel);
+          settingsGuideRoot.querySelector('[data-guide-action="skip"]').textContent =
+            settingsGuideCopy.later;
+          settingsGuideRoot.querySelector('[data-guide-action="previous"]').textContent =
+            settingsGuideCopy.previous;
+          renderSettingsGuide();
         }
       };
       let settingsGuideUpdateQueued = false;
@@ -955,8 +1126,8 @@ struct HarnessWebView: NSViewRepresentable {
       ];
       const updateSessionUsageView = () => {
         const values = sessionUsage
-          ? `输入 ${sessionUsage.input} · 输出 ${sessionUsage.output}`
-          : '暂无用量';
+          ? `${labels.input} ${sessionUsage.input} · ${labels.output} ${sessionUsage.output}`
+          : labels.noUsage;
         subtitle.textContent = sessionUsage ? values : latestBalanceSubtitle;
         const usageValues = document.getElementById('dsh-session-usage-values');
         if (usageValues && usageValues.textContent !== values) usageValues.textContent = values;
@@ -1007,6 +1178,16 @@ struct HarnessWebView: NSViewRepresentable {
       queueSessionUsageUpdate();
 
       window.__dshBalanceUpdate = payload => {
+        Object.assign(labels, payload.labels || {});
+        updateSettingsGuideLanguage(labels.language);
+        themeLabel.textContent = labels.themeBackground;
+        themeButton.title = labels.themeBackground;
+        themeButton.setAttribute(
+          'aria-label',
+          themeButton.dataset.active === 'true'
+            ? labels.themeBackgroundConfigured
+            : labels.themeBackground
+        );
         root.dataset.tone = payload.tone;
         root.dataset.state = payload.state;
         const pricing = payload.pricing;
@@ -1015,7 +1196,7 @@ struct HarnessWebView: NSViewRepresentable {
         latestBalanceSubtitle = payload.subtitle;
         title.textContent = payload.title;
         pricingBadge.textContent = pricing
-          ? (pricing.currentPeriod === 'peak' ? '高峰期' : '谷时')
+          ? (pricing.currentPeriod === 'peak' ? labels.peakPeriod : labels.offPeakPeriod)
           : '';
         updateSessionUsageView();
         panel.replaceChildren();
@@ -1024,19 +1205,19 @@ struct HarnessWebView: NSViewRepresentable {
         header.className = 'dsh-balance-header';
         const headingRow = document.createElement('div');
         headingRow.className = 'dsh-balance-heading-row';
-        headingRow.appendChild(text('div', 'DeepSeek API 余额', 'dsh-balance-heading'));
+        headingRow.appendChild(text('div', labels.balanceHeading, 'dsh-balance-heading'));
         if (pricing) {
           headingRow.appendChild(text(
             'span',
-            pricing.currentPeriod === 'peak' ? '高峰期' : '谷时',
+            pricing.currentPeriod === 'peak' ? labels.peakPeriod : labels.offPeakPeriod,
             'dsh-pricing-pill'
           ));
         }
         header.appendChild(headingRow);
         const close = text('button', '×', 'dsh-balance-close');
         close.type = 'button';
-        close.setAttribute('aria-label', '收起余额明细');
-        close.title = '收起';
+        close.setAttribute('aria-label', labels.collapseBalanceDetails);
+        close.title = labels.collapse;
         close.addEventListener('click', event => { event.stopPropagation(); setExpanded(false); });
         header.appendChild(close);
         panel.appendChild(header);
@@ -1066,13 +1247,16 @@ struct HarnessWebView: NSViewRepresentable {
           total.append(text('span', entry.total), text('span', entry.currency, 'dsh-balance-currency'));
           const breakdown = document.createElement('div');
           breakdown.className = 'dsh-balance-breakdown';
-          breakdown.append(text('span', `赠送 ${entry.granted}`), text('span', `充值 ${entry.toppedUp}`));
+          breakdown.append(
+            text('span', `${labels.grantedPrefix} ${entry.granted}`),
+            text('span', `${labels.toppedUpPrefix} ${entry.toppedUp}`)
+          );
           item.append(total, breakdown);
           panel.appendChild(item);
         }
 
         if (payload.state === 'loading') {
-          panel.appendChild(text('div', '正在向 DeepSeek 查询余额…', 'dsh-balance-updated'));
+          panel.appendChild(text('div', labels.loadingBalance, 'dsh-balance-updated'));
         } else if (payload.updatedLabel) {
           panel.appendChild(text('div', payload.updatedLabel, 'dsh-balance-updated'));
         }
@@ -1080,7 +1264,7 @@ struct HarnessWebView: NSViewRepresentable {
         const usage = document.createElement('div');
         usage.className = 'dsh-session-usage';
         usage.append(
-          text('span', '当前会话 tokens', 'dsh-session-usage-label'),
+          text('span', labels.sessionTokens, 'dsh-session-usage-label'),
           text('span', '', 'dsh-session-usage-values')
         );
         usage.lastChild.id = 'dsh-session-usage-values';
@@ -1094,7 +1278,7 @@ struct HarnessWebView: NSViewRepresentable {
           const summaryCopy = document.createElement('span');
           summaryCopy.className = 'dsh-pricing-summary-copy';
           summaryCopy.append(
-            text('span', '查看模型价格', 'dsh-pricing-summary-label'),
+            text('span', labels.viewModelPricing, 'dsh-pricing-summary-label'),
             text('span', pricing.unitLabel, 'dsh-pricing-unit')
           );
           summary.appendChild(summaryCopy);
@@ -1110,10 +1294,13 @@ struct HarnessWebView: NSViewRepresentable {
 
             const grid = document.createElement('div');
             grid.className = 'dsh-pricing-grid';
-            for (const label of ['', '命中', '未命中', '输出']) {
+            for (const label of ['', labels.cacheHit, labels.cacheMiss, labels.output]) {
               grid.appendChild(text('div', label, 'dsh-pricing-cell dsh-pricing-grid-header'));
             }
-            for (const [label, key] of [['谷时', 'offPeak'], ['高峰', 'peak']]) {
+            for (const [label, key] of [
+              [labels.offPeakPeriod, 'offPeak'],
+              [labels.peakPeriod, 'peak']
+            ]) {
               const rate = model[key];
               const rowClass = key === pricing.currentPeriod ? ' dsh-pricing-current-row' : '';
               grid.appendChild(text('div', label, `dsh-pricing-cell dsh-pricing-period${rowClass}`));
@@ -1134,10 +1321,14 @@ struct HarnessWebView: NSViewRepresentable {
 
         const actions = document.createElement('div');
         actions.className = 'dsh-balance-actions';
-        const settings = text('button', '配置 API Key', 'dsh-balance-action dsh-balance-action-primary');
+        const settings = text(
+          'button',
+          labels.configureAPIKey,
+          'dsh-balance-action dsh-balance-action-primary'
+        );
         settings.type = 'button';
         settings.addEventListener('click', event => { event.stopPropagation(); send('settings'); });
-        const refresh = text('button', '刷新', 'dsh-balance-action');
+        const refresh = text('button', labels.refresh, 'dsh-balance-action');
         refresh.type = 'button';
         refresh.addEventListener('click', event => { event.stopPropagation(); send('refresh'); });
         actions.append(settings, refresh);
@@ -1153,7 +1344,10 @@ struct HarnessWebView: NSViewRepresentable {
         const enabled = imageDataURL.length > 0;
         document.documentElement.classList.toggle('dsh-has-theme', enabled);
         themeButton.dataset.active = enabled ? 'true' : 'false';
-        themeButton.setAttribute('aria-label', enabled ? '主题背景，已设置' : '主题背景');
+        themeButton.setAttribute(
+          'aria-label',
+          enabled ? labels.themeBackgroundConfigured : labels.themeBackground
+        );
 
         if (!enabled) {
           document.body.style.removeProperty('--dsh-theme-image');

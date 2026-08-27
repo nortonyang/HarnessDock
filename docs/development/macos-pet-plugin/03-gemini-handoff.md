@@ -77,3 +77,10 @@
 - 宠物图集与 QA JSON 验证。
 - `./scripts/run_checks.sh`、`./scripts/build_app.sh`、签名与 Info.plist 检查。
 - 独立 Bundle ID、空偏好 UI QA。
+
+## Marina Codex 宠物增量交接
+
+- 复用 `artifacts/pets/marina-run/package`，不得重新绘制、镜像、编辑或伪造已完成的图像任务。
+- 安装时必须同时复制 `pet.json` 与 `spritesheet.webp`，并验证源/目标 SHA-256 一致。
+- DsHarness Chat 选择设为 `codex:marina`；不得修改 Harness Web 插件的 localStorage 选择或内置 DeepWhale 资源。
+- 重启后验证 Codex 包可发现、Chat 宠物启用和本机偏好持久化。

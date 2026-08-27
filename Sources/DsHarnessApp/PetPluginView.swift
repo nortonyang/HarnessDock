@@ -3,6 +3,7 @@ import SwiftUI
 
 struct PetOverlayView: View {
     @EnvironmentObject private var controller: PetPluginController
+    @EnvironmentObject private var model: AppModel
 
     let package: PetPluginPackage
     let applicationState: PetAnimationState
@@ -24,9 +25,9 @@ struct PetOverlayView: View {
         }
         .buttonStyle(.plain)
         .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
-        .help("点击和 \(package.displayName) 打招呼")
-        .accessibilityLabel("桌面宠物 \(package.displayName)")
-        .accessibilityHint("点击播放挥手动画")
+        .help(model.localized("点击和 %@ 打招呼", package.displayName))
+        .accessibilityLabel(model.localized("桌面宠物 %@", package.displayName))
+        .accessibilityHint(model.localized("点击播放挥手动画"))
         .contextMenu {
             Button("宠物设置…") {
                 controller.showSettings = true
@@ -92,6 +93,7 @@ struct PetSpriteView: View {
 
 struct PetPluginSettingsView: View {
     @EnvironmentObject private var controller: PetPluginController
+    @EnvironmentObject private var model: AppModel
 
     var body: some View {
         VStack(spacing: 0) {
@@ -147,7 +149,7 @@ struct PetPluginSettingsView: View {
                     }
 
                     Button("导入宠物包…") {
-                        controller.importPackage()
+                        controller.importPackage(language: model.appLanguage)
                     }
                     .buttonStyle(.borderedProminent)
 
@@ -189,7 +191,7 @@ struct PetPluginSettingsView: View {
                     }
 
                     LabeledContent("来源") {
-                        Text(package.origin.title)
+                        Text(model.localized(package.origin.title))
                             .foregroundStyle(.secondary)
                     }
 

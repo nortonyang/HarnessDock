@@ -11,6 +11,7 @@
 | ST-505 | 自动验证和完工审核 | AT-509 | US-508 | 已完成 |
 | ST-506 | DeepWhale 视觉资产与规范包 | AT-510 | US-509 | 已完成 |
 | ST-507 | 内置资源发现、默认选择和打包 | AT-511、AT-512 | US-510、US-511 | 已完成 |
+| ST-508 | Marina Codex 包安装与 Chat 选择同步 | AT-513 | US-512 | 已完成 |
 
 ## AT-501：定义宠物清单模型
 
@@ -231,3 +232,23 @@
 ### 完成定义
 
 - 实机 QA 和 README 均能独立回答插件名称与入口问题。
+
+## AT-513：安装并选中 Marina Codex 宠物
+
+用户故事 US-512：作为同时使用 Harness 与 Chat 的用户，我希望 Chat 页面也能使用鲸鱼女仆 Marina，以便两个页面的宠物角色保持一致。
+
+### 范围
+
+- 复用已经通过 hatch-pet 最终化的 Marina 包，不重复生成或修改图集。
+- 将 `pet.json` 与 `spritesheet.webp` 一起安装到 `~/.codex/pets/marina`。
+- 将本机 DsHarness 的 Chat 原生宠物选择切换为 `codex:marina` 并保持启用。
+
+### 验收标准
+
+- Given Marina 孵化运行，When 检查任务、QA 与图集，Then 10 个生成任务全部完成、QA 无 error/warning、图集为 1536×1872。
+- Given 包已安装，When 扫描 `~/.codex/pets`，Then `marina` 同时包含合法 `pet.json` 与 `spritesheet.webp`，原始包与安装包哈希一致。
+- Given DsHarness 重启，When 打开 Chat 页面，Then 已选包 ID 为 `codex:marina` 且宠物显示已启用；Harness 页插件选择不被改写。
+
+### 完成定义
+
+- Codex 宠物目录、DsHarness 偏好和重启后的 Chat 加载路径均有验证证据。

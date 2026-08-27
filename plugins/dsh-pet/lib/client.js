@@ -20,9 +20,12 @@ window.__ModuleLoader__.load({
     const STATES = {
       idle: { row: 0, frames: 6, interval: 260 },
       waving: { row: 3, frames: 4, interval: 180 },
-      clicked: { row: 4, frames: 6, interval: 120 },
-      hovering: { row: 5, frames: 6, interval: 220 },
-      dragging: { row: 6, frames: 6, interval: 140 }
+      clicked: { row: 4, frames: 5, interval: 150 },
+      commandFailed: { row: 5, frames: 8, interval: 150 },
+      hovering: { row: 6, frames: 6, interval: 260 },
+      dragging: { row: 7, frames: 6, interval: 140 },
+      commandRunning: { row: 7, frames: 6, interval: 140 },
+      commandSucceeded: { row: 8, frames: 6, interval: 180 }
     };
     const PETS = {
       deepwhale: {
@@ -43,6 +46,16 @@ window.__ModuleLoader__.load({
       visible: true,
       edge: "right",
       offset: 0.62
+    });
+    const EMPTY_SESSION_LIST = Object.freeze({
+      current: undefined,
+      byId: Object.freeze({}),
+      jobsBySession: Object.freeze({})
+    });
+    const EMPTY_SESSION_SNAPSHOT = Object.freeze({
+      running: false,
+      promptError: null,
+      lastAgentError: null
     });
     const listeners = new Set();
 
@@ -140,6 +153,134 @@ window.__ModuleLoader__.load({
       return React.useSyncExternalStore(subscribe, getSnapshot, () => false);
     }
 
+    function errorIdentity(error) {
+      if (error === null || error === undefined) return null;
+      if (typeof error === "string") return error;
+      const detail = error.error && typeof error.error === "object" ? error.error : error;
+      const code = typeof detail.code === "string" ? detail.code : "unknown";
+      const message = typeof detail.message === "string" ? detail.message : "";
+      return `${code}:${message}`;
+    }
+
+    function commandSignal(listSnapshot, sessionSnapshot) {
+      const list = listSnapshot || EMPTY_SESSION_LIST;
+      const session = sessionSnapshot || EMPTY_SESSION_SNAPSHOT;
+      const sessionId = list.current;
+      const summary = sessionId === undefined ? undefined : list.byId?.[sessionId];
+      const jobs = sessionId === undefined ? [] : (list.jobsBySession?.[sessionId] || []);
+      const busy = summary?.running === true
+        || session.running === true
+        || jobs.some((job) => job.status === "running" || job.status === "stopping");
+      const latestFailedJob = jobs
+        .filter((job) => job.status === "failed")
+        .reduce((latest, job) => {
+          if (latest === null) return job;
+          const latestTime = latest.finishedAt ?? latest.startedAt ?? 0;
+          const jobTime = job.finishedAt ?? job.startedAt ?? 0;
+          return jobTime >= latestTime ? job : latest;
+        }, null);
+      const errorParts = [
+        errorIdentity(session.lastAgentError),
+        errorIdentity(session.promptError),
+        latestFailedJob === null
+          ? null
+          : `job:${latestFailedJob.id}:${latestFailedJob.finishedAt ?? latestFailedJob.startedAt ?? 0}`
+      ].filter((part) => part !== null);
+      return {
+        sessionId,
+        busy,
+        errorToken: errorParts.length === 0 ? null : errorParts.join("|")
+      };
+    }
+
+    function useHarnessCommandAnimation(sessions) {
+      const listStore = sessions?.list;
+      const subscribeList = React.useCallback(
+        (listener) => listStore?.subscribe(listener) ?? (() => {}),
+        [listStore]
+      );
+      const getListSnapshot = React.useCallback(
+        () => listStore?.getSnapshot() ?? EMPTY_SESSION_LIST,
+        [listStore]
+      );
+      const listSnapshot = React.useSyncExternalStore(
+        subscribeList,
+        getListSnapshot,
+        () => EMPTY_SESSION_LIST
+      );
+      const sessionStore = listSnapshot.current === undefined
+        ? undefined
+        : sessions?.binding(listSnapshot.current)?.session;
+      const subscribeSession = React.useCallback(
+        (listener) => sessionStore?.subscribe(listener) ?? (() => {}),
+        [sessionStore]
+      );
+      const getSessionSnapshot = React.useCallback(
+        () => sessionStore?.getSnapshot() ?? EMPTY_SESSION_SNAPSHOT,
+        [sessionStore]
+      );
+      const sessionSnapshot = React.useSyncExternalStore(
+        subscribeSession,
+        getSessionSnapshot,
+        () => EMPTY_SESSION_SNAPSHOT
+      );
+      const signal = commandSignal(listSnapshot, sessionSnapshot);
+      const signalRef = React.useRef(signal);
+      const previousRef = React.useRef(null);
+      const terminalTimer = React.useRef(null);
+      const terminalState = React.useRef(null);
+      const [commandState, setCommandState] = React.useState(
+        signal.busy ? "commandRunning" : null
+      );
+      signalRef.current = signal;
+
+      React.useEffect(() => {
+        const clearTerminal = () => {
+          if (terminalTimer.current !== null) {
+            window.clearTimeout(terminalTimer.current);
+            terminalTimer.current = null;
+          }
+          terminalState.current = null;
+        };
+        const playTerminal = (nextState) => {
+          clearTerminal();
+          terminalState.current = nextState;
+          setCommandState(nextState);
+          const animation = STATES[nextState];
+          terminalTimer.current = window.setTimeout(() => {
+            terminalTimer.current = null;
+            terminalState.current = null;
+            setCommandState(signalRef.current.busy ? "commandRunning" : null);
+          }, animation.frames * animation.interval);
+        };
+        const previous = previousRef.current;
+        if (previous === null || previous.sessionId !== signal.sessionId) {
+          clearTerminal();
+          setCommandState(signal.busy ? "commandRunning" : null);
+        } else {
+          const hasNewError = signal.errorToken !== null
+            && signal.errorToken !== previous.errorToken;
+          if (hasNewError) {
+            playTerminal("commandFailed");
+          } else if (signal.busy && !previous.busy) {
+            clearTerminal();
+            setCommandState("commandRunning");
+          } else if (!signal.busy && previous.busy) {
+            playTerminal("commandSucceeded");
+          } else if (signal.busy && terminalState.current === null) {
+            setCommandState("commandRunning");
+          }
+        }
+        previousRef.current = signal;
+      }, [signal.busy, signal.errorToken, signal.sessionId]);
+
+      React.useEffect(() => () => {
+        if (terminalTimer.current !== null) window.clearTimeout(terminalTimer.current);
+      }, []);
+
+      return commandState;
+    }
+
     function PetSprite({ petId, state = "idle", compact = false }) {
       const [frame, setFrame] = React.useState(0);
       const reducedMotion = useReducedMotion();
@@ -169,9 +310,10 @@ window.__ModuleLoader__.load({
       });
     }
 
-    function PetOverlay() {
+    function PetOverlay({ sessions }) {
       const current = usePreferences();
       const reducedMotion = useReducedMotion();
+      const commandState = useHarnessCommandAnimation(sessions);
       const [state, setState] = React.useState("idle");
       const [peeking, setPeeking] = React.useState(false);
       const [dragPoint, setDragPoint] = React.useState(null);
@@ -199,7 +341,7 @@ window.__ModuleLoader__.load({
           resetTimer.current = window.setTimeout(() => {
             setState("idle");
             resetTimer.current = null;
-          }, 900);
+          }, STATES.waving.frames * STATES.waving.interval);
           peekTimer.current = window.setTimeout(() => {
             setPeeking(false);
             peekTimer.current = null;
@@ -247,12 +389,16 @@ window.__ModuleLoader__.load({
           setState(hovered ? "hovering" : "idle");
           setPeeking(hovered);
         };
-        const playReaction = (nextState, duration) => {
+        const playReaction = (nextState) => {
           cancelAutomaticPeek();
           if (reactionTimer.current !== null) window.clearTimeout(reactionTimer.current);
           setState(nextState);
           setPeeking(true);
-          reactionTimer.current = window.setTimeout(settleAfterReaction, duration);
+          const animation = STATES[nextState] || STATES.idle;
+          reactionTimer.current = window.setTimeout(
+            settleAfterReaction,
+            animation.frames * animation.interval
+          );
         };
         const updateHover = (inside) => {
           if (hoverRef.current === inside) return;
@@ -313,7 +459,7 @@ window.__ModuleLoader__.load({
           setDragPoint(null);
           suppressClickUntil.current = Date.now() + 400;
           emitPreferences({ ...current, ...dock }, true);
-          playReaction("waving", 900);
+          playReaction("waving");
           consume(event);
         };
         const cancelDrag = () => {
@@ -338,7 +484,7 @@ window.__ModuleLoader__.load({
             return;
           }
           if (!current.visible || !isInsidePet(event)) return;
-          playReaction("clicked", 900);
+          playReaction("clicked");
         };
         document.addEventListener("pointerdown", onPointerDown, true);
         document.addEventListener("pointermove", onPointerMove, true);
@@ -363,6 +509,7 @@ window.__ModuleLoader__.load({
           ? { left: `${current.offset * 100}%`, bottom: "0px" }
           : { [current.edge]: "0px", top: `${current.offset * 100}%` }
         : { left: `${dragPoint.x}px`, top: `${dragPoint.y}px` };
+      const displayState = commandState ?? state;
 
       return React.createElement(
         "div",
@@ -372,12 +519,13 @@ window.__ModuleLoader__.load({
           role: "img",
           "aria-label": `${PETS[current.petId].name} 桌面宠物；可悬停、点击和拖动贴边`,
           "data-edge": current.edge,
-          "data-peeking": peeking ? "true" : "false",
-          "data-state": state,
+          "data-peeking": peeking || commandState !== null ? "true" : "false",
+          "data-state": displayState,
+          "data-command-state": commandState ?? undefined,
           "data-dragging": dragPoint === null ? undefined : "true",
           style: positionStyle
         },
-        React.createElement(PetSprite, { petId: current.petId, state })
+        React.createElement(PetSprite, { petId: current.petId, state: displayState })
       );
     }
 
@@ -488,23 +636,41 @@ window.__ModuleLoader__.load({
         will-change: transform;
         transition: transform .48s cubic-bezier(.2, .8, .2, 1);
       }
-      .dshpet-overlay[data-edge="left"] { transform: translate(-58%, -50%); }
-      .dshpet-overlay[data-edge="right"] { transform: translate(58%, -50%); }
-      .dshpet-overlay[data-edge="bottom"] { transform: translate(-50%, 48%); }
-      .dshpet-overlay[data-edge="left"] .dshpet-sprite { transform: scaleX(-1); }
-      .dshpet-overlay[data-edge="left"][data-peeking="true"] { transform: translate(-18%, -50%); }
-      .dshpet-overlay[data-edge="right"][data-peeking="true"] { transform: translate(18%, -50%); }
-      .dshpet-overlay[data-edge="bottom"][data-peeking="true"] { transform: translate(-50%, 16%); }
+      .dshpet-overlay[data-edge="left"] { transform: translate(-62%, -50%); }
+      .dshpet-overlay[data-edge="right"] { transform: translate(62%, -50%); }
+      .dshpet-overlay[data-edge="bottom"] { transform: translate(-50%, 55%); }
+      .dshpet-overlay[data-edge="left"] .dshpet-sprite {
+        transform: rotate(22deg) scaleX(-1);
+      }
+      .dshpet-overlay[data-edge="right"] .dshpet-sprite { transform: rotate(-22deg); }
+      .dshpet-overlay[data-edge="left"][data-peeking="true"] { transform: translate(-28%, -50%); }
+      .dshpet-overlay[data-edge="right"][data-peeking="true"] { transform: translate(28%, -50%); }
+      .dshpet-overlay[data-edge="bottom"][data-peeking="true"] { transform: translate(-50%, 22%); }
+      .dshpet-overlay[data-edge="left"][data-peeking="true"] .dshpet-sprite {
+        transform: rotate(6deg) scaleX(-1);
+      }
+      .dshpet-overlay[data-edge="right"][data-peeking="true"] .dshpet-sprite {
+        transform: rotate(-6deg);
+      }
       .dshpet-overlay[data-dragging="true"] {
         transform: translate(-50%, -50%);
         transition: none;
         filter: drop-shadow(0 9px 12px rgb(0 0 0 / .32));
+      }
+      .dshpet-overlay[data-edge="left"][data-dragging="true"] .dshpet-sprite {
+        transform: scaleX(-1);
+      }
+      .dshpet-overlay[data-edge="right"][data-dragging="true"] .dshpet-sprite {
+        transform: none;
       }
       .dshpet-sprite {
         display: block;
         flex: none;
         background-repeat: no-repeat;
         image-rendering: pixelated;
+        transform-origin: 50% 100%;
+        transition: transform .48s cubic-bezier(.2, .8, .2, 1);
+        will-change: transform;
       }
       .dshpet-settings {
         box-sizing: border-box;
@@ -587,7 +753,7 @@ window.__ModuleLoader__.load({
       }
       .dshpet-dock-options button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary, #8b5cf6); outline-offset: 2px; }
       @media (prefers-reduced-motion: reduce) {
-        .dshpet-overlay { transition: none; }
+        .dshpet-overlay, .dshpet-sprite { transition: none; }
       }
       @media (width <= 680px) {
         .dshpet-grid { grid-template-columns: minmax(0, 1fr); }
@@ -596,7 +762,7 @@ window.__ModuleLoader__.load({
       }
     `;
 
-    const inject = ["slots"];
+    const inject = ["sessions", "slots"];
 
     function apply(ctx) {
       ctx.effect(() => {
@@ -616,11 +782,15 @@ window.__ModuleLoader__.load({
         return () => window.removeEventListener("storage", onStorage);
       }, "dsharness-pet: preference synchronization");
 
+      function PetOverlayEntry() {
+        return React.createElement(PetOverlay, { sessions: ctx.sessions });
+      }
+
       ctx.slots.inject("shell.overlay", () => ctx.slots.register({
         name: "shell.overlay",
         id: "dsharness-pet-overlay",
         order: 60
-      }, PetOverlay));
+      }, PetOverlayEntry));
 
       ctx.slots.inject("settings.plugins.tab", () => ctx.slots.register({
         name: "settings.plugins.tab",
@@ -632,7 +802,7 @@ window.__ModuleLoader__.load({
 
     exports.apply = apply;
     exports.inject = inject;
-    exports.__test = { nearestDock, normalizePreferences };
+    exports.__test = { commandSignal, nearestDock, normalizePreferences };
     return module.exports;
   }
 });

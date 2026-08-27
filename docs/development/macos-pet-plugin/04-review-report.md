@@ -8,6 +8,7 @@
 - 验证与说明：核心检查、单元测试、构建脚本与 README。
 - 独立 QA Bundle ID 的实机欢迎页和宠物设置 sheet；未退出或干扰正在运行的正式 DsHarness 会话。
 - DeepWhale 孵化运行、逐帧检查、联系表、最终图集、包清单和应用内置资源。
+- Marina 孵化运行、Codex 包安装、Chat 选择同步与重启发现。
 
 ## 问题发现
 
@@ -19,6 +20,7 @@
 | 环境限制 | `swift test` 在当前 Command Line Tools 环境缺少仓库既有测试使用的 `Testing` 模块 | `DeepSeekBalanceTests.swift:2` 在测试发现阶段报 `no such module 'Testing'` | 安装完整匹配的 Xcode 后补跑；本轮新契约已同步覆盖在 `DsHarnessCoreChecks` |
 | 构建兼容 | 默认 macOS 26.5 SDK 与已安装 Swift 编译器补丁版本不一致 | 原始 `swift build` 报 SDK/compiler mismatch | 构建脚本在 Command Line Tools 环境优先使用支持 macOS 14 目标的 MacOSX15 SDK，验证已通过 |
 | 预览限制 | 当前机器未安装 `ffmpeg` | 视频渲染步骤报 `FileNotFoundError` | 使用工作流支持的 `--skip-videos` 完成最终化；逐帧 QA、联系表、透明图集与尺寸校验均通过 |
+| 已修复 P2 | Chat 先前选中内置 DeepWhale，与 Harness 页选择的 Marina 不同 | 已安装 Marina Codex 包，UserDefaults 为 `codex:marina`，Chat 实机 AX 与截图均显示 Marina | 无 |
 
 ## 验收标准检查
 
@@ -35,6 +37,7 @@
 | US-509 | 通过 | DeepWhale 9 行动画、透明图集、联系表、验证 JSON 和包清单均完成；方向问题经人工 QA 修复 |
 | US-510 | 通过 | DeepWhale 随 SwiftPM 和正式 `.app` 内置；全新 Bundle ID 默认 AX 标签为“桌面宠物 DeepWhale” |
 | US-511 | 通过 | 爪印入口打开“桌面宠物插件”，设置页显示 DeepWhale 与“DsHarness 内置”；README 解释网页列表中看不到的原因 |
+| US-512 | 通过 | 10 个任务全部完成；QA 无 error/warning；源/目标哈希一致；`~/.codex/pets/marina` 完整；Chat 实机显示“桌面宠物 Marina” |
 
 ## 验证结果
 
@@ -50,6 +53,9 @@
 - 独立 Bundle ID UI QA：第二次全新偏好启动时 AX 标签为“桌面宠物 DeepWhale”；工具栏爪印打开“桌面宠物插件”，选择值为 DeepWhale、来源为“DsHarness 内置”、启用值为 1。
 - 生成记录兼容：当前内置 imagegen 原始文件名为 `exec-*.png`，运行目录中的工具副本仅扩展来源文件名前缀校验（仍要求文件位于 `$CODEX_HOME/generated_images` 并校验 SHA-256），未伪造来源或改写生成图。
 - `swift test --disable-sandbox`：未通过，原因是仓库原有 `DeepSeekBalanceTests.swift` 依赖当前环境不存在的 `Testing` 模块，不是本轮代码编译失败。
+- Marina Codex QA：`pet_job_status.py` 显示 10/10 complete；人工复核联系表通过；图集为 1536×1872，验证与 review 均无 error/warning。
+- Marina 安装：`pet.json` SHA-256 为 `ca10b27cb0eb19c81f7e15372fabf892c26386250dc2fe974e23d37fb86a6b16`，图集 SHA-256 为 `3f74cea48fa8f855db1c663551d369aabddb81e21610ca4c4bffd3ccb8962ce4`，源包与 `~/.codex/pets/marina` 一致。
+- Chat 实机：偏好为 `codex:marina` 且启用值为 `1`；重启 DsHarness 后 AX 标签为“桌面宠物 Marina”，截图确认右下角显示鲸鱼女仆。
 
 ## 完成度更新
 
@@ -60,6 +66,7 @@
 | 动画覆盖层与设置 | 0% | 100% | 独立 QA 窗口视觉与 AX 验证通过 |
 | 文档与验证 | 0% | 100% | README、规划、构建和本审核报告 |
 | 内置 DeepWhale | 0% | 100% | 孵化 QA、应用资源、包内哈希与独立 UI QA |
+| Marina Codex 宠物与 Chat 同步 | 0% | 100% | 孵化 QA、Codex 安装目录、哈希、偏好与 Chat 实机截图 |
 
 ## 剩余工作
 

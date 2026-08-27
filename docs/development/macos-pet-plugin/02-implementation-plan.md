@@ -13,6 +13,7 @@
 | 7 | 用 hatch-pet/imagegen 生成并审核 DeepWhale 8×9 动画包 | Codex + 图像生成子代理 | `artifacts/pets/deepwhale-run` | 图集校验、联系表、逐帧检查 | 已完成 |
 | 8 | 将 DeepWhale 作为 SwiftPM 与 `.app` 内置资源接入发现逻辑 | Codex | `Package.swift`、`PetPluginController.swift`、`scripts/build_app.sh`、资源目录 | 构建、产物检查、独立 UI QA | 已完成 |
 | 9 | 更新入口说明并完成增量审核 | Codex | `README.md`、本目录文档 | 文档检查、实机验证 | 已完成 |
+| 10 | 复核并安装 Marina Codex 包，切换 Chat 本机选择 | Codex | `artifacts/pets/marina-run/package`、`~/.codex/pets/marina`、UserDefaults | job status、QA、哈希、重启发现 | 已完成 |
 
 ## 完成度
 
@@ -23,6 +24,7 @@
 | 动画与设置 UI | 100% | `PetPluginView.swift`、独立 QA 窗口验证 | 宠物、工具栏和设置页已实机显示 |
 | 验证与审核 | 100% | 核心检查、Release 构建、签名验证、`04-review-report.md` | `swift test` 的仓库既有环境限制已记录 |
 | 内置 DeepWhale | 100% | `Sources/DsHarnessApp/Resources/Pets/DeepWhale`、`artifacts/pets/deepwhale-run/qa`、独立 Bundle ID UI QA | 预览视频因本机无 `ffmpeg` 跳过；逐帧、联系表与图集校验通过 |
+| Marina Codex 宠物 | 100% | 10 个任务完成、QA 通过、源/安装包哈希一致、Chat 实机显示 Marina | 已安装到 `~/.codex/pets/marina` 并选中 |
 
 ## 要修复的问题
 
@@ -34,6 +36,7 @@
 | 新安装没有外部宠物时功能不可见 | P2 | US-510 | 内置 DeepWhale 并优先作为无历史选择时的默认宠物 | 已修复 |
 | 孵化器新版清单字段无法被旧解码器识别 | P2 | US-501、US-510 | 同时兼容 `name`/`spritesheet` 与 `displayName`/`spritesheetPath` | 已修复 |
 | 用户误以为它是 Harness 网页插件 | P3 | US-511 | 在 README 和交付说明中明确原生入口与重启方式 | 已修复 |
+| Chat 当前选中内置 DeepWhale，与 Harness 页 Marina 不一致 | P2 | US-512 | 安装 Marina 到 Codex 宠物目录并把 Chat 本机偏好切换到 `codex:marina` | 已修复 |
 
 ## 具体案例
 
@@ -48,6 +51,7 @@
 | 减少动态 | macOS 开启减少动态效果 | 每个状态固定第一帧 | 实机检查 |
 | 全新安装 | 独立 Bundle ID、无外部宠物与无偏好 | 主窗口默认显示 DeepWhale | 独立应用 QA |
 | 旧版仍运行 | 已打开旧 DsHarness 进程 | 退出旧进程并重新打开 `dist/DsHarness.app` 后看到新入口 | 实机检查 |
+| Chat 与 Harness 角色同步 | Harness 已选择 Marina，Chat 当前为 DeepWhale | 安装 Codex Marina 并只切换 Chat 原生选择；两套运行时保持隔离 | 包哈希、偏好与重启检查 |
 
 ## 兼容与回滚策略
 

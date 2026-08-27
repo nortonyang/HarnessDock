@@ -1,10 +1,12 @@
 import AppKit
+import DsHarnessCore
 import SwiftUI
 import WebKit
 
 struct DeepSeekChatWebView: NSViewRepresentable {
     let url: URL
     let reloadRequestID: Int
+    let language: AppLanguage
     @Binding var isLoading: Bool
     @Binding var loadError: String?
 
@@ -17,6 +19,13 @@ struct DeepSeekChatWebView: NSViewRepresentable {
         configuration.websiteDataStore = .default()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         configuration.preferences.isElementFullscreenEnabled = true
+        configuration.userContentController.addUserScript(
+            WKUserScript(
+                source: DeepSeekChatEnterBehavior.userScript,
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true
+            )
+        )
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
@@ -72,7 +81,10 @@ struct DeepSeekChatWebView: NSViewRepresentable {
 
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
             parent.isLoading = false
-            parent.loadError = "网页进程已停止，请重新加载。"
+            parent.loadError = AppLocalization.localized(
+                "网页进程已停止，请重新加载。",
+                language: parent.language
+            )
         }
 
         func webView(
@@ -118,9 +130,9 @@ struct DeepSeekChatWebView: NSViewRepresentable {
             completionHandler: @escaping ([URL]?) -> Void
         ) {
             let panel = NSOpenPanel()
-            panel.title = "选择要发送给 DeepSeek Chat 的文件"
-            panel.message = "只有你确认选择的文件才会交给 DeepSeek 官方聊天页面。"
-            panel.prompt = "选择"
+            panel.title = localized("选择要发送给 DeepSeek Chat 的文件")
+            panel.message = localized("只有你确认选择的文件才会交给 DeepSeek 官方聊天页面。")
+            panel.prompt = localized("选择")
             panel.canChooseFiles = true
             panel.canChooseDirectories = parameters.allowsDirectories
             panel.allowsMultipleSelection = parameters.allowsMultipleSelection
@@ -137,6 +149,10 @@ struct DeepSeekChatWebView: NSViewRepresentable {
             return host == "deepseek.com" || host.hasSuffix(".deepseek.com")
         }
 
+        private func localized(_ key: String) -> String {
+            AppLocalization.localized(key, language: parent.language)
+        }
+
         private func updateFailure(_ error: Error) {
             let nsError = error as NSError
             if nsError.domain == NSURLErrorDomain,
@@ -148,4 +164,3 @@ struct DeepSeekChatWebView: NSViewRepresentable {
         }
     }
 }
-

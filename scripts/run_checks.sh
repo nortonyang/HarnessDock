@@ -10,6 +10,8 @@ cd "${repository_root}"
 mkdir -p "${module_cache}"
 
 npm --prefix "${repository_root}/plugins/dsh-pet" run check
+node "${repository_root}/scripts/check-chat-enter.mjs"
+plutil -lint "${repository_root}"/Resources/*.lproj/Localizable.strings
 
 run_flags=(run --disable-sandbox DsHarnessCoreChecks)
 

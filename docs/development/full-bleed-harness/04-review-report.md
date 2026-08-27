@@ -4,6 +4,7 @@
 
 - `ContentView.swift` 运行态条件分支和全窗 WebView。
 - `HarnessWebView.swift` 余额 user script、状态更新与受限消息桥。
+- `DeepSeekChatWebView.swift` 与 `DeepSeekChatEnterBehavior.swift` 的全部可编辑控件回车脚本及其输入法、修饰键和非编辑控件边界。
 - `AppModel.swift` 非敏感余额展示模型；`DsHarnessApp.swift` 菜单入口。
 - release 构建、真实 Harness 会话、余额胶囊和明细面板。
 
@@ -44,12 +45,16 @@
 | US-223 | 通过 | 环境变量已配置时 AX tree 无安全文本栏和保存按钮；点击“更换 API Key”后才出现空安全文本栏，取消后恢复摘要 |
 | US-224 | 通过 | 首次设置页自动显示 1/6 引导；可翻至 6/6，顶部入口可重开，稍后与 Escape 关闭后设置页均保持打开 |
 | US-225 | 通过 | 侧栏主题入口与 `⇧⌘T` 直达统一设置的主题栏目；`⇧⌘B` 切回 API 栏目，旧 sheet 与完成按钮已移除 |
+| US-226 | 通过 | 隔离回归断言组合输入第一次 Enter 发送计数 0、第二次 Enter 发送计数 1；最新版应用逐键触发系统中文输入法候选后，第一次保留 `hello` 草稿，第二次创建 `hello` 消息 |
+| US-227 | 通过 | Settings 三语言选项即时切换；英文应用菜单、主题/余额注入控件和余额详情 AX tree 通过；重启后保持英文并已恢复跟随系统；官方 Harness/Chat 页面未重载或改写语言 |
 
 ## 验证结果
 
 - `./scripts/run_checks.sh`：通过。
 - `./scripts/build_app.sh`：通过。
 - `plutil -lint`、`codesign --verify --deep --strict`：通过。
+- 双语切换检查：English 设置页、应用菜单、`Theme Background`、`Peak`、`Current Session Tokens`、`View Model Pricing`、`Configure API Key` 和 `Refresh` 均有 AX tree 证据；重启后 `Main Interface` 保持英文，最后恢复“跟随系统”。
+- 本地化边界检查：切换前后保持同一 Harness 工作区与会话；只更新原生 SwiftUI/AppKit 文案及应用注入辅助 UI，未调用第三方网页语言接口。
 - Computer Use 实机检查：单层 Harness、余额胶囊及详情展开均通过。
 - 增量实机检查：关闭按钮收起成功；配置动作打开安全文本栏；未读取或填写用户凭据。
 - 侧栏联动检查：折叠态 AX tree 与截图通过；最终展开态截图复查遇到 ScreenCaptureKit `-3811`，但展开状态判断沿用已验证的“收起侧边栏”可访问名称。
@@ -78,6 +83,12 @@
 - 主题设置迁移检查：Harness 左侧栏“主题背景”打开“DS Harness 设置”，AX tree 标记“主题背景，已选择”，并显示预览、选择图片、62% 遮罩与本地存储说明。
 - 定向入口检查：同一设置窗口中 `⇧⌘T` 选择主题栏目，`⇧⌘B` 选择 API 与余额栏目；手动点击两个栏目也能原地切换。
 - 状态边界检查：实机验证期间未选择、移除图片或调整滑杆；源码已移除 `showThemeSettings`、独立 sheet 和主题页“完成”按钮，既有存储逻辑保持不变。
+- Chat 回车旧检查（证据作废）：只在输入空白后按普通 Enter，再输入 `second`；空白本就可能被网页拒绝发送，未覆盖用户报告的非空正文路径。
+- Chat 输入边界最终结论：组合态 Enter 只确认输入法并隔离网页发送逻辑；组合结束后的无修饰普通 Enter 放行给 DeepSeek 发送；四类修饰键与单行输入继续拦截，空白输入交由网页保持不发送。
+- Chat 全量回归：`node scripts/check-chat-enter.mjs` 直接使用生产 user script，模拟 `insertCompositionText`、组合确认与页面发送监听器；第一次 Enter 发送计数为 0、第二次普通 Enter 发送计数为 1，四类修饰键和单行发送计数为 0，空白输入到达页面但不产生消息，非编辑按钮保持原样。
+- Chat 实机输入法回归：在最新 `dist/DsHarness.app` 的 DeepSeek Chat 编辑器中切换中文输入法，键入英文 `hello` 后按 Enter；英文由输入法确认并继续留在草稿中，编辑器未新增换行，页面未产生新消息。验证后已清空草稿并恢复原输入法。
+- Chat 两次 Enter 实机回归：逐键输入 `hello` 并确认系统候选框已出现；第一次 Enter 后输入框仍保留 `hello` 且没有新消息，第二次 Enter 后输入框清空并创建 `hello` 消息。测试结束后已恢复输入法。
+- Chat 真实页面复验：重启最新 release 构建后输入 `draft`，普通 Enter 后 AX 值为两行；Shift/Command/Option/Control+Enter 后草稿继续保留且页面未进入会话，随后已清空全部测试草稿。
 
 ## 完成度更新
 
@@ -103,7 +114,9 @@
 | 已配置凭据的设置页精简 | 0% | 100% | 环境变量、主动更换和无 Key 三条实机路径 |
 | Harness 设置新手引导 | 0% | 100% | release 构建、首次自动展示、完整翻页、重复打开与关闭实机检查 |
 | 主题背景并入应用设置 | 0% | 100% | release 构建、统一窗口截图、侧栏入口与双快捷键实机检查 |
+| Chat 输入法确认与正常发送 | 70% | 100% | `insertCompositionText` 隔离回归、release 构建与系统中文输入法两次 Enter 实机复验 |
+| 原生界面中英文切换 | 20% | 100% | 双语资源、三选项设置、即时菜单/余额/主题更新、重启持久化与完整构建门禁 |
 
 ## 剩余工作
 
-- 当前功能计划已完成；公开正式版仍须完成 `docs/release-readiness.md` 中的发布阻塞项。
+- 当前计划内功能已完成；公开正式版仍须完成 `docs/release-readiness.md` 中的发布阻塞项。

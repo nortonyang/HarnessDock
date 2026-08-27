@@ -31,6 +31,7 @@ enum AppSurface: String, CaseIterable, Identifiable {
 enum AppSettingsSection: String, CaseIterable, Identifiable {
     case apiBalance
     case themeBackground
+    case language
 
     var id: Self { self }
 
@@ -38,6 +39,7 @@ enum AppSettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .apiBalance: "API 与余额"
         case .themeBackground: "主题背景"
+        case .language: "语言"
         }
     }
 
@@ -45,6 +47,7 @@ enum AppSettingsSection: String, CaseIterable, Identifiable {
         switch self {
         case .apiBalance: "wallet.pass.fill"
         case .themeBackground: "photo.on.rectangle.angled"
+        case .language: "globe"
         }
     }
 }
@@ -63,6 +66,29 @@ enum BalanceCredentialSource: Equatable {
 }
 
 struct BalanceWebPresentation: Codable, Equatable {
+    struct Labels: Codable, Equatable {
+        let language: String
+        let themeBackground: String
+        let themeBackgroundConfigured: String
+        let balanceHeading: String
+        let peakPeriod: String
+        let offPeakPeriod: String
+        let collapseBalanceDetails: String
+        let collapse: String
+        let grantedPrefix: String
+        let toppedUpPrefix: String
+        let loadingBalance: String
+        let sessionTokens: String
+        let noUsage: String
+        let input: String
+        let output: String
+        let viewModelPricing: String
+        let cacheHit: String
+        let cacheMiss: String
+        let configureAPIKey: String
+        let refresh: String
+    }
+
     struct Entry: Codable, Equatable {
         let currency: String
         let total: String
@@ -89,6 +115,7 @@ struct BalanceWebPresentation: Codable, Equatable {
     let updatedLabel: String?
     let entries: [Entry]
     let pricing: Pricing?
+    let labels: Labels
 }
 
 struct ThemeBackgroundPresentation: Codable, Equatable {
@@ -112,6 +139,7 @@ private enum ThemeBackgroundError: LocalizedError {
 
 @MainActor
 final class AppModel: ObservableObject {
+    @Published private(set) var appLanguage: AppLanguage = .system
     @Published private(set) var selectedSurface: AppSurface = .harness
     @Published private(set) var hasOpenedDeepSeekChat = false
     @Published private(set) var workspaceURL: URL?
@@ -139,6 +167,7 @@ final class AppModel: ObservableObject {
 
     private let workspaceDefaultsKey = "lastWorkspacePath"
     private let themeDimmingDefaultsKey = "themeBackgroundDimmingOpacity"
+    private let appLanguageDefaultsKey = "appLanguage"
     private let balanceClient = DeepSeekBalanceClient()
     private let balanceKeychain = BalanceKeychain()
     private var process: Process?
@@ -157,6 +186,10 @@ final class AppModel: ObservableObject {
 
     init() {
         configuration = HarnessConfiguration(port: Self.portArgument() ?? 3_080)
+        if let savedLanguage = UserDefaults.standard.string(forKey: appLanguageDefaultsKey),
+           let language = AppLanguage(rawValue: savedLanguage) {
+            appLanguage = language
+        }
         if let savedDimming = UserDefaults.standard.object(
             forKey: themeDimmingDefaultsKey
         ) as? Double {
@@ -164,6 +197,24 @@ final class AppModel: ObservableObject {
         }
         loadThemeBackground()
         updateBalanceCredentialSource()
+    }
+
+    func localized(_ key: String) -> String {
+        AppLocalization.localized(key, language: appLanguage)
+    }
+
+    func localized(_ key: String, _ arguments: CVarArg...) -> String {
+        String(
+            format: localized(key),
+            locale: appLanguage.locale,
+            arguments: arguments
+        )
+    }
+
+    func setAppLanguage(_ language: AppLanguage) {
+        guard appLanguage != language else { return }
+        appLanguage = language
+        UserDefaults.standard.set(language.rawValue, forKey: appLanguageDefaultsKey)
     }
 
     var isManagedServer: Bool {
@@ -178,52 +229,59 @@ final class AppModel: ObservableObject {
     }
 
     func balanceWebPresentation(at date: Date = Date()) -> BalanceWebPresentation {
-        let pricing = Self.pricingWebPresentation(at: date)
+        let pricing = pricingWebPresentation(at: date)
+        let labels = balanceWebLabels
 
         switch balanceState {
         case .notConfigured:
             return BalanceWebPresentation(
-                title: "配置 API 余额",
-                subtitle: "安全配置",
+                title: localized("配置 API 余额"),
+                subtitle: localized("安全配置"),
                 tone: "neutral",
                 state: "notConfigured",
                 error: nil,
                 updatedLabel: nil,
                 entries: [],
-                pricing: pricing
+                pricing: pricing,
+                labels: labels
             )
         case .loading:
             return BalanceWebPresentation(
-                title: "正在查询余额",
-                subtitle: "DeepSeek 开放平台",
+                title: localized("正在查询余额"),
+                subtitle: localized("DeepSeek 开放平台"),
                 tone: "loading",
                 state: "loading",
                 error: nil,
                 updatedLabel: nil,
                 entries: [],
-                pricing: pricing
+                pricing: pricing,
+                labels: labels
             )
         case let .failed(message):
             return BalanceWebPresentation(
-                title: "余额查询失败",
-                subtitle: "点击查看详情",
+                title: localized("余额查询失败"),
+                subtitle: localized("点击查看详情"),
                 tone: "error",
                 state: "failed",
                 error: message,
                 updatedLabel: nil,
                 entries: [],
-                pricing: pricing
+                pricing: pricing,
+                labels: labels
             )
         case let .loaded(response, refreshedAt):
             return BalanceWebPresentation(
-                title: response.preferredInfo?.displayTotal ?? "余额已同步",
+                title: response.preferredInfo?.displayTotal ?? localized("余额已同步"),
                 subtitle: response.isAvailable
-                    ? "API 余额可用"
-                    : "API 暂不可用",
+                    ? localized("API 余额可用")
+                    : localized("API 暂不可用"),
                 tone: response.isAvailable ? "success" : "warning",
                 state: "loaded",
                 error: nil,
-                updatedLabel: "更新于 \(refreshedAt.formatted(date: .omitted, time: .shortened))",
+                updatedLabel: localized(
+                    "更新于 %@",
+                    refreshedAt.formatted(date: .omitted, time: .shortened)
+                ),
                 entries: response.balanceInfos.map {
                     BalanceWebPresentation.Entry(
                         currency: $0.currency.uppercased(),
@@ -232,27 +290,59 @@ final class AppModel: ObservableObject {
                         toppedUp: $0.displayToppedUp
                     )
                 },
-                pricing: pricing
+                pricing: pricing,
+                labels: labels
             )
         }
     }
 
-    private static func pricingWebPresentation(at date: Date) -> BalanceWebPresentation.Pricing {
+    private var balanceWebLabels: BalanceWebPresentation.Labels {
+        BalanceWebPresentation.Labels(
+            language: appLanguage.resolvedIdentifier,
+            themeBackground: localized("主题背景"),
+            themeBackgroundConfigured: localized("主题背景，已设置"),
+            balanceHeading: localized("DeepSeek API 余额"),
+            peakPeriod: localized("高峰期"),
+            offPeakPeriod: localized("谷时"),
+            collapseBalanceDetails: localized("收起余额明细"),
+            collapse: localized("收起"),
+            grantedPrefix: localized("赠送"),
+            toppedUpPrefix: localized("充值"),
+            loadingBalance: localized("正在向 DeepSeek 查询余额…"),
+            sessionTokens: localized("当前会话 tokens"),
+            noUsage: localized("暂无用量"),
+            input: localized("输入"),
+            output: localized("输出"),
+            viewModelPricing: localized("查看模型价格"),
+            cacheHit: localized("命中"),
+            cacheMiss: localized("未命中"),
+            configureAPIKey: localized("配置 API Key"),
+            refresh: localized("刷新")
+        )
+    }
+
+    private func pricingWebPresentation(at date: Date) -> BalanceWebPresentation.Pricing {
         let status = DeepSeekAPIPricing.status(at: date)
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.locale = appLanguage.locale
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.timeZone = TimeZone(identifier: "Asia/Shanghai")
         formatter.dateFormat = "EEE HH:mm"
+        let currentPeriod = localized(status.period == .peak ? "高峰" : "谷时")
+        let nextPeriod = localized(status.nextPeriod == .peak ? "高峰" : "谷时")
 
         return BalanceWebPresentation.Pricing(
             currentPeriod: status.period.rawValue,
-            currentPeriodLabel: "当前\(status.period.displayName)",
-            nextPeriodLabel: status.nextPeriod.displayName,
-            nextSwitchLabel: "\(formatter.string(from: status.nextTransition)) 切换为\(status.nextPeriod.displayName)",
-            scheduleLabel: "工作日 09:00–12:00、14:00–18:00 高峰；其余谷时（北京时间）",
-            unitLabel: "人民币 / 百万 tokens",
-            sourceLabel: "DeepSeek 中文价格表",
+            currentPeriodLabel: localized("当前%@", currentPeriod),
+            nextPeriodLabel: nextPeriod,
+            nextSwitchLabel: localized(
+                "%@ 切换为%@",
+                formatter.string(from: status.nextTransition),
+                nextPeriod
+            ),
+            scheduleLabel: localized("工作日 09:00–12:00、14:00–18:00 高峰；其余谷时（北京时间）"),
+            unitLabel: localized("人民币 / 百万 tokens"),
+            sourceLabel: localized("DeepSeek 中文价格表"),
             models: DeepSeekAPIPricing.models
         )
     }
@@ -298,9 +388,9 @@ final class AppModel: ObservableObject {
 
     func chooseWorkspace() {
         let panel = NSOpenPanel()
-        panel.title = "选择 DeepSeek Harness 工作区"
-        panel.message = "Harness 的文件和命令权限将以这个项目目录为起点。"
-        panel.prompt = "打开项目"
+        panel.title = localized("选择 DeepSeek Harness 工作区")
+        panel.message = localized("Harness 的文件和命令权限将以这个项目目录为起点。")
+        panel.prompt = localized("打开项目")
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
@@ -316,7 +406,7 @@ final class AppModel: ObservableObject {
             for: .applicationSupportDirectory,
             in: .userDomainMask
         ).first else {
-            let message = "无法访问应用数据目录，不能创建默认工作区。"
+            let message = localized("无法访问应用数据目录，不能创建默认工作区。")
             appendLog(message)
             status = .failed(message)
             return
@@ -332,7 +422,7 @@ final class AppModel: ObservableObject {
             )
             setWorkspace(workspaceURL)
         } catch {
-            let message = "无法创建默认工作区：\(error.localizedDescription)"
+            let message = localized("无法创建默认工作区：%@", error.localizedDescription)
             appendLog(message)
             status = .failed(message)
         }
@@ -340,9 +430,9 @@ final class AppModel: ObservableObject {
 
     func chooseThemeBackground() {
         let panel = NSOpenPanel()
-        panel.title = "选择主题背景图片"
-        panel.message = "图片会缩放后保存在本机应用数据目录，不会写入当前项目。"
-        panel.prompt = hasThemeBackground ? "更换背景" : "设为背景"
+        panel.title = localized("选择主题背景图片")
+        panel.message = localized("图片会缩放后保存在本机应用数据目录，不会写入当前项目。")
+        panel.prompt = localized(hasThemeBackground ? "更换背景" : "设为背景")
         panel.allowedContentTypes = [.image]
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
@@ -357,7 +447,7 @@ final class AppModel: ObservableObject {
             themeBackgroundData = data
             themeBackgroundError = nil
         } catch {
-            themeBackgroundError = error.localizedDescription
+            themeBackgroundError = localized(error.localizedDescription)
         }
     }
 
@@ -457,7 +547,7 @@ final class AppModel: ObservableObject {
                 return
             } catch {
                 guard !Task.isCancelled else { return }
-                self?.balanceState = .failed(Self.balanceFailureMessage(for: error))
+                self?.balanceState = .failed(self?.balanceFailureMessage(for: error) ?? error.localizedDescription)
             }
         }
     }
@@ -465,7 +555,7 @@ final class AppModel: ObservableObject {
     func saveBalanceAPIKey(_ value: String) {
         let credential = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !credential.isEmpty else {
-            balanceCredentialError = "请输入 DeepSeek API Key。"
+            balanceCredentialError = localized("请输入 DeepSeek API Key。")
             return
         }
 
@@ -524,9 +614,9 @@ final class AppModel: ObservableObject {
             }
             themeBackgroundData = data
         } catch ThemeBackgroundError.storageUnavailable {
-            themeBackgroundError = ThemeBackgroundError.storageUnavailable.localizedDescription
+            themeBackgroundError = localized(ThemeBackgroundError.storageUnavailable.localizedDescription)
         } catch {
-            themeBackgroundError = error.localizedDescription
+            themeBackgroundError = localized(error.localizedDescription)
         }
     }
 
@@ -632,21 +722,30 @@ final class AppModel: ObservableObject {
         return credential
     }
 
-    private static func balanceFailureMessage(for error: Error) -> String {
+    private func balanceFailureMessage(for error: Error) -> String {
         if let balanceError = error as? DeepSeekBalanceError {
-            return balanceError.localizedDescription
+            switch balanceError {
+            case .missingCredential:
+                return localized("尚未配置 DeepSeek API Key。")
+            case .invalidCredential:
+                return localized("API Key 无效或已失效，请重新配置。")
+            case let .httpStatus(code):
+                return localized("余额服务返回 HTTP %@，请稍后重试。", String(code))
+            case .invalidResponse:
+                return localized("余额服务返回了无法识别的数据。")
+            }
         }
         if let urlError = error as? URLError {
             switch urlError.code {
             case .notConnectedToInternet:
-                return "当前无法连接网络。"
+                return localized("当前无法连接网络。")
             case .timedOut:
-                return "查询余额超时，请重试。"
+                return localized("查询余额超时，请重试。")
             default:
-                return "暂时无法连接余额服务。"
+                return localized("暂时无法连接余额服务。")
             }
         }
-        return "暂时无法查询余额。"
+        return localized("暂时无法查询余额。")
     }
 
     private func startHarness(in workspace: URL) {

@@ -133,11 +133,14 @@ final class PetPluginController: ObservableObject {
             : "已忽略 \(errors.count) 个无效宠物包：\(errors.prefix(2).joined(separator: "；"))"
     }
 
-    func importPackage() {
+    func importPackage(language: AppLanguage = .system) {
         let panel = NSOpenPanel()
-        panel.title = "导入 DsHarness 宠物包"
-        panel.message = "请选择包含 pet.json 与 spritesheet.webp 的宠物文件夹。"
-        panel.prompt = "导入"
+        panel.title = AppLocalization.localized("导入 DsHarness 宠物包", language: language)
+        panel.message = AppLocalization.localized(
+            "请选择包含 pet.json 与 spritesheet.webp 的宠物文件夹。",
+            language: language
+        )
+        panel.prompt = AppLocalization.localized("导入", language: language)
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
@@ -181,7 +184,8 @@ final class PetPluginController: ObservableObject {
             )
             isEnabled = true
         } catch {
-            lastError = "无法导入宠物包：\(error.localizedDescription)"
+            let format = AppLocalization.localized("无法导入宠物包：%@", language: language)
+            lastError = String(format: format, locale: language.locale, error.localizedDescription)
         }
     }
 

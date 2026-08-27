@@ -21,6 +21,8 @@
 | 15 | 安装 app、重绑 profile 并重启 Harness | `/Applications/DsHarness.app`、web profile | link 目标、3080 启动图、真实 UI | 已完成 |
 | 16 | 锁定已验证的 Harness 版本并优先直接运行匹配缓存，缺失时再回退 npx | `HarnessConfiguration`、`ExecutableLocator` 与检查 | 缓存版本校验、3080 启动图与进程命令 | 已完成 |
 | 17 | 左侧停靠时仅镜像精灵，保持容器向左裁切 | 插件 CSS 与静态检查 | 左侧镜像契约、右/底边不变、插件构建 | 已完成 |
+| 18 | 加深三边缩回位移，左右增加向内倾斜并在探出/拖动时复位 | 插件 CSS 与静态检查 | 两态位移、倾角、拖动姿态、真实截图 | 已完成 |
+| 19 | 按图集清单修正 hover/click/drag 的行号、帧数与节奏 | 插件状态表与静态检查 | manifest 对照、透明空格回归、真实交互 | 已完成 |
 
 ## 实现约束
 
@@ -31,6 +33,7 @@
 - 用 `ctx.slots.inject` 跟随插槽声明与 teardown；所有注册 disposer 由 Cordis 生命周期管理。
 - 设置使用 `dsharness.pet.preferences.v1` localStorage 键；仅接受白名单宠物 ID和布尔值。
 - 图集按 8 列、9 行、192×208 单格播放；空闲为第 0 行，并定时播放挥手行。
+- 交互状态必须按图集清单映射：hovering=`waiting` 行 6/6 帧，clicked=`jumping` 行 4/5 帧，dragging=`running` 行 7/6 帧；不得按 8 列宽度误把透明空格当有效帧。
 - overlay 保持 `pointer-events: none`；文档捕获阶段用坐标识别悬停与点击但不阻止事件。非交互背景可直接拖动；交互控件上只允许 `⌥` 强制拖动。
 - 停靠边只允许 `left`、`right`、`bottom`，沿边位置归一化并限制在安全区间；旧偏好自动补默认值。
 
@@ -42,6 +45,7 @@
 - 应用内只复制 npm `files` 对应的运行文件；profile 使用应用内绝对路径，本机删除或移动开发仓库不影响已安装插件。
 - 如果 Harness 插槽契约升级，插件在包级隔离，可更新 bundle 而不迁移 DsHarness 主应用数据。
 - 左侧朝向通过 overlay 子级精灵镜像实现，不对定位容器做缩放，避免 `translate` 方向和拖动命中矩形被反转。
+- 藏身读感通过子级精灵的 `transform-origin` 与轻量倾角实现；定位容器继续只负责贴边位移，避免改变事件矩形或引入新的遮挡层。
 
 ## Codex 审核清单
 

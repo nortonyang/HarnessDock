@@ -43,6 +43,11 @@ cp "${repository_root}/Resources/Info.plist" "${contents_directory}/Info.plist"
 if [[ -f "${repository_root}/Resources/AppIcon.icns" ]]; then
     cp "${repository_root}/Resources/AppIcon.icns" "${contents_directory}/Resources/AppIcon.icns"
 fi
+for localization in "${repository_root}"/Resources/*.lproj; do
+    if [[ -d "${localization}" ]]; then
+        cp -R "${localization}" "${contents_directory}/Resources/"
+    fi
+done
 bundled_pets="${repository_root}/Sources/DsHarnessApp/Resources/Pets"
 if [[ -d "${bundled_pets}" ]]; then
     cp -R "${bundled_pets}" "${contents_directory}/Resources/Pets"

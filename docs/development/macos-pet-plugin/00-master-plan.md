@@ -51,6 +51,7 @@
 | S5 | 构建、测试与审核 | ST-505 | S2-S4 完成 | 自动检查、构建和审核通过 | 已完成 |
 | S6 | 生成 DeepWhale 宠物包 | ST-506 | 8×9 契约已完成 | 图集、清单、联系表和预览全部通过 QA | 已完成 |
 | S7 | 内置资源接入与可见性验证 | ST-507 | S6 完成 | 全新偏好环境可默认显示 DeepWhale | 已完成 |
+| S8 | 安装 Marina Codex 宠物并同步 Chat 选择 | ST-508 | Marina 孵化与 QA 已完成 | `~/.codex/pets/marina` 可被发现，Chat 选中 Marina | 已完成 |
 
 ## 验证策略
 
@@ -62,3 +63,4 @@
 - 人工检查宠物覆盖层只在宠物区域捕获点击，并验证“减少动态效果”。
 - 检查 DeepWhale `final/validation.json`、`qa/review.json`、联系表和逐行动画预览。
 - 用独立 Bundle ID 启动正式 `.app`，确认即使存在外部宠物也优先默认显示内置鲸鱼，并验证设置入口与来源标签。
+- 复核 Marina 的 10 个 imagegen job、联系表、验证 JSON 与包尺寸；安装到 Codex 宠物目录后重启 DsHarness，确认 Chat 偏好为 `codex:marina`。

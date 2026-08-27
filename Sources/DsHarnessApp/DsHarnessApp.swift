@@ -10,6 +10,7 @@ struct DsHarnessApp: App {
             ContentView()
                 .environmentObject(model)
                 .environmentObject(petPlugin)
+                .environment(\.locale, model.appLanguage.locale)
                 .frame(minWidth: 980, minHeight: 680)
                 .onAppear {
                     model.restoreWorkspaceIfNeeded()
@@ -26,12 +27,12 @@ struct DsHarnessApp: App {
         .windowToolbarStyle(.unifiedCompact)
         .commands {
             CommandGroup(replacing: .newItem) {
-                Button("选择项目…") {
+                Button(model.localized("选择项目…")) {
                     model.chooseWorkspace()
                 }
                 .keyboardShortcut("o", modifiers: .command)
 
-                Button("新任务") {
+                Button(model.localized("新任务")) {
                     model.requestHome()
                 }
                 .keyboardShortcut("n", modifiers: .command)
@@ -39,12 +40,12 @@ struct DsHarnessApp: App {
             }
 
             CommandGroup(after: .toolbar) {
-                Button("切换到 Harness") {
+                Button(model.localized("切换到 Harness")) {
                     model.selectSurface(.harness)
                 }
                 .keyboardShortcut("1", modifiers: .command)
 
-                Button("切换到 DeepSeek 免费聊天") {
+                Button(model.localized("切换到 DeepSeek 免费聊天")) {
                     model.selectSurface(.chat)
                 }
                 .keyboardShortcut("2", modifiers: .command)
@@ -52,8 +53,8 @@ struct DsHarnessApp: App {
                 Divider()
 
                 Button(model.selectedSurface == .harness
-                       ? "重新加载 Harness"
-                       : "重新加载 DeepSeek Chat") {
+                       ? model.localized("重新加载 Harness")
+                       : model.localized("重新加载 DeepSeek Chat")) {
                     model.requestSelectedSurfaceReload()
                 }
                 .keyboardShortcut("r", modifiers: .command)
@@ -63,40 +64,47 @@ struct DsHarnessApp: App {
                         : !model.hasOpenedDeepSeekChat
                 )
 
-                Button("在 Safari 中打开 DeepSeek Chat") {
+                Button(model.localized("在 Safari 中打开 DeepSeek Chat")) {
                     model.openDeepSeekChatInBrowser()
                 }
                 .disabled(model.selectedSurface != .chat)
 
                 Divider()
 
-                Button("Chat 原生宠物…") {
+                Button(model.localized("Chat 原生宠物…")) {
                     petPlugin.showSettings = true
                 }
                 .keyboardShortcut("p", modifiers: [.command, .shift])
                 .disabled(model.selectedSurface != .chat)
 
-                Button("API 与余额设置…") {
+                Button(model.localized("API 与余额设置…")) {
                     model.requestSettings(.apiBalance)
                 }
                 .keyboardShortcut("b", modifiers: [.command, .shift])
 
-                Button("主题背景…") {
+                Button(model.localized("主题背景…")) {
                     model.requestSettings(.themeBackground)
                 }
                 .keyboardShortcut("t", modifiers: [.command, .shift])
 
-                Button("查看 Harness 日志") {
+                Button(model.localized("查看 Harness 日志")) {
                     model.showLogs = true
                 }
                 .keyboardShortcut("l", modifiers: [.command, .shift])
                 .disabled(model.logText.isEmpty)
+
+                Divider()
+
+                Button(model.localized("语言…")) {
+                    model.requestSettings(.language)
+                }
             }
         }
 
         Settings {
             AppSettingsView()
                 .environmentObject(model)
+                .environment(\.locale, model.appLanguage.locale)
         }
     }
 }
