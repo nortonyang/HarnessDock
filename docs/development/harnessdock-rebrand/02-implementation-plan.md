@@ -9,7 +9,7 @@
 | 3 | 重命名 App 类型、Info.plist、构建产物和脚本 | Codex | App、Resources、scripts | release 构建、plist、file、codesign | 已完成 |
 | 4 | 改名插件并迁移旧偏好键 | Codex | `plugins/harnessdock-pet` | `npm ... run check`、pack dry-run | 已完成 |
 | 5 | 同步本地化、README、CHANGELOG 和 Product Hunt | Codex | Resources、README、docs | 双语审核、残留/隐私扫描 | 已完成 |
-| 6 | 审核、提交、推送并改名 GitHub 仓库 | Codex | Git/GitHub | 远程 refs 与 URL 验证 | 进行中 |
+| 6 | 审核、提交、推送并改名 GitHub 仓库 | Codex | Git/GitHub | 远程 refs、URL 与 PR 验证 | 已完成 |
 
 ## 完成度
 
@@ -19,7 +19,7 @@
 | Swift/App 重命名 | 100% | `HarnessDock.app`、plist、codesign、core checks | 保留兼容 Bundle ID |
 | 插件迁移 | 100% | `@harnessdock/pet checks passed`、6 文件内嵌、npm pack dry-run | 旧偏好键迁移通过 |
 | 发布材料同步 | 100% | 双语 README、CHANGELOG、Product Hunt 文案与候选校验和 | 脱敏图库仍属发布阻塞项 |
-| GitHub 远程改名 | 0% | 暂无 | 待外部变更 |
+| GitHub 远程改名 | 100% | `nortonyang/HarnessDock`、三条远程分支、PR #1 | `develop → release` 等待合并审核 |
 
 ## 要修复的问题
 
@@ -29,7 +29,7 @@
 | 更换 Bundle ID 会丢失登录和设置 | P1 | US-803 | 保留兼容性 Identifier、目录和 Keychain 服务 | 方案已确定 |
 | 插件改名可能丢失偏好 | P2 | US-804 | 新键优先、旧键读取迁移 | 已修复并测试 |
 | README 截图仍显示旧品牌 | P2 | US-805 | 移除旧截图并在发布前补脱敏图库 | 当前树已修复；新图库待补 |
-| GitHub CLI 登录状态可能不可用 | P2 | US-806 | 优先使用已登录浏览器；失败则报告，不索取 Token | 外部改名待执行 |
+| GitHub CLI 登录状态可能不可用 | P2 | US-806 | 使用现有 GitHub 管理权限改名并验证，不索取 Token | 已解决 |
 
 ## 具体案例
 

@@ -10,7 +10,6 @@
 
 | 严重级别 | 问题 | 证据 | 必要动作 |
 | --- | --- | --- | --- |
-| P2 | GitHub 仓库外部名称仍待更新 | 本地 README 已指向 `nortonyang/HarnessDock`，外部仓库需登录态操作 | 推送提交后在 GitHub 改名并验证三条分支 |
 | P2 | 公开图库尚未补拍 | 旧品牌及真实工作区截图已从当前树移除；macOS 锁屏阻止本轮自动补拍 | 解锁后使用脱敏演示工作区重拍 |
 | P2 | 完整 `swift test` 未运行 | Command Line Tools 环境缺少 `Testing` 模块 | 安装完整匹配 Xcode 后补跑；核心契约由 `HarnessDockCoreChecks` 覆盖 |
 
@@ -23,7 +22,7 @@
 | US-803 | 通过 | `app.dsharness.desktop`、Application Support 与 Keychain 服务保持不变 |
 | US-804 | 通过 | 插件检查验证旧 `dsharness.pet.preferences.v1` 迁移至新键 |
 | US-805 | 部分通过 | README/CHANGELOG/Product Hunt 已同步；旧截图已移除，新图库待补 |
-| US-806 | 待外部验证 | Git 提交、推送与 GitHub 仓库改名尚待执行 |
+| US-806 | 通过 | 仓库已改名为 `nortonyang/HarnessDock`；origin 已更新；main/develop/release 均验证存在；PR #1 推进 develop → release |
 
 ## 验证结果
 
@@ -40,10 +39,9 @@
 | 项目 | 更新前 | 更新后 | 证据 |
 | --- | ---: | ---: | --- |
 | 规划与命名矩阵 | 0% | 100% | 00/01/02/03 文档 |
-| 全量重命名 | 0% | 95% | 本地代码、App、插件、文档和候选包完成；GitHub 外部改名待执行 |
+| 全量重命名 | 0% | 100% | 本地代码、App、插件、文档、候选包、GitHub 仓库和 origin 均完成 |
 
 ## 剩余工作
 
-- 提交并推送 `develop`。
-- 在 GitHub 将仓库改名为 `HarnessDock`，更新本地 origin 并验证 `main/develop/release`。
+- 审核并合并 GitHub PR #1，将 `develop` 的重命名提升到 `release`；正式版本仍不得绕过 release → main 审核。
 - 解锁 Mac 后补拍脱敏界面图库；正式发布仍需许可证、原创图标、Developer ID、公证和干净 Mac 验证。
