@@ -1,10 +1,10 @@
 {
   "ok": true,
-  "run_dir": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run",
-  "spritesheet": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/final/spritesheet.webp",
-  "validation": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/final/validation.json",
-  "contact_sheet": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/qa/contact-sheet.png",
-  "review": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/qa/review.json",
+  "run_dir": "<REPOSITORY_ROOT>/artifacts/pets/marina-run",
+  "spritesheet": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/final/spritesheet.webp",
+  "validation": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/final/validation.json",
+  "contact_sheet": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/qa/contact-sheet.png",
+  "review": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/qa/review.json",
   "videos": null,
-  "package": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/package"
+  "package": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/package"
 }

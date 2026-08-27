@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "frames_root": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames",
+  "frames_root": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames",
   "errors": [],
   "warnings": [],
   "rows": [
@@ -15,7 +15,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/idle/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/idle/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19377,
@@ -30,7 +30,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/idle/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/idle/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19267,
@@ -45,7 +45,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/idle/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/idle/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18730,
@@ -60,7 +60,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/idle/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/idle/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19095,
@@ -75,7 +75,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/idle/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/idle/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19264,
@@ -90,7 +90,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/idle/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/idle/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19420,
@@ -116,7 +116,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17492,
@@ -131,7 +131,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17612,
@@ -146,7 +146,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18993,
@@ -161,7 +161,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16303,
@@ -176,7 +176,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17059,
@@ -191,7 +191,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16466,
@@ -206,7 +206,7 @@
         },
         {
           "index": 6,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/06.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 15834,
@@ -221,7 +221,7 @@
         },
         {
           "index": 7,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-right/07.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-right/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17215,
@@ -247,7 +247,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17544,
@@ -262,7 +262,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17027,
@@ -277,7 +277,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16912,
@@ -292,7 +292,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17722,
@@ -307,7 +307,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17358,
@@ -322,7 +322,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17974,
@@ -337,7 +337,7 @@
         },
         {
           "index": 6,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/06.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17587,
@@ -352,7 +352,7 @@
         },
         {
           "index": 7,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running-left/07.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running-left/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17213,
@@ -378,7 +378,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waving/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waving/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19674,
@@ -393,7 +393,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waving/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waving/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19489,
@@ -408,7 +408,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waving/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waving/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19238,
@@ -423,7 +423,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waving/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waving/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19412,
@@ -449,7 +449,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/jumping/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/jumping/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20844,
@@ -464,7 +464,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/jumping/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/jumping/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21502,
@@ -479,7 +479,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/jumping/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/jumping/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21177,
@@ -494,7 +494,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/jumping/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/jumping/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19068,
@@ -509,7 +509,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/jumping/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/jumping/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 22379,
@@ -535,7 +535,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20176,
@@ -550,7 +550,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19820,
@@ -565,7 +565,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20462,
@@ -580,7 +580,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 22608,
@@ -595,7 +595,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21995,
@@ -610,7 +610,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 22977,
@@ -625,7 +625,7 @@
         },
         {
           "index": 6,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/06.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20104,
@@ -640,7 +640,7 @@
         },
         {
           "index": 7,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/failed/07.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/failed/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20139,
@@ -666,7 +666,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waiting/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waiting/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21722,
@@ -681,7 +681,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waiting/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waiting/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20728,
@@ -696,7 +696,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waiting/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waiting/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21380,
@@ -711,7 +711,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waiting/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waiting/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21374,
@@ -726,7 +726,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waiting/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waiting/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21371,
@@ -741,7 +741,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/waiting/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/waiting/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21395,
@@ -767,7 +767,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19845,
@@ -782,7 +782,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18609,
@@ -797,7 +797,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19105,
@@ -812,7 +812,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19052,
@@ -827,7 +827,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18736,
@@ -842,7 +842,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/running/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/running/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19074,
@@ -868,7 +868,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/review/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/review/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19297,
@@ -883,7 +883,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/review/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/review/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18750,
@@ -898,7 +898,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/review/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/review/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18686,
@@ -913,7 +913,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/review/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/review/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18498,
@@ -928,7 +928,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/review/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/review/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18524,
@@ -943,7 +943,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/frames/review/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/frames/review/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18606,

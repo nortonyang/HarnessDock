@@ -179,13 +179,13 @@
   ],
   "references": [
     {
-      "path": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/references/reference-01.png",
+      "path": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/references/reference-01.png",
       "width": 690,
       "height": 1236,
       "mode": "RGB",
       "format": "PNG",
       "source_path": "/private/var/folders/d_/cn9cng3s0s3409hnvssh2bxw0000gn/T/codex-clipboard-4aad521f-050c-4f95-8e0d-a9169b7630b0.png",
-      "copied_path": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/marina-run/references/reference-01.png"
+      "copied_path": "<REPOSITORY_ROOT>/artifacts/pets/marina-run/references/reference-01.png"
     }
   ],
   "chroma_key": {

@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "frames_root": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames",
+  "frames_root": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames",
   "errors": [],
   "warnings": [],
   "rows": [
@@ -15,7 +15,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/idle/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/idle/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17020,
@@ -30,7 +30,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/idle/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/idle/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17468,
@@ -45,7 +45,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/idle/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/idle/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16950,
@@ -60,7 +60,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/idle/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/idle/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17011,
@@ -75,7 +75,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/idle/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/idle/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17387,
@@ -90,7 +90,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/idle/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/idle/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17863,
@@ -116,7 +116,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18974,
@@ -131,7 +131,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18703,
@@ -146,7 +146,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19653,
@@ -161,7 +161,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18911,
@@ -176,7 +176,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19467,
@@ -191,7 +191,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20301,
@@ -206,7 +206,7 @@
         },
         {
           "index": 6,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/06.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19775,
@@ -221,7 +221,7 @@
         },
         {
           "index": 7,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-right/07.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-right/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19690,
@@ -247,7 +247,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19690,
@@ -262,7 +262,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19775,
@@ -277,7 +277,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20301,
@@ -292,7 +292,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19467,
@@ -307,7 +307,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18911,
@@ -322,7 +322,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19653,
@@ -337,7 +337,7 @@
         },
         {
           "index": 6,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/06.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18703,
@@ -352,7 +352,7 @@
         },
         {
           "index": 7,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running-left/07.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running-left/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18974,
@@ -378,7 +378,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waving/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waving/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17595,
@@ -393,7 +393,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waving/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waving/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17391,
@@ -408,7 +408,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waving/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waving/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17369,
@@ -423,7 +423,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waving/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waving/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17486,
@@ -449,7 +449,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/jumping/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/jumping/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17708,
@@ -464,7 +464,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/jumping/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/jumping/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17666,
@@ -479,7 +479,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/jumping/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/jumping/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17067,
@@ -494,7 +494,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/jumping/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/jumping/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17873,
@@ -509,7 +509,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/jumping/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/jumping/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18257,
@@ -535,7 +535,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20751,
@@ -550,7 +550,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19255,
@@ -565,7 +565,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 16283,
@@ -580,7 +580,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 13541,
@@ -595,7 +595,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 18822,
@@ -610,7 +610,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19822,
@@ -625,7 +625,7 @@
         },
         {
           "index": 6,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/06.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/06.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19871,
@@ -640,7 +640,7 @@
         },
         {
           "index": 7,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/failed/07.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/failed/07.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19797,
@@ -666,7 +666,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waiting/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waiting/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17942,
@@ -681,7 +681,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waiting/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waiting/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17723,
@@ -696,7 +696,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waiting/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waiting/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17627,
@@ -711,7 +711,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waiting/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waiting/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17596,
@@ -726,7 +726,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waiting/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waiting/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17654,
@@ -741,7 +741,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/waiting/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/waiting/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 17535,
@@ -767,7 +767,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21031,
@@ -782,7 +782,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20006,
@@ -797,7 +797,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19895,
@@ -812,7 +812,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19483,
@@ -827,7 +827,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 20762,
@@ -842,7 +842,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/running/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/running/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 19342,
@@ -868,7 +868,7 @@
       "frames": [
         {
           "index": 0,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/review/00.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/review/00.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21160,
@@ -883,7 +883,7 @@
         },
         {
           "index": 1,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/review/01.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/review/01.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21047,
@@ -898,7 +898,7 @@
         },
         {
           "index": 2,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/review/02.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/review/02.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21070,
@@ -913,7 +913,7 @@
         },
         {
           "index": 3,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/review/03.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/review/03.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21095,
@@ -928,7 +928,7 @@
         },
         {
           "index": 4,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/review/04.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/review/04.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21188,
@@ -943,7 +943,7 @@
         },
         {
           "index": 5,
-          "file": "/Users/nortonyang/Documents/ChatGPT/DsHarness/artifacts/pets/deepwhale-run/frames/review/05.png",
+          "file": "<REPOSITORY_ROOT>/artifacts/pets/deepwhale-run/frames/review/05.png",
           "width": 192,
           "height": 208,
           "nontransparent_pixels": 21028,
