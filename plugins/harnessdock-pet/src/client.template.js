@@ -1,12 +1,13 @@
 window.__ModuleLoader__.load({
-  id: "@dsharness/pet",
+  id: "@harnessdock/pet",
   factory: (require) => {
     const module = { exports: {} };
     const exports = module.exports;
     Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 
     const React = require("react");
-    const STORAGE_KEY = "dsharness.pet.preferences.v1";
+    const STORAGE_KEY = "harnessdock.pet.preferences.v1";
+    const LEGACY_STORAGE_KEYS = Object.freeze(["dsharness.pet.preferences.v1"]);
     const FRAME_WIDTH = 192;
     const FRAME_HEIGHT = 208;
     const COLUMN_COUNT = 8;
@@ -100,8 +101,20 @@ window.__ModuleLoader__.load({
 
     function readPreferences() {
       try {
-        const value = window.localStorage.getItem(STORAGE_KEY);
-        return value === null ? DEFAULT_PREFERENCES : normalizePreferences(JSON.parse(value));
+        for (const key of [STORAGE_KEY, ...LEGACY_STORAGE_KEYS]) {
+          const value = window.localStorage.getItem(key);
+          if (value === null) continue;
+          try {
+            const normalized = normalizePreferences(JSON.parse(value));
+            if (key !== STORAGE_KEY) {
+              window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+            }
+            return normalized;
+          } catch (_error) {
+            // Ignore a malformed value and continue to a compatible legacy key.
+          }
+        }
+        return DEFAULT_PREFERENCES;
       } catch (_error) {
         return DEFAULT_PREFERENCES;
       }
@@ -298,7 +311,7 @@ window.__ModuleLoader__.load({
       }, [animation.frames, animation.interval, petId, reducedMotion, state]);
 
       return React.createElement("span", {
-        className: "dshpet-sprite",
+        className: "harnessdock-pet-sprite",
         "aria-hidden": "true",
         style: {
           width: `${width}px`,
@@ -515,7 +528,7 @@ window.__ModuleLoader__.load({
         "div",
         {
           ref: overlayRef,
-          className: "dshpet-overlay",
+          className: "harnessdock-pet-overlay",
           role: "img",
           "aria-label": `${PETS[current.petId].name} 桌面宠物；可悬停、点击和拖动贴边`,
           "data-edge": current.edge,
@@ -534,7 +547,7 @@ window.__ModuleLoader__.load({
         "button",
         {
           type: "button",
-          className: "dshpet-choice",
+          className: "harnessdock-pet-choice",
           role: "radio",
           "aria-checked": selected ? "true" : "false",
           "data-selected": selected ? "true" : undefined,
@@ -543,13 +556,13 @@ window.__ModuleLoader__.load({
         React.createElement(PetSprite, { petId: pet.id, compact: true }),
         React.createElement(
           "span",
-          { className: "dshpet-choice-copy" },
+          { className: "harnessdock-pet-choice-copy" },
           React.createElement("strong", null, pet.name),
           React.createElement("small", null, pet.description)
         ),
         React.createElement(
           "span",
-          { className: "dshpet-check", "aria-hidden": "true" },
+          { className: "harnessdock-pet-check", "aria-hidden": "true" },
           selected ? "✓" : ""
         )
       );
@@ -563,17 +576,17 @@ window.__ModuleLoader__.load({
 
       return React.createElement(
         "section",
-        { className: "dshpet-settings", "aria-labelledby": "dshpet-heading" },
+        { className: "harnessdock-pet-settings", "aria-labelledby": "harnessdock-pet-heading" },
         React.createElement(
           "div",
-          { className: "dshpet-heading" },
+          { className: "harnessdock-pet-heading" },
           React.createElement("div", null,
-            React.createElement("h3", { id: "dshpet-heading" }, "桌面宠物"),
+            React.createElement("h3", { id: "harnessdock-pet-heading" }, "桌面宠物"),
             React.createElement("p", null, "选择动画伙伴，并让它贴在应用边缘探头。")
           ),
           React.createElement(
             "label",
-            { className: "dshpet-toggle" },
+            { className: "harnessdock-pet-toggle" },
             React.createElement("input", {
               type: "checkbox",
               checked: current.visible,
@@ -584,7 +597,7 @@ window.__ModuleLoader__.load({
         ),
         React.createElement(
           "div",
-          { className: "dshpet-grid", role: "radiogroup", "aria-label": "选择桌面宠物" },
+          { className: "harnessdock-pet-grid", role: "radiogroup", "aria-label": "选择桌面宠物" },
           Object.values(PETS).map((pet) => React.createElement(PetChoice, {
             key: pet.id,
             pet,
@@ -594,11 +607,11 @@ window.__ModuleLoader__.load({
         ),
         React.createElement(
           "div",
-          { className: "dshpet-dock" },
+          { className: "harnessdock-pet-dock" },
           React.createElement("strong", null, "停靠边缘"),
           React.createElement(
             "div",
-            { className: "dshpet-dock-options", role: "radiogroup", "aria-label": "选择停靠边缘" },
+            { className: "harnessdock-pet-dock-options", role: "radiogroup", "aria-label": "选择停靠边缘" },
             DOCK_EDGES.map((edge) => React.createElement(
               "button",
               {
@@ -615,14 +628,14 @@ window.__ModuleLoader__.load({
         ),
         React.createElement(
           "p",
-          { className: "dshpet-footnote" },
+          { className: "harnessdock-pet-footnote" },
           "光标、点击和拖动会触发不同动作。可从非控件背景直接拖动；若宠物盖在按钮上，按住 ⌥ Option 可强制拖动。松手吸附最近边框并保存位置，普通点击仍会传给下方控件。"
         )
       );
     }
 
     const CSS = `
-      .dshpet-overlay {
+      .harnessdock-pet-overlay {
         position: fixed;
         z-index: 60;
         width: ${DISPLAY_WIDTH}px;
@@ -636,34 +649,34 @@ window.__ModuleLoader__.load({
         will-change: transform;
         transition: transform .48s cubic-bezier(.2, .8, .2, 1);
       }
-      .dshpet-overlay[data-edge="left"] { transform: translate(-62%, -50%); }
-      .dshpet-overlay[data-edge="right"] { transform: translate(62%, -50%); }
-      .dshpet-overlay[data-edge="bottom"] { transform: translate(-50%, 55%); }
-      .dshpet-overlay[data-edge="left"] .dshpet-sprite {
+      .harnessdock-pet-overlay[data-edge="left"] { transform: translate(-62%, -50%); }
+      .harnessdock-pet-overlay[data-edge="right"] { transform: translate(62%, -50%); }
+      .harnessdock-pet-overlay[data-edge="bottom"] { transform: translate(-50%, 55%); }
+      .harnessdock-pet-overlay[data-edge="left"] .harnessdock-pet-sprite {
         transform: rotate(22deg) scaleX(-1);
       }
-      .dshpet-overlay[data-edge="right"] .dshpet-sprite { transform: rotate(-22deg); }
-      .dshpet-overlay[data-edge="left"][data-peeking="true"] { transform: translate(-28%, -50%); }
-      .dshpet-overlay[data-edge="right"][data-peeking="true"] { transform: translate(28%, -50%); }
-      .dshpet-overlay[data-edge="bottom"][data-peeking="true"] { transform: translate(-50%, 22%); }
-      .dshpet-overlay[data-edge="left"][data-peeking="true"] .dshpet-sprite {
+      .harnessdock-pet-overlay[data-edge="right"] .harnessdock-pet-sprite { transform: rotate(-22deg); }
+      .harnessdock-pet-overlay[data-edge="left"][data-peeking="true"] { transform: translate(-28%, -50%); }
+      .harnessdock-pet-overlay[data-edge="right"][data-peeking="true"] { transform: translate(28%, -50%); }
+      .harnessdock-pet-overlay[data-edge="bottom"][data-peeking="true"] { transform: translate(-50%, 22%); }
+      .harnessdock-pet-overlay[data-edge="left"][data-peeking="true"] .harnessdock-pet-sprite {
         transform: rotate(6deg) scaleX(-1);
       }
-      .dshpet-overlay[data-edge="right"][data-peeking="true"] .dshpet-sprite {
+      .harnessdock-pet-overlay[data-edge="right"][data-peeking="true"] .harnessdock-pet-sprite {
         transform: rotate(-6deg);
       }
-      .dshpet-overlay[data-dragging="true"] {
+      .harnessdock-pet-overlay[data-dragging="true"] {
         transform: translate(-50%, -50%);
         transition: none;
         filter: drop-shadow(0 9px 12px rgb(0 0 0 / .32));
       }
-      .dshpet-overlay[data-edge="left"][data-dragging="true"] .dshpet-sprite {
+      .harnessdock-pet-overlay[data-edge="left"][data-dragging="true"] .harnessdock-pet-sprite {
         transform: scaleX(-1);
       }
-      .dshpet-overlay[data-edge="right"][data-dragging="true"] .dshpet-sprite {
+      .harnessdock-pet-overlay[data-edge="right"][data-dragging="true"] .harnessdock-pet-sprite {
         transform: none;
       }
-      .dshpet-sprite {
+      .harnessdock-pet-sprite {
         display: block;
         flex: none;
         background-repeat: no-repeat;
@@ -672,7 +685,7 @@ window.__ModuleLoader__.load({
         transition: transform .48s cubic-bezier(.2, .8, .2, 1);
         will-change: transform;
       }
-      .dshpet-settings {
+      .harnessdock-pet-settings {
         box-sizing: border-box;
         width: 100%;
         max-width: 760px;
@@ -681,23 +694,23 @@ window.__ModuleLoader__.load({
         flex-direction: column;
         gap: 18px;
       }
-      .dshpet-heading {
+      .harnessdock-pet-heading {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 24px;
       }
-      .dshpet-heading h3 { margin: 0 0 5px; font-size: 16px; }
-      .dshpet-heading p, .dshpet-footnote {
+      .harnessdock-pet-heading h3 { margin: 0 0 5px; font-size: 16px; }
+      .harnessdock-pet-heading p, .harnessdock-pet-footnote {
         margin: 0;
         color: var(--dsw-alias-label-tertiary, #9ca3af);
         font-size: 13px;
         line-height: 20px;
       }
-      .dshpet-toggle { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; font-size: 13px; }
-      .dshpet-toggle input { accent-color: var(--dsw-alias-state-business-primary, #8b5cf6); }
-      .dshpet-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-      .dshpet-choice {
+      .harnessdock-pet-toggle { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; font-size: 13px; }
+      .harnessdock-pet-toggle input { accent-color: var(--dsw-alias-state-business-primary, #8b5cf6); }
+      .harnessdock-pet-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .harnessdock-pet-choice {
         box-sizing: border-box;
         min-height: 116px;
         display: flex;
@@ -712,16 +725,16 @@ window.__ModuleLoader__.load({
         padding: 10px 12px;
         background: var(--dsw-alias-bg-layer-3, #303034);
       }
-      .dshpet-choice:hover { background: var(--dsw-alias-interactive-bg-hover, #3b3b40); }
-      .dshpet-choice[data-selected="true"] {
+      .harnessdock-pet-choice:hover { background: var(--dsw-alias-interactive-bg-hover, #3b3b40); }
+      .harnessdock-pet-choice[data-selected="true"] {
         border-color: var(--dsw-alias-state-business-primary, #8b5cf6);
         box-shadow: 0 0 0 2px color-mix(in srgb, var(--dsw-alias-state-business-primary, #8b5cf6) 20%, transparent);
       }
-      .dshpet-choice:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary, #8b5cf6); outline-offset: 2px; }
-      .dshpet-choice-copy { min-width: 0; display: flex; flex: 1; flex-direction: column; gap: 4px; }
-      .dshpet-choice-copy strong { font-size: 14px; }
-      .dshpet-choice-copy small { color: var(--dsw-alias-label-tertiary, #9ca3af); font-size: 12px; }
-      .dshpet-check {
+      .harnessdock-pet-choice:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary, #8b5cf6); outline-offset: 2px; }
+      .harnessdock-pet-choice-copy { min-width: 0; display: flex; flex: 1; flex-direction: column; gap: 4px; }
+      .harnessdock-pet-choice-copy strong { font-size: 14px; }
+      .harnessdock-pet-choice-copy small { color: var(--dsw-alias-label-tertiary, #9ca3af); font-size: 12px; }
+      .harnessdock-pet-check {
         width: 22px;
         height: 22px;
         display: grid;
@@ -731,11 +744,11 @@ window.__ModuleLoader__.load({
         background: var(--dsw-alias-state-business-primary, #8b5cf6);
         opacity: 0;
       }
-      .dshpet-choice[data-selected="true"] .dshpet-check { opacity: 1; }
-      .dshpet-dock { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-      .dshpet-dock > strong { font-size: 13px; }
-      .dshpet-dock-options { display: inline-flex; gap: 8px; }
-      .dshpet-dock-options button {
+      .harnessdock-pet-choice[data-selected="true"] .harnessdock-pet-check { opacity: 1; }
+      .harnessdock-pet-dock { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+      .harnessdock-pet-dock > strong { font-size: 13px; }
+      .harnessdock-pet-dock-options { display: inline-flex; gap: 8px; }
+      .harnessdock-pet-dock-options button {
         min-width: 64px;
         color: inherit;
         font: inherit;
@@ -746,19 +759,19 @@ window.__ModuleLoader__.load({
         padding: 6px 10px;
         background: var(--dsw-alias-bg-layer-3, #303034);
       }
-      .dshpet-dock-options button[data-selected="true"] {
+      .harnessdock-pet-dock-options button[data-selected="true"] {
         color: white;
         border-color: var(--dsw-alias-state-business-primary, #8b5cf6);
         background: var(--dsw-alias-state-business-primary, #8b5cf6);
       }
-      .dshpet-dock-options button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary, #8b5cf6); outline-offset: 2px; }
+      .harnessdock-pet-dock-options button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary, #8b5cf6); outline-offset: 2px; }
       @media (prefers-reduced-motion: reduce) {
-        .dshpet-overlay, .dshpet-sprite { transition: none; }
+        .harnessdock-pet-overlay, .harnessdock-pet-sprite { transition: none; }
       }
       @media (width <= 680px) {
-        .dshpet-grid { grid-template-columns: minmax(0, 1fr); }
-        .dshpet-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
-        .dshpet-dock { align-items: flex-start; flex-direction: column; }
+        .harnessdock-pet-grid { grid-template-columns: minmax(0, 1fr); }
+        .harnessdock-pet-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
+        .harnessdock-pet-dock { align-items: flex-start; flex-direction: column; }
       }
     `;
 
@@ -767,20 +780,22 @@ window.__ModuleLoader__.load({
     function apply(ctx) {
       ctx.effect(() => {
         const style = document.createElement("style");
-        style.dataset.plugin = "@dsharness/pet";
-        style.dataset.pluginCss = "@dsharness/pet/client.css";
+        style.dataset.plugin = "@harnessdock/pet";
+        style.dataset.pluginCss = "@harnessdock/pet/client.css";
         style.textContent = CSS;
         document.head.appendChild(style);
         return () => style.remove();
-      }, "dsharness-pet: styles");
+      }, "harnessdock-pet: styles");
 
       ctx.effect(() => {
         const onStorage = (event) => {
-          if (event.key === STORAGE_KEY) emitPreferences(readPreferences(), false);
+          if ([STORAGE_KEY, ...LEGACY_STORAGE_KEYS].includes(event.key)) {
+            emitPreferences(readPreferences(), false);
+          }
         };
         window.addEventListener("storage", onStorage);
         return () => window.removeEventListener("storage", onStorage);
-      }, "dsharness-pet: preference synchronization");
+      }, "harnessdock-pet: preference synchronization");
 
       function PetOverlayEntry() {
         return React.createElement(PetOverlay, { sessions: ctx.sessions });
@@ -788,7 +803,7 @@ window.__ModuleLoader__.load({
 
       ctx.slots.inject("shell.overlay", () => ctx.slots.register({
         name: "shell.overlay",
-        id: "dsharness-pet-overlay",
+        id: "harnessdock-pet-overlay",
         order: 60
       }, PetOverlayEntry));
 
@@ -802,7 +817,7 @@ window.__ModuleLoader__.load({
 
     exports.apply = apply;
     exports.inject = inject;
-    exports.__test = { commandSignal, nearestDock, normalizePreferences };
+    exports.__test = { commandSignal, nearestDock, normalizePreferences, readPreferences };
     return module.exports;
   }
 });

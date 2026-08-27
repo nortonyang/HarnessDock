@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import DsHarnessCore
+@testable import HarnessDockCore
 
 struct DeepSeekBalanceTests {
     @Test

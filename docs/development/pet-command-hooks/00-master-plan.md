@@ -2,7 +2,7 @@
 
 ## 目标
 
-让 DsHarness 的两套宠物都能响应正在执行的命令或消息任务：Harness Web 插件宠物订阅官方会话服务，Chat 原生宠物订阅 WebKit 页面生成状态。统一表现为运行时播放 `running`、成功后播放一次 `review`、失败后播放一次 `failed`，随后回到原有待机或鼠标交互状态。
+让 HarnessDock 的两套宠物都能响应正在执行的命令或消息任务：Harness Web 插件宠物订阅官方会话服务，Chat 原生宠物订阅 WebKit 页面生成状态。统一表现为运行时播放 `running`、成功后播放一次 `review`、失败后播放一次 `failed`，随后回到原有待机或鼠标交互状态。
 
 ## 非目标
 

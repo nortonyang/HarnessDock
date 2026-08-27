@@ -1,5 +1,5 @@
 {
-  "name": "@dsharness/pet",
+  "name": "@harnessdock/pet",
   "version": "0.1.0",
   "description": "Animated DeepWhale and Marina companions for DeepSeek Harness Web",
   "type": "module",

@@ -66,7 +66,7 @@
 
 /* Settings */
 "设置" = "Settings";
-"管理 DS Harness 的本机配置" = "Manage Local DS Harness Settings";
+"管理 HarnessDock 的本机配置" = "Manage Local HarnessDock Settings";
 "API 与余额" = "API & Balance";
 "API 与余额设置…" = "API & Balance Settings…";
 "连接 DeepSeek 开放平台账户并读取余额" = "Connect to your DeepSeek platform account and retrieve its balance";
@@ -76,13 +76,13 @@
 "语言" = "Language";
 "语言…" = "Language…";
 "应用语言" = "App Language";
-"选择 DS Harness 原生界面的显示语言" = "Choose the language for the native DS Harness interface";
+"选择 HarnessDock 原生界面的显示语言" = "Choose the language for the native HarnessDock interface";
 "跟随系统" = "System Default";
 "简体中文" = "简体中文";
 "随 macOS 的首选语言自动选择中文或英文" = "Use Chinese or English based on the preferred macOS language";
 "始终显示简体中文" = "Always display the interface in Simplified Chinese";
 "切换后立即应用并自动保存，无需重启应用或重新加载当前会话。" = "Changes apply and save immediately. No restart or session reload is needed.";
-"DeepSeek Chat 与官方 Harness 网页拥有各自的语言设置，本选项只控制 DS Harness 的原生按钮、菜单和设置界面。" = "DeepSeek Chat and the official Harness webpage have their own language settings. This option controls only native DS Harness buttons, menus, and settings.";
+"DeepSeek Chat 与官方 Harness 网页拥有各自的语言设置，本选项只控制 HarnessDock 的原生按钮、菜单和设置界面。" = "DeepSeek Chat and the official Harness webpage have their own language settings. This option controls only native HarnessDock buttons, menus, and settings.";
 "已选择" = "Selected";
 
 /* API key and balance */
@@ -192,10 +192,10 @@
 "在 Chat 页面显示原生宠物" = "Show the native pet on the Chat page";
 "来源" = "Source";
 "作者" = "Author";
-"DsHarness 内置" = "Bundled with DsHarness";
+"HarnessDock 内置" = "Bundled with HarnessDock";
 "Codex 宠物" = "Codex Pet";
-"DsHarness 导入" = "Imported into DsHarness";
-"导入 DsHarness 宠物包" = "Import a DsHarness Pet Package";
+"HarnessDock 导入" = "Imported into HarnessDock";
+"导入 HarnessDock 宠物包" = "Import a HarnessDock Pet Package";
 "请选择包含 pet.json 与 spritesheet.webp 的宠物文件夹。" = "Choose a pet folder containing pet.json and spritesheet.webp.";
 "导入" = "Import";
 "无法导入宠物包：%@" = "Could not import the pet package: %@";

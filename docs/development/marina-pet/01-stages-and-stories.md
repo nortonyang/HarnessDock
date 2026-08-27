@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | ST-601 | 真实 DSH 插件契约 | US-601 | 已完成 |
 | ST-602 | 8×9 Marina 宠物包 | US-602、US-603 | 已完成 |
-| ST-603 | `@dsharness/pet` bundle/client 插件 | US-604、US-605 | 已完成 |
+| ST-603 | `@harnessdock/pet` bundle/client 插件 | US-604、US-605 | 已完成 |
 | ST-604 | 安装、构建与实机审核 | US-606 | 已完成 |
 | ST-605 | 贴边、拖动吸附与探头动画 | US-607 | 已完成 |
 | ST-606 | 悬停、点击、拖动动作与发布检查 | US-608、US-609 | 已完成 |
@@ -17,11 +17,11 @@
 
 ## US-601：插件可被 Harness 识别
 
-作为 Harness 用户，我希望宠物是设置页插件列表中的正式插件，而不是仅由 DsHarness macOS 外壳绘制的功能。
+作为 Harness 用户，我希望宠物是设置页插件列表中的正式插件，而不是仅由 HarnessDock macOS 外壳绘制的功能。
 
 验收标准：
 
-- Given 插件安装到 `web` profile，When 查看组合配置，Then 存在 `id: pet` 且模块名为 `@dsharness/pet`。
+- Given 插件安装到 `web` profile，When 查看组合配置，Then 存在 `id: pet` 且模块名为 `@harnessdock/pet`。
 - Given Harness 正常启动，When 打开“设置 → 插件 → 插件列表”，Then 可以搜索并看到 `pet`，状态为启用。
 
 ## US-602：Marina 保持参考角色身份
@@ -71,7 +71,7 @@
 
 - 本地包可以被 `dsh plugin --profile web add` 安装并加入 profile bundles。
 - 删除该依赖即可移除插件层；仓库内插件是唯一源代码，不修改 npm 缓存中的 Harness 文件。
-- DsHarness 原生构建检查仍通过，现有用户改动不被覆盖。
+- HarnessDock 原生构建检查仍通过，现有用户改动不被覆盖。
 
 ## US-607：贴边后探头探脑
 
@@ -104,14 +104,14 @@
 - 文档明确区分 npm/GitHub 可安装发布与 DeepSeek 官方收录；在没有公开官方插件站投稿入口时，不声称已经上传。
 - 官方收录通过 `deepseek-ai/deepseek-harness` 上游提案或 PR，由项目维护者决定是否接受。
 
-## US-610：部署到本地 DsHarness 应用
+## US-610：部署到本地 HarnessDock 应用
 
-作为本机用户，我希望宠物插件随安装后的 DsHarness 应用交付，不依赖开发仓库路径。
+作为本机用户，我希望宠物插件随安装后的 HarnessDock 应用交付，不依赖开发仓库路径。
 
 验收标准：
 
-- Given 执行应用构建，When 检查 app bundle，Then `Contents/Resources/Plugins/dsh-pet` 包含插件运行所需的 6 个发布文件。
-- Given 应用复制到 `/Applications/DsHarness.app`，When 安装 Harness profile 插件，Then `@dsharness/pet` 链接目标位于应用 Resources，而不是仓库目录。
+- Given 执行应用构建，When 检查 app bundle，Then `Contents/Resources/Plugins/harnessdock-pet` 包含插件运行所需的 6 个发布文件。
+- Given 应用复制到 `/Applications/HarnessDock.app`，When 安装 Harness profile 插件，Then `@harnessdock/pet` 链接目标位于应用 Resources，而不是仓库目录。
 - Given 旧 Harness 服务被安全重启，When 打开本地应用，Then 3080 启动图加载 `pet` 且设置页仍可见。
 
 ## US-611：左侧停靠露头且朝内

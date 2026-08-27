@@ -7,7 +7,7 @@
 | 1 | 增加主页面选择、Chat 懒加载和重载状态 | Codex | `AppModel.swift` | 构建/状态审核 | 已完成 |
 | 2 | 用 ZStack 常驻两个页面并增加标题栏 Picker | Codex | `ContentView.swift` | 实机切换 | 已完成 |
 | 3 | 实现官方 Chat WKWebView、域名策略、上传和弹窗导航 | Codex | `DeepSeekChatWebView.swift` | 实机登录页/代码审核 | 已完成 |
-| 4 | 增加菜单快捷键、README 和错误回退 | Codex | `DsHarnessApp.swift`、`README.md` | 实机/文档 | 已完成 |
+| 4 | 增加菜单快捷键、README 和错误回退 | Codex | `HarnessDockApp.swift`、`README.md` | 实机/文档 | 已完成 |
 | 5 | 构建、签名、实机验证和审核 | Codex | app/docs | 命令/截图 | 已完成 |
 
 ## 完成度

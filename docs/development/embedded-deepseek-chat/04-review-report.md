@@ -25,7 +25,7 @@
 
 - `./scripts/run_checks.sh`：通过。
 - `./scripts/build_app.sh`：通过。
-- `codesign --verify --deep --strict dist/DsHarness.app`：通过。
+- `codesign --verify --deep --strict dist/HarnessDock.app`：通过。
 - `git diff --check`：通过。
 - Computer Use：标题栏切换功能通过；最终短标签定为 `Harness / Chat`；官方 Chat 顶层 URL 加载成功；返回 Harness 后再次进入 Chat 未出现重新加载状态。
 - 隐私检查：未登录、未填写表单、未发送消息、未上传文件，也未保存包含用户聊天记录的验收截图。

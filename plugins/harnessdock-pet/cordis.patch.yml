@@ -2,4 +2,4 @@
 # built-in Harness entry. The browser half is discovered through dsh.client.
 - insert:
     - id: pet
-      name: '@dsharness/pet'
+      name: '@harnessdock/pet'

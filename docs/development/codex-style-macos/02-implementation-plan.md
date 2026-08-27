@@ -4,10 +4,10 @@
 
 | 步骤 | 工作内容 | 负责人 | 文件或区域 | 验证方式 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 建立 Swift Package、核心配置和测试 | Codex | `Package.swift`、`Sources/DsHarnessCore/`、`Tests/` | `./scripts/run_checks.sh`；完整 Xcode 环境运行 `swift test` | 已完成 |
-| 2 | 实现 npx 定位和 Harness 子进程控制 | Codex | `Sources/DsHarnessApp/AppModel.swift` | `swift build`、smoke test | 已完成 |
-| 3 | 实现 SwiftUI 侧边栏、状态页和设置 | Codex | `Sources/DsHarnessApp/ContentView.swift` | UI 检查 | 已完成 |
-| 4 | 实现 WKWebView 容器与导航动作 | Codex | `Sources/DsHarnessApp/HarnessWebView.swift` | UI 检查 | 已完成 |
+| 1 | 建立 Swift Package、核心配置和测试 | Codex | `Package.swift`、`Sources/HarnessDockCore/`、`Tests/` | `./scripts/run_checks.sh`；完整 Xcode 环境运行 `swift test` | 已完成 |
+| 2 | 实现 npx 定位和 Harness 子进程控制 | Codex | `Sources/HarnessDockApp/AppModel.swift` | `swift build`、smoke test | 已完成 |
+| 3 | 实现 SwiftUI 侧边栏、状态页和设置 | Codex | `Sources/HarnessDockApp/ContentView.swift` | UI 检查 | 已完成 |
+| 4 | 实现 WKWebView 容器与导航动作 | Codex | `Sources/HarnessDockApp/HarnessWebView.swift` | UI 检查 | 已完成 |
 | 5 | 生成 `.app` 和使用文档 | Codex | `scripts/build_app.sh`、`README.md` | 打包与 plist 校验 | 已完成 |
 | 6 | 对照验收标准审核 | Codex | `04-review-report.md` | 测试、diff、审核 | 已完成 |
 
@@ -18,7 +18,7 @@
 | 规划与架构 | 100% | `00-master-plan.md`、`01-stages-and-stories.md` | 已完成文档门禁 |
 | Swift 核心与服务 | 90% | 核心检查通过；服务附着 smoke test 通过 | NVM-only Finder 自动发现结转 |
 | macOS UI | 100% | `ui-preview.jpeg`、`ui-running.jpeg` | 欢迎页和真实 Harness 均已验证 |
-| 打包与交付 | 100% | `dist/DsHarness.app`、codesign/plutil 校验 | 本机 ad-hoc 包 |
+| 打包与交付 | 100% | `dist/HarnessDock.app`、codesign/plutil 校验 | 本机 ad-hoc 包 |
 
 ## 要修复的问题
 

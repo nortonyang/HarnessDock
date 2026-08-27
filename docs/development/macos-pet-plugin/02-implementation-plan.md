@@ -4,11 +4,11 @@
 
 | 步骤 | 工作内容 | 负责人 | 文件或区域 | 验证方式 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 增加宠物清单、固定图集几何和动画时序模型 | Codex | `Sources/DsHarnessCore/PetPlugin.swift` | 核心检查、XCTest | 已完成 |
-| 2 | 增加包发现、图片校验、导入和偏好持久化控制器 | Codex | `Sources/DsHarnessApp/PetPluginController.swift` | 构建、只读样本验证 | 已完成 |
-| 3 | 增加图集帧裁切和宠物覆盖层 | Codex | `Sources/DsHarnessApp/PetPluginView.swift` | 构建、实机视觉检查 | 已完成 |
-| 4 | 将插件接入主窗口、工具栏、菜单和设置 sheet | Codex | `ContentView.swift`、`DsHarnessApp.swift` | 构建、交互检查 | 已完成 |
-| 5 | 更新 README、核心检查和单元测试 | Codex | `README.md`、`Sources/DsHarnessCoreChecks/main.swift`、`Tests` | 仓库验证命令 | 已完成 |
+| 1 | 增加宠物清单、固定图集几何和动画时序模型 | Codex | `Sources/HarnessDockCore/PetPlugin.swift` | 核心检查、XCTest | 已完成 |
+| 2 | 增加包发现、图片校验、导入和偏好持久化控制器 | Codex | `Sources/HarnessDockApp/PetPluginController.swift` | 构建、只读样本验证 | 已完成 |
+| 3 | 增加图集帧裁切和宠物覆盖层 | Codex | `Sources/HarnessDockApp/PetPluginView.swift` | 构建、实机视觉检查 | 已完成 |
+| 4 | 将插件接入主窗口、工具栏、菜单和设置 sheet | Codex | `ContentView.swift`、`HarnessDockApp.swift` | 构建、交互检查 | 已完成 |
+| 5 | 更新 README、核心检查和单元测试 | Codex | `README.md`、`Sources/HarnessDockCoreChecks/main.swift`、`Tests` | 仓库验证命令 | 已完成 |
 | 6 | 对照用户故事审核并更新完成度 | Codex | 本目录 `04-review-report.md` | diff 审核 | 已完成 |
 | 7 | 用 hatch-pet/imagegen 生成并审核 DeepWhale 8×9 动画包 | Codex + 图像生成子代理 | `artifacts/pets/deepwhale-run` | 图集校验、联系表、逐帧检查 | 已完成 |
 | 8 | 将 DeepWhale 作为 SwiftPM 与 `.app` 内置资源接入发现逻辑 | Codex | `Package.swift`、`PetPluginController.swift`、`scripts/build_app.sh`、资源目录 | 构建、产物检查、独立 UI QA | 已完成 |
@@ -23,7 +23,7 @@
 | 宠物包运行时 | 100% | `PetPlugin.swift`、`PetPluginController.swift` | 自动发现、校验、导入和持久化已实现 |
 | 动画与设置 UI | 100% | `PetPluginView.swift`、独立 QA 窗口验证 | 宠物、工具栏和设置页已实机显示 |
 | 验证与审核 | 100% | 核心检查、Release 构建、签名验证、`04-review-report.md` | `swift test` 的仓库既有环境限制已记录 |
-| 内置 DeepWhale | 100% | `Sources/DsHarnessApp/Resources/Pets/DeepWhale`、`artifacts/pets/deepwhale-run/qa`、独立 Bundle ID UI QA | 预览视频因本机无 `ffmpeg` 跳过；逐帧、联系表与图集校验通过 |
+| 内置 DeepWhale | 100% | `Sources/HarnessDockApp/Resources/Pets/DeepWhale`、`artifacts/pets/deepwhale-run/qa`、独立 Bundle ID UI QA | 预览视频因本机无 `ffmpeg` 跳过；逐帧、联系表与图集校验通过 |
 | Marina Codex 宠物 | 100% | 10 个任务完成、QA 通过、源/安装包哈希一致、Chat 实机显示 Marina | 已安装到 `~/.codex/pets/marina` 并选中 |
 
 ## 要修复的问题
@@ -50,7 +50,7 @@
 | 页面错误 | WebView 有加载错误 | 宠物播放 failed | 状态映射审核 |
 | 减少动态 | macOS 开启减少动态效果 | 每个状态固定第一帧 | 实机检查 |
 | 全新安装 | 独立 Bundle ID、无外部宠物与无偏好 | 主窗口默认显示 DeepWhale | 独立应用 QA |
-| 旧版仍运行 | 已打开旧 DsHarness 进程 | 退出旧进程并重新打开 `dist/DsHarness.app` 后看到新入口 | 实机检查 |
+| 旧版仍运行 | 已打开旧 HarnessDock 进程 | 退出旧进程并重新打开 `dist/HarnessDock.app` 后看到新入口 | 实机检查 |
 | Chat 与 Harness 角色同步 | Harness 已选择 Marina，Chat 当前为 DeepWhale | 安装 Codex Marina 并只切换 Chat 原生选择；两套运行时保持隔离 | 包哈希、偏好与重启检查 |
 
 ## 兼容与回滚策略

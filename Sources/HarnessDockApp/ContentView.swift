@@ -1,5 +1,5 @@
 import AppKit
-import DsHarnessCore
+import HarnessDockCore
 import SwiftUI
 
 struct ContentView: View {
@@ -311,7 +311,7 @@ private struct SidebarView: View {
                 BrandMark()
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("DS Harness")
+                    Text("HarnessDock")
                         .font(.system(size: 15, weight: .semibold))
                     Text("for macOS · Preview")
                         .font(.system(size: 10, weight: .medium))
@@ -401,7 +401,7 @@ private struct SidebarView: View {
             BrandMark()
                 .padding(.top, 34)
                 .padding(.bottom, 4)
-                .help("DS Harness")
+                .help("HarnessDock")
 
             RailButton(
                 systemImage: "sidebar.right",
@@ -1329,7 +1329,7 @@ struct AppSettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("设置")
                         .font(.system(size: 16, weight: .semibold))
-                    Text("管理 DS Harness 的本机配置")
+                    Text("管理 HarnessDock 的本机配置")
                         .font(.system(size: 10.5))
                         .foregroundStyle(.secondary)
                 }
@@ -1541,7 +1541,7 @@ private struct LanguageSettingsPane: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("应用语言")
                         .font(.system(size: 14, weight: .semibold))
-                    Text("选择 DS Harness 原生界面的显示语言")
+                    Text("选择 HarnessDock 原生界面的显示语言")
                         .font(.system(size: 10.5))
                         .foregroundStyle(.secondary)
                 }
@@ -1604,7 +1604,7 @@ private struct LanguageSettingsPane: View {
             HStack(alignment: .top, spacing: 9) {
                 Image(systemName: "safari")
                     .foregroundStyle(.secondary)
-                Text("DeepSeek Chat 与官方 Harness 网页拥有各自的语言设置，本选项只控制 DS Harness 的原生按钮、菜单和设置界面。")
+                Text("DeepSeek Chat 与官方 Harness 网页拥有各自的语言设置，本选项只控制 HarnessDock 的原生按钮、菜单和设置界面。")
                     .font(.system(size: 10.5))
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

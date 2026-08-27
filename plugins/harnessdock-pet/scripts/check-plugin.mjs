@@ -11,14 +11,14 @@ const patch = await readFile(resolve(pluginDir, "cordis.patch.yml"), "utf8");
 const client = await readFile(resolve(pluginDir, "lib/client.js"), "utf8");
 const assets = JSON.parse(await readFile(resolve(pluginDir, "lib/assets.json"), "utf8"));
 
-assert.equal(manifest.name, "@dsharness/pet");
+assert.equal(manifest.name, "@harnessdock/pet");
 assert.equal(manifest.dsh.bundle.patch, "./cordis.patch.yml");
 assert.equal(manifest.dsh.client.platform, "web");
 assert.equal(manifest.exports["./client"], "./lib/client.js");
 assert.match(patch, /id:\s*pet/);
-assert.match(patch, /name:\s*'@dsharness\/pet'/);
+assert.match(patch, /name:\s*'@harnessdock\/pet'/);
 assert.match(client, /window\.__ModuleLoader__\.load/);
-assert.match(client, /id:\s*"@dsharness\/pet"/);
+assert.match(client, /id:\s*"@harnessdock\/pet"/);
 assert.match(client, /ctx\.slots\.inject\("shell\.overlay"/);
 assert.match(client, /ctx\.slots\.inject\("settings\.plugins\.tab"/);
 assert.match(client, /data:image\/webp;base64,/);
@@ -51,14 +51,14 @@ assert.match(client, /translate\(28%, -50%\)/);
 assert.match(client, /translate\(-50%, 22%\)/);
 assert.match(
   client,
-  /\.dshpet-overlay\[data-edge="left"\] \.dshpet-sprite\s*\{\s*transform:\s*rotate\(22deg\) scaleX\(-1\);\s*\}/
+  /\.harnessdock-pet-overlay\[data-edge="left"\] \.harnessdock-pet-sprite\s*\{\s*transform:\s*rotate\(22deg\) scaleX\(-1\);\s*\}/
 );
-assert.match(client, /data-edge="right"\] \.dshpet-sprite \{ transform: rotate\(-22deg\); \}/);
+assert.match(client, /data-edge="right"\] \.harnessdock-pet-sprite \{ transform: rotate\(-22deg\); \}/);
 assert.match(client, /transform-origin:\s*50% 100%/);
 assert.match(client, /data-edge="left"\]\[data-dragging="true"\][\s\S]{0,100}scaleX\(-1\)/);
 assert.match(client, /data-edge="right"\]\[data-dragging="true"\][\s\S]{0,100}transform:\s*none/);
-assert.doesNotMatch(client, /data-edge="bottom"\] \.dshpet-sprite/);
-assert.doesNotMatch(client, /className:\s*"dshpet-overlay"[\s\S]{0,200}onClick:/);
+assert.doesNotMatch(client, /data-edge="bottom"\] \.harnessdock-pet-sprite/);
+assert.doesNotMatch(client, /className:\s*"harnessdock-pet-overlay"[\s\S]{0,200}onClick:/);
 assert.doesNotMatch(client, /__(?:DEEPWHALE|MARINA)_DATA_URL__/);
 assert.match(assets.deepwhale.sha256, /^[a-f0-9]{64}$/);
 assert.match(assets.marina.sha256, /^[a-f0-9]{64}$/);
@@ -67,9 +67,20 @@ let handoff;
 const effects = [];
 const registrations = [];
 const styleNodes = [];
+const storageValues = new Map([
+  ["dsharness.pet.preferences.v1", JSON.stringify({
+    petId: "marina",
+    visible: false,
+    edge: "left",
+    offset: 0.3
+  })]
+]);
 const windowMock = {
   __ModuleLoader__: { load(value) { handoff = value; } },
-  localStorage: { getItem() { return null; }, setItem() {} },
+  localStorage: {
+    getItem(key) { return storageValues.get(key) ?? null; },
+    setItem(key, value) { storageValues.set(key, value); }
+  },
   addEventListener() {},
   removeEventListener() {}
 };
@@ -79,12 +90,17 @@ const documentMock = {
 };
 
 vm.runInNewContext(client, { window: windowMock, document: documentMock }, { filename: "lib/client.js" });
-assert.equal(handoff.id, "@dsharness/pet");
+assert.equal(handoff.id, "@harnessdock/pet");
 const browserPlugin = handoff.factory((specifier) => {
   if (specifier === "react") return {};
   throw new Error(`unexpected client require: ${specifier}`);
 });
 assert.deepEqual([...browserPlugin.inject], ["sessions", "slots"]);
+assert.deepEqual(
+  JSON.parse(storageValues.get("harnessdock.pet.preferences.v1")),
+  { petId: "marina", visible: false, edge: "left", offset: 0.3 }
+);
+assert.equal(browserPlugin.__test.readPreferences().petId, "marina");
 assert.equal(browserPlugin.__test.nearestDock(5, 300, 1000, 800).edge, "left");
 assert.equal(browserPlugin.__test.nearestDock(995, 300, 1000, 800).edge, "right");
 assert.equal(browserPlugin.__test.nearestDock(500, 795, 1000, 800).edge, "bottom");
@@ -144,9 +160,9 @@ browserPlugin.apply({
 });
 assert.deepEqual(
   registrations.map(({ options }) => `${options.name}:${options.id}`),
-  ["shell.overlay:dsharness-pet-overlay", "settings.plugins.tab:desktop-pet"]
+  ["shell.overlay:harnessdock-pet-overlay", "settings.plugins.tab:desktop-pet"]
 );
 assert.equal(styleNodes.length, 1);
 for (const dispose of effects.reverse()) dispose();
 
-console.log("@dsharness/pet checks passed");
+console.log("@harnessdock/pet checks passed");

@@ -242,7 +242,7 @@
 
 #### 验收标准
 
-- Given 构建环境，When 运行 `./scripts/build_app.sh`，Then `dist/DsHarness.app` 存在且主程序可执行。
+- Given 构建环境，When 运行 `./scripts/build_app.sh`，Then `dist/HarnessDock.app` 存在且主程序可执行。
 
 #### 验证方式
 

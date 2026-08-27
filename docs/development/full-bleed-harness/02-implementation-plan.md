@@ -7,7 +7,7 @@
 | 1 | 运行态直接返回 WebView | Codex | `ContentView.swift` | 构建/截图 | 已完成 |
 | 2 | 增加幂等余额 user script 与消息处理 | Codex | `HarnessWebView.swift` | 构建/交互 | 已完成 |
 | 3 | 增加余额注入展示模型 | Codex | `AppModel.swift` | 核心审核 | 已完成 |
-| 4 | 补充 macOS 菜单入口 | Codex | `DsHarnessApp.swift` | 菜单检查 | 已完成 |
+| 4 | 补充 macOS 菜单入口 | Codex | `HarnessDockApp.swift` | 菜单检查 | 已完成 |
 | 5 | 构建、实机截图和复审 | Codex | app/docs | 命令+实机 | 已完成 |
 | 6 | 增加余额显式关闭与动作后自动收起 | Codex | `HarnessWebView.swift` | 实机交互 | 已完成 |
 | 7 | 将设置按钮改为“配置 API Key”主入口，Keychain 优先且可回退环境变量 | Codex | `HarnessWebView.swift`、`AppModel.swift`、现有配置 sheet | 实机交互 | 已完成 |
@@ -26,12 +26,12 @@
 | 20 | 在余额摘要与面板标题加入时段标签，并将模型价目表改为默认折叠 | Codex | `AppModel.swift`、`HarnessWebView.swift` | 构建/实机展开与 AX tree | 已完成 |
 | 21 | 以中文官方表替换模型价格、模型范围、单位与来源链接 | Codex | `DeepSeekPricing.swift`、`AppModel.swift`、checks | 核心断言/构建/实机价格面板 | 已完成 |
 | 22 | 从 Harness 当前会话统计文本提取输入/输出 tokens 并同步到余额 UI | Codex | `HarnessWebView.swift` | 实机会话/AX tree/动态刷新 | 已完成 |
-| 23 | 将余额 Key 表单迁入原生 Settings 场景并统一所有入口 | Codex | `DsHarnessApp.swift`、`ContentView.swift`、`AppModel.swift` | 构建/实机入口与设置窗口 | 已完成 |
+| 23 | 将余额 Key 表单迁入原生 Settings 场景并统一所有入口 | Codex | `HarnessDockApp.swift`、`ContentView.swift`、`AppModel.swift` | 构建/实机入口与设置窗口 | 已完成 |
 | 24 | 根据凭据来源折叠或展开 API Key 编辑表单 | Codex | `ContentView.swift` | 构建/环境变量与未配置实机状态 | 已完成 |
 | 25 | 注入 Harness 设置页分步引导、目标高亮与可重复入口 | Codex | `HarnessWebView.swift` | 构建/首次与重复打开实机检查 | 已完成 |
-| 26 | 将主题背景内容迁入带栏目导航的统一设置窗口 | Codex | `AppModel.swift`、`ContentView.swift`、`DsHarnessApp.swift` | 构建/三个入口与栏目切换实机检查 | 已完成 |
+| 26 | 将主题背景内容迁入带栏目导航的统一设置窗口 | Codex | `AppModel.swift`、`ContentView.swift`、`HarnessDockApp.swift` | 构建/三个入口与栏目切换实机检查 | 已完成 |
 | 27 | 在 window 捕获阶段区分 Chat 输入法确认、普通发送与修饰键换行 | Codex | `DeepSeekChatEnterBehavior.swift`、`DeepSeekChatWebView.swift`、定向检查 | 首次确认/二次发送/修饰/单行/空白发送计数 | 已完成 |
-| 28 | 增加语言偏好、英文资源、设置栏目及动态文案桥接 | Codex | `AppLocalization.swift`、`AppModel.swift`、`ContentView.swift`、`DsHarnessApp.swift`、本地化资源、构建脚本 | 资源检查/release 构建/中英文实机切换 | 已完成 |
+| 28 | 增加语言偏好、英文资源、设置栏目及动态文案桥接 | Codex | `AppLocalization.swift`、`AppModel.swift`、`ContentView.swift`、`HarnessDockApp.swift`、本地化资源、构建脚本 | 资源检查/release 构建/中英文实机切换 | 已完成 |
 
 ## 完成度
 
@@ -43,7 +43,7 @@
 | 验证 | 100% | checks/build/plist/codesign | 全部门禁通过 |
 | 余额交互收口 | 100% | AX tree、release 构建 | 收起和安全输入页均实机可达 |
 | 侧栏折叠联动 | 100% | AX tree + 实机截图 | 折叠态只显示 40pt `¥` 图标 |
-| 紧凑图标对齐 | 100% | `balance-sidebar-aligned.png` | 折叠态 6pt 左边距使图标中心线一致；展开态仍为 12pt |
+| 紧凑图标对齐 | 100% | 历史本地视觉检查 | 折叠态 6pt 左边距使图标中心线一致；旧品牌/真实工作区截图已从公开树移除 |
 | 展开态视觉融合 | 100% | Computer Use 实机截图 | 无框侧栏行与设置项对齐，详情浮层保持独立 |
 | 公开发布安全收口 | 100% | Git 忽略检查、密钥扫描、`release-readiness.md` | 可立即修复项已完成，正式发布阻塞项已分级记录 |
 | 展开态图标网格 | 100% | Computer Use 实机截图 | `¥` 与设置齿轮共用 18pt 图标列，金额与“设置”文字起点一致 |

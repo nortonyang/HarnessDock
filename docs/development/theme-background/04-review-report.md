@@ -3,7 +3,7 @@
 ## 审核范围
 
 - 规划中的 US-301 至 US-305。
-- `AppModel.swift`、`ContentView.swift`、`DsHarnessApp.swift`、`HarnessWebView.swift` 的主题增量。
+- `AppModel.swift`、`ContentView.swift`、`HarnessDockApp.swift`、`HarnessWebView.swift` 的主题增量。
 
 ## 问题发现
 
@@ -28,7 +28,7 @@
 
 - `./scripts/build_app.sh`：通过。
 - `./scripts/run_checks.sh`：通过。
-- `codesign --verify --deep --strict dist/DsHarness.app`：通过。
+- `codesign --verify --deep --strict dist/HarnessDock.app`：通过。
 - `git diff --check`：通过。
 - 独立测试副本：主题设置可打开，“完成”和 Esc 均可关闭，当前背景和遮罩未改变。
 - 背景回归测试：主题启用后侧栏和主工作区均显示图片；Harness 深层 DOM 变化后动态重新标记布局面。

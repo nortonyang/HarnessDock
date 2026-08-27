@@ -1,4 +1,4 @@
-# DS Harness for macOS
+# HarnessDock for macOS
 
 [English](README.md) · [简体中文](README.zh-CN.md)
 
@@ -9,18 +9,18 @@
 
 **A native macOS workspace for DeepSeek Harness—with local project launching, API balance and peak/off-peak pricing, built-in DeepSeek Chat, custom backgrounds, and animated pets.**
 
-DS Harness wraps the official [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) web UI in a SwiftUI and WebKit desktop experience. Choose a local project, let the app start the pinned Harness runtime, and work without managing terminal commands or browser tabs.
+HarnessDock wraps the official [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) web UI in a SwiftUI and WebKit desktop experience. Choose a local project, let the app start the pinned Harness runtime, and work without managing terminal commands or browser tabs.
 
 > [!WARNING]
-> DS Harness is an independent, unofficial project and is not affiliated with or endorsed by DeepSeek. DeepSeek Harness is still a developer preview, so upstream changes may require compatibility updates.
+> HarnessDock is an independent, unofficial project and is not affiliated with or endorsed by DeepSeek. DeepSeek Harness is still a developer preview, so upstream changes may require compatibility updates.
 
 ## Screenshots
 
-![DS Harness workspace with API balance](docs/screenshots/full-bleed-balance.png)
+The earlier development screenshots were removed because they contained a real workspace and the previous product name. A sanitized HarnessDock gallery will be added before the public Product Hunt launch.
 
 ## Overview
 
-DS Harness is designed for developers who want the official Harness workflow to feel at home on macOS. The native shell handles project selection, runtime startup, recovery, logs, shortcuts, local settings, and presentation while the Harness UI continues to provide conversations, tools, approvals, and plugins.
+HarnessDock is designed for developers who want the official Harness workflow to feel at home on macOS. The native shell handles project selection, runtime startup, recovery, logs, shortcuts, local settings, and presentation while the Harness UI continues to provide conversations, tools, approvals, and plugins.
 
 ## Features
 
@@ -33,10 +33,10 @@ DS Harness is designed for developers who want the official Harness workflow to 
 - **Custom background image** with an adjustable content mask, stored only on the current Mac.
 - **Bilingual native interface** with System Default, Simplified Chinese, and English options.
 - **Guided settings tour** explaining presets, permissions, appearance, send behavior, models, and plugins.
-- **Task-aware animated pets** through the `@dsharness/pet` Harness plugin: the pet reacts to running, successful, and failed tasks, with an optional local Chat preview layer.
+- **Task-aware animated pets** through the `@harnessdock/pet` Harness plugin: the pet reacts to running, successful, and failed tasks, with an optional local Chat preview layer.
 - **Reliable lifecycle management** that safely reuses a verified existing Harness service and cleans up processes started by the app.
 
-## What DS Harness Does Not Do
+## What HarnessDock Does Not Do
 
 - It does not replace or reimplement DeepSeek Harness.
 - It does not bypass DeepSeek Chat login; the Chat tab opens the official website and uses its normal account session.
@@ -65,20 +65,20 @@ npx --version
 The repository currently supports source builds. It does **not** yet publish a Developer ID-signed and Apple-notarized installer.
 
 ```bash
-git clone https://github.com/nortonyang/DsHarness.git
-cd DsHarness
+git clone https://github.com/nortonyang/HarnessDock.git
+cd HarnessDock
 ./scripts/build_app.sh
-open dist/DsHarness.app
+open dist/HarnessDock.app
 ```
 
-The build script creates `dist/DsHarness.app`, embeds the six release files for the pet plugin, and applies an ad-hoc signature for local testing. Do not redistribute this local artifact as a trusted consumer release.
+The build script creates `dist/HarnessDock.app`, embeds the six release files for the pet plugin, and applies an ad-hoc signature for local testing. Do not redistribute this local artifact as a trusted consumer release.
 
 ## Usage
 
-1. Open DS Harness. If a previous workspace exists, **Enter** reopens it; otherwise choose a local project folder.
+1. Open HarnessDock. If a previous workspace exists, **Enter** reopens it; otherwise choose a local project folder.
 2. Wait until the status becomes **Local**. Harness starts on `127.0.0.1:3080` by default.
 3. Configure model access in **Harness → Settings → Models**.
-4. To display account balance, open **DS Harness → Settings → API & Balance** and save a separate DeepSeek API key to Keychain.
+4. To display account balance, open **HarnessDock → Settings → API & Balance** and save a separate DeepSeek API key to Keychain.
 5. Start a task in the official Harness interface, or switch to **Chat** for the official DeepSeek web chat.
 
 The first visit to Harness settings shows a six-step guide. It explains the available controls without changing them. Select **Quick Start** in the settings header to reopen the guide at any time.
@@ -97,7 +97,7 @@ In Chat, IME confirmation does not send the draft, modified Enter inserts a newl
 - The balance key is not passed to the Harness child process or the Chat page.
 - Background image copies remain in this Mac's Application Support directory.
 - Imported pet packages are read as JSON and image assets; their code is not executed.
-- DS Harness does not include analytics or crash reporting in the current preview.
+- HarnessDock does not include analytics or crash reporting in the current preview.
 
 Model pricing is displayed in RMB per million tokens using DeepSeek's [official Chinese pricing page](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) as the reference. Pricing can change; the official page and your account bill remain authoritative. Token counters are read from locally available Harness session statistics and may not represent complete account-wide usage.
 
@@ -107,12 +107,12 @@ Open **Settings → Theme Background** or press `⇧⌘T` to import, replace, re
 
 ## Pets
 
-The Harness plugin lives in `plugins/dsh-pet` and is published locally as `@dsharness/pet` with entry ID `pet`.
+The Harness plugin lives in `plugins/harnessdock-pet` and is published locally as `@harnessdock/pet` with entry ID `pet`.
 
 ```bash
-npm --prefix plugins/dsh-pet run build
-npm --prefix plugins/dsh-pet run check
-dsh plugin --profile web add ./plugins/dsh-pet
+npm --prefix plugins/harnessdock-pet run build
+npm --prefix plugins/harnessdock-pet run check
+dsh plugin --profile web add ./plugins/harnessdock-pet
 ```
 
 Restart Harness after installation. Open **Settings → Plugins → Desktop Pet** to select DeepWhale or Marina, hide the pet, or change its dock position.
@@ -140,13 +140,13 @@ The optional native pet layer is limited to Chat and reads compatible packages f
 Run from source:
 
 ```bash
-swift run DsHarness
+swift run HarnessDock
 ```
 
 Use a specific workspace and port during development:
 
 ```bash
-swift run DsHarness --workspace /absolute/path/to/project --port 3095
+swift run HarnessDock --workspace /absolute/path/to/project --port 3095
 ```
 
 Validate a local build:
@@ -155,7 +155,7 @@ Validate a local build:
 ./scripts/run_checks.sh
 swift build
 ./scripts/build_app.sh
-plutil -lint dist/DsHarness.app/Contents/Info.plist
+plutil -lint dist/HarnessDock.app/Contents/Info.plist
 ```
 
 With a full Xcode installation, you can also run `swift test`. Command Line Tools-only systems may lack XCTest/Testing frameworks, so `run_checks.sh` provides framework-independent core checks.
@@ -163,25 +163,27 @@ With a full Xcode installation, you can also run `swift test`. Command Line Tool
 ## Project Structure
 
 ```text
-DsHarness/
+HarnessDock/
 ├── Sources/                  # SwiftUI shell, WebKit integration, app state, and core services
 ├── Tests/                    # XCTest unit tests
 ├── Resources/                # Info.plist and app icon resources
-├── plugins/dsh-pet/          # Official-slot Harness desktop pet plugin
+├── plugins/harnessdock-pet/          # Official-slot Harness desktop pet plugin
 ├── scripts/                  # Build and validation scripts
 └── docs/                     # Screenshots, plans, reviews, and release notes
 ```
 
 ## Upgrade and Uninstall
 
-To upgrade a source build, quit DS Harness, pull the latest source, rebuild, and reopen `dist/DsHarness.app`. A running copy is not replaced automatically.
+To upgrade a source build, quit HarnessDock, pull the latest source, rebuild, and reopen `dist/HarnessDock.app`. A running copy is not replaced automatically.
+
+When upgrading from DS Harness, existing Chat cookies, local settings, backgrounds, imported pets, and the balance credential remain available. HarnessDock intentionally keeps the compatibility bundle identifier `app.dsharness.desktop` and its existing local storage/keychain service names; these internal identifiers are not the public product name.
 
 To uninstall, quit the app and remove the locally built app. Optional user data such as preferences, imported backgrounds, WebKit cookies, and the Keychain balance credential remain until removed separately. No automated uninstaller is provided in this preview.
 
 ## Troubleshooting
 
 - **Harness does not start:** confirm `node` and `npx` meet the requirements, then open Harness logs with `⇧⌘L`.
-- **Port 3080 is in use:** DS Harness only attaches when the page contains the official Harness `__DSH_BOOT__` marker; otherwise it reports a conflict.
+- **Port 3080 is in use:** HarnessDock only attaches when the page contains the official Harness `__DSH_BOOT__` marker; otherwise it reports a conflict.
 - **Chat asks for login:** this is expected. The tab loads the official DeepSeek Chat service and cannot use the Harness API key as a web login.
 - **Balance is unavailable:** configure the balance key in Settings, check network access, and refresh. This key is separate from Harness model settings.
 - **macOS blocks the app:** the current source build is ad-hoc signed and not notarized. Build it locally for testing; a public release still needs Developer ID signing and Apple notarization.
@@ -201,11 +203,11 @@ See the [public release readiness review](docs/release-readiness.md) for the det
 
 ## Support
 
-Found a bug or have a feature idea? Open a [GitHub issue](https://github.com/nortonyang/DsHarness/issues) with your macOS version, Mac architecture, reproduction steps, and relevant Harness logs. Do not include API keys, login cookies, private code, or other secrets.
+Found a bug or have a feature idea? Open a [GitHub issue](https://github.com/nortonyang/HarnessDock/issues) with your macOS version, Mac architecture, reproduction steps, and relevant Harness logs. Do not include API keys, login cookies, private code, or other secrets.
 
 ## License
 
-No license has been selected yet. Source availability alone does not grant permission to copy, modify, or redistribute the project. Choose and add a license before presenting DS Harness as open source or accepting external redistribution.
+No license has been selected yet. Source availability alone does not grant permission to copy, modify, or redistribute the project. Choose and add a license before presenting HarnessDock as open source or accepting external redistribution.
 
 ## Acknowledgements
 

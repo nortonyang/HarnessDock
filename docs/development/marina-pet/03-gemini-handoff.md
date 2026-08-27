@@ -11,14 +11,14 @@
 实现范围：
 
 - 完成 Marina 8×9 动画包和 QA。
-- 创建 `plugins/dsh-pet`，包名 `@dsharness/pet`、Loader ID `pet`。
+- 创建 `plugins/harnessdock-pet`，包名 `@harnessdock/pet`、Loader ID `pet`。
 - 通过 `shell.overlay` 绘制宠物，通过 `settings.plugins.tab` 提供 DeepWhale / Marina 切换。
 - 用官方 `dsh plugin --profile web add` 安装并验证插件列表可见。
 - 增量实现左、右、底三边停靠；按住 `⌥` 拖动后吸附最近边，部分身体藏在窗口外并周期性探头。
 - 增量实现坐标式悬停观察、点击跳跃、拖动奔跑；普通点击继续传给下方 Harness 控件，交互控件上的拖动只在按住 `⌥` 时接管。
 - 用 `npm pack --dry-run` 检查可发布内容；不虚构不存在的 DeepSeek 官方插件站上传结果。
 - 构建时把 6 个运行文件嵌入 app Resources；本机安装后将 web profile 重绑到应用内插件副本并验证重启加载。
-- 左侧停靠只对 `.dshpet-sprite` 做水平镜像，使头朝内容区且身体藏到左侧窗口外；禁止镜像 overlay 定位容器，右侧、底部和设置预览不得变化。
+- 左侧停靠只对 `.harnessdock-pet-sprite` 做水平镜像，使头朝内容区且身体藏到左侧窗口外；禁止镜像 overlay 定位容器，右侧、底部和设置预览不得变化。
 - 三边缩回要呈现“身体在窗口外、头部探入”的姿态：左右用更深位移与向内倾斜，探出时减小倾角；底部加深下沉。拖动时移除倾角，禁止修改 `pointer-events` 和文档捕获事件逻辑。
 - 修正交互状态表：悬停必须使用 waiting 行 6（6 帧），点击使用 jumping 行 4（5 帧），拖动使用 running 行 7（6 帧）；以 `frames-manifest.json` 为依据，禁止播放 failed 行或透明第 6 格。
 

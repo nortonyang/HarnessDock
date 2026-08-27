@@ -48,5 +48,5 @@
 验收标准：
 
 - 插件、Core 与 Chat 脚本检查全部通过。
-- `./scripts/build_app.sh` 通过，`/Applications/DsHarness.app` 更新后签名有效。
+- `./scripts/build_app.sh` 通过，`/Applications/HarnessDock.app` 更新后签名有效。
 - 删除 Harness 订阅 Hook 与 Chat 脚本消息处理即可回滚，不涉及用户数据迁移。

@@ -1,5 +1,5 @@
 #!/usr/bin/env swift
-// Generates Resources/AppIcon.icns for the DS Harness macOS app.
+// Generates Resources/AppIcon.icns for the HarnessDock macOS app.
 // Renders the brand gradient + SF Symbol "sparkles" at every icon size and
 // packs them with iconutil. Run from the repository root:
 //   swift scripts/generate_icon.swift

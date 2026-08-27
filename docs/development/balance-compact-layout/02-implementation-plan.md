@@ -4,8 +4,8 @@
 
 | 步骤 | 工作内容 | 负责人 | 文件或区域 | 验证方式 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 新增余额响应模型、格式和 API 客户端 | Codex | `Sources/DsHarnessCore/DeepSeekBalance.swift` | 核心检查 | 已完成 |
-| 2 | 新增 Keychain 存储和 AppModel 状态 | Codex | `Sources/DsHarnessApp/BalanceKeychain.swift`、`AppModel.swift` | 构建/审核 | 已完成 |
+| 1 | 新增余额响应模型、格式和 API 客户端 | Codex | `Sources/HarnessDockCore/DeepSeekBalance.swift` | 核心检查 | 已完成 |
+| 2 | 新增 Keychain 存储和 AppModel 状态 | Codex | `Sources/HarnessDockApp/BalanceKeychain.swift`、`AppModel.swift` | 构建/审核 | 已完成 |
 | 3 | 新增余额 pill、详情 popover 和配置 sheet | Codex | `ContentView.swift` | 实机 UI | 已完成 |
 | 4 | 用 64/236pt 自定义侧栏替换 NavigationSplitView | Codex | `ContentView.swift` | 实机 UI | 已完成 |
 | 5 | 更新检查、README 和打包产物 | Codex | checks/docs/scripts | 命令验证 | 已完成 |

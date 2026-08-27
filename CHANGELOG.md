@@ -1,6 +1,6 @@
 # Changelog
 
-All notable user-visible changes to DS Harness are documented in this file.
+All notable user-visible changes to HarnessDock are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project intends to use semantic versioning after the first public release.
 
@@ -25,11 +25,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Custom local background images with adjustable content dimming.
 - System Default, Simplified Chinese, and English native interface options.
 - Six-step settings guide for presets, permissions, appearance, send behavior, models, and plugins.
-- `@dsharness/pet` Harness plugin with DeepWhale and Marina, edge docking, drag interactions, and task-aware running/success/failure animations.
+- `@harnessdock/pet` Harness plugin with DeepWhale and Marina, edge docking, drag interactions, and task-aware running/success/failure animations.
 - Optional native Chat pet preview for compatible local pet packages.
 
 ### Changed
 
+- Renamed the product, app bundle, Swift package/targets, build artifacts, plugin package, documentation, and launch copy from DS Harness to HarnessDock.
+- Retained the legacy compatibility bundle identifier, Application Support location, Keychain service, and migrated the pet preference key so existing local data survives the rename.
 - API key configuration, theme background, and language controls are consolidated in the native Settings window.
 - Existing API credentials are represented by a configured state instead of being echoed into an input field.
 - Chat Enter handling protects IME confirmation, modified Enter, single-line fields, and empty drafts from accidental submission.

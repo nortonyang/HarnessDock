@@ -1,4 +1,4 @@
-# DS Harness — Product Hunt launch draft
+# HarnessDock — Product Hunt launch draft
 
 Last verified against Product Hunt's official launch guidance: 2026-08-27.
 
@@ -16,11 +16,12 @@ Official references:
 - Version: developer preview `0.1.0`.
 - Minimum system: macOS 14 Sonoma.
 - Current candidate architecture: arm64 only.
-- Local candidate archive: `DS-Harness-0.1.0-macOS-arm64.zip`, 8,431,626 bytes.
-- Local candidate SHA-256: `25451ba9c739b759b174e9b1765ad0916f8285bb0e44a3b9704b1d0eced3b229`.
+- Local candidate archive: `HarnessDock-0.1.0-macOS-arm64.zip`, 8,435,845 bytes.
+- Local candidate SHA-256: `10369350380f3a9e01de649e18cbd7940e6821b3992c9fea912d4dd31ad72850`.
 - Candidate signature: valid ad-hoc signature only; no Developer ID team and no Apple notarization.
 - App price: **Pending license decision**. Intended launch choice is Free; DeepSeek API usage is billed separately by DeepSeek.
 - Privacy: balance credentials stay in macOS Keychain or the process environment; the app makes a read-only balance request to DeepSeek's official API.
+- Upgrade compatibility: the public product is HarnessDock, while the legacy `app.dsharness.desktop` bundle identifier and related local service names are retained so existing sessions and settings survive the rename.
 - Product URL: **Pending usable GitHub Release or landing/download page**.
 - Download: **Pending Developer ID signing, Apple notarization, and clean-Mac smoke test**. The checksum above is for a local, non-public candidate and must be regenerated for the exact uploaded artifact.
 
@@ -28,7 +29,7 @@ Official references:
 
 ### Name
 
-DS Harness
+HarnessDock
 
 ### Tagline — 39/60 characters
 
@@ -36,7 +37,7 @@ DeepSeek Harness, made native for macOS
 
 ### Description — 239 characters
 
-DS Harness is a native SwiftUI workspace for DeepSeek Harness. Open local projects, view API balance and RMB peak/off-peak pricing, switch to DeepSeek Chat, personalize backgrounds, and add task-aware pets. API keys stay in macOS Keychain.
+HarnessDock is a native SwiftUI workspace for DeepSeek Harness. Open local projects, view API balance and RMB peak/off-peak pricing, switch to DeepSeek Chat, personalize backgrounds, and add task-aware pets. API keys stay in macOS Keychain.
 
 ### Launch tags — confirm exact labels in the live form
 
@@ -50,7 +51,7 @@ Free — **pending license decision**. Users bring their own DeepSeek API access
 
 ### Maker first comment
 
-Hi Product Hunt! I built DS Harness because I wanted the official DeepSeek Harness workflow to feel like a real Mac app instead of another browser tab.
+Hi Product Hunt! I built HarnessDock because I wanted the official DeepSeek Harness workflow to feel like a real Mac app instead of another browser tab.
 
 The native SwiftUI shell opens local projects, starts the pinned Harness runtime, keeps Harness and DeepSeek Chat in one window, and adds the macOS details I missed: Keychain-backed balance checks, Beijing-time peak/off-peak RMB pricing, custom backgrounds, bilingual controls, and task-aware animated pets.
 
@@ -62,7 +63,7 @@ This is an independent, unofficial developer preview for macOS 14+. I would espe
 
 ### 产品名
 
-DS Harness
+HarnessDock
 
 ### 标语
 
@@ -70,7 +71,7 @@ DS Harness
 
 ### 产品描述
 
-DS Harness 是面向 DeepSeek Harness 的原生 SwiftUI 工作空间。它能打开本地项目、展示 API 余额和人民币高峰/谷时价格、切换 DeepSeek Chat、自定义主题背景，并加入能感知任务状态的动态宠物。API Key 安全保存在 macOS 钥匙串中。
+HarnessDock 是面向 DeepSeek Harness 的原生 SwiftUI 工作空间。它能打开本地项目、展示 API 余额和人民币高峰/谷时价格、切换 DeepSeek Chat、自定义主题背景，并加入能感知任务状态的动态宠物。API Key 安全保存在 macOS 钥匙串中。
 
 ### 发布标签（以表单现场选项为准）
 
@@ -84,7 +85,7 @@ DS Harness 是面向 DeepSeek Harness 的原生 SwiftUI 工作空间。它能打
 
 ### Maker 首条评论
 
-大家好！我开发 DS Harness，是因为我希望官方 DeepSeek Harness 的工作流能真正像一款 Mac 应用，而不是浏览器里的另一个标签页。
+大家好！我开发 HarnessDock，是因为我希望官方 DeepSeek Harness 的工作流能真正像一款 Mac 应用，而不是浏览器里的另一个标签页。
 
 原生 SwiftUI 外壳可以打开本地项目、启动锁定版本的 Harness 运行时，把 Harness 与 DeepSeek Chat 放进同一个窗口，并补充更符合 macOS 使用习惯的能力：钥匙串余额查询、北京时间高峰/谷时人民币价格、自定义背景、中英文界面和能感知任务状态的动态宠物。
 

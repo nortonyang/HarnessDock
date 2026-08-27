@@ -44,7 +44,7 @@
 
 增量范围：US-226（再次返工）。用户要求与 Codex 一致的两步体验：中文输入法组合态输入 `hello` 时，第一次 Enter 只让系统确认英文上屏，不额外换行、不发送；组合结束后第二次无修饰 Enter 放行给 DeepSeek 页面并正常发送一次。Shift/Option/Control/Command+Enter 在多行编辑器中仍只换行，单行输入框不提交；空白多行输入交给 DeepSeek 原生逻辑但不得产生空消息。监听器位于 `window` 捕获阶段，通过 `composedPath`、`isContentEditable` 和 input/textarea 判断可编辑控件。组合态停止传播但不 `preventDefault`；非组合态多行编辑器的无修饰 Enter 不拦截，其余受控路径继续阻止网页发送。回归必须断言首次组合确认发送计数 0、第二次普通 Enter 发送计数 1，修饰键与单行输入发送计数 0，空白输入虽然到达页面但发送计数仍为 0。不得读取、记录或传出用户编辑内容。
 
-增量范围：US-227。为 DS Harness 原生界面增加“跟随系统 / 简体中文 / English”语言偏好，并在应用设置中提供“语言”栏目。偏好写入 UserDefaults，打开中的原生窗口与 macOS 菜单即时更新，重启后保持。覆盖原生主窗口、菜单、设置、余额/主题、欢迎/状态与宠物设置；内嵌 Harness/Chat 网页不重载、不改写语言。使用主 App Bundle 的 `zh-Hans.lproj` 与 `en.lproj` 资源，动态字符串通过统一本地化帮助方法生成。必须运行资源语法检查、完整 checks、release 构建，并实机验证中文、English 与重启持久化。不得改名、修改 Bundle ID 或扩大到第三方网页本地化。
+增量范围：US-227。为 HarnessDock 原生界面增加“跟随系统 / 简体中文 / English”语言偏好，并在应用设置中提供“语言”栏目。偏好写入 UserDefaults，打开中的原生窗口与 macOS 菜单即时更新，重启后保持。覆盖原生主窗口、菜单、设置、余额/主题、欢迎/状态与宠物设置；内嵌 Harness/Chat 网页不重载、不改写语言。使用主 App Bundle 的 `zh-Hans.lproj` 与 `en.lproj` 资源，动态字符串通过统一本地化帮助方法生成。必须运行资源语法检查、完整 checks、release 构建，并实机验证中文、English 与重启持久化。不得改名、修改 Bundle ID 或扩大到第三方网页本地化。
 
 约束：
 
@@ -55,12 +55,12 @@
 
 预期改动区域：
 
-- `Sources/DsHarnessApp/ContentView.swift`
-- `Sources/DsHarnessApp/HarnessWebView.swift`
-- `Sources/DsHarnessApp/AppModel.swift`
-- `Sources/DsHarnessApp/DsHarnessApp.swift`
-- `Sources/DsHarnessApp/DeepSeekChatWebView.swift`
-- `Sources/DsHarnessCore/DeepSeekChatEnterBehavior.swift`
+- `Sources/HarnessDockApp/ContentView.swift`
+- `Sources/HarnessDockApp/HarnessWebView.swift`
+- `Sources/HarnessDockApp/AppModel.swift`
+- `Sources/HarnessDockApp/HarnessDockApp.swift`
+- `Sources/HarnessDockApp/DeepSeekChatWebView.swift`
+- `Sources/HarnessDockCore/DeepSeekChatEnterBehavior.swift`
 - `scripts/check-chat-enter.mjs`
 
 需要运行的验证：

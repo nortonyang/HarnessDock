@@ -17,17 +17,17 @@
 
 预期改动区域：
 
-- `Sources/DsHarnessApp/AppModel.swift`
-- `Sources/DsHarnessApp/ContentView.swift`
-- `Sources/DsHarnessApp/DeepSeekChatWebView.swift`
-- `Sources/DsHarnessApp/DsHarnessApp.swift`
+- `Sources/HarnessDockApp/AppModel.swift`
+- `Sources/HarnessDockApp/ContentView.swift`
+- `Sources/HarnessDockApp/DeepSeekChatWebView.swift`
+- `Sources/HarnessDockApp/HarnessDockApp.swift`
 - `README.md`
 
 需要运行的验证：
 
 - `./scripts/run_checks.sh`
 - `./scripts/build_app.sh`
-- `codesign --verify --deep --strict dist/DsHarness.app`
+- `codesign --verify --deep --strict dist/HarnessDock.app`
 - 实机完成标题栏切换、官网加载、返回保持和 Safari 回退检查。
 
 返回内容：变更文件、实现摘要、验证结果、阻塞点和偏离计划之处。

@@ -27,7 +27,7 @@
 ## 验收标准
 
 - `swift build`、`./scripts/run_checks.sh` 成功；完整 Xcode 环境额外运行 `swift test`。
-- `./scripts/build_app.sh` 生成 `dist/DsHarness.app`。
+- `./scripts/build_app.sh` 生成 `dist/HarnessDock.app`。
 - 有效工作区可启动服务并加载 `http://127.0.0.1:3080`。
 - 找不到 npx、服务退出或页面错误时均给出可读状态。
 - README 明确依赖和 MVP 限制。
@@ -35,9 +35,9 @@
 ## 预期改动区域
 
 - `Package.swift`
-- `Sources/DsHarnessCore/`
-- `Sources/DsHarnessApp/`
-- `Tests/DsHarnessCoreTests/`
+- `Sources/HarnessDockCore/`
+- `Sources/HarnessDockApp/`
+- `Tests/HarnessDockCoreTests/`
 - `scripts/build_app.sh`
 - `README.md`
 - `docs/development/codex-style-macos/`
@@ -47,7 +47,7 @@
 - `./scripts/run_checks.sh`
 - `swift build`
 - `./scripts/build_app.sh`
-- `plutil -lint dist/DsHarness.app/Contents/Info.plist`
+- `plutil -lint dist/HarnessDock.app/Contents/Info.plist`
 - `git diff --check`
 
 ## 返回内容

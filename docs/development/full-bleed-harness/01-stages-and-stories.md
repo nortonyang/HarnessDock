@@ -36,7 +36,7 @@
 
 ### 验收标准
 
-- Given Harness 已运行，When 窗口显示，Then 看不到 DS Harness 原生侧栏、项目卡片和原生顶部项目栏。
+- Given Harness 已运行，When 窗口显示，Then 看不到 HarnessDock 原生侧栏、项目卡片和原生顶部项目栏。
 - Given Harness 未就绪，When 启动或失败，Then 原生状态页仍能解释原因。
 
 ## AT-202：全窗 WebView
@@ -394,7 +394,7 @@
 ### 范围
 
 - 支持“跟随系统”“简体中文”“English”三个选项，偏好只保存在本机 UserDefaults。
-- 覆盖 DS Harness 原生窗口、macOS 应用菜单、应用设置、余额/主题界面、欢迎/启动/错误状态及原生宠物设置。
+- 覆盖 HarnessDock 原生窗口、macOS 应用菜单、应用设置、余额/主题界面、欢迎/启动/错误状态及原生宠物设置。
 - 内嵌 DeepSeek Harness 与 DeepSeek Chat 网页继续使用各自的语言设置；不篡改第三方网页语言。
 
 ### 验收标准

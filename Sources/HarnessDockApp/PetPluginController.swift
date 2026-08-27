@@ -1,5 +1,5 @@
 import AppKit
-import DsHarnessCore
+import HarnessDockCore
 import Foundation
 import ImageIO
 
@@ -11,11 +11,11 @@ enum PetPackageOrigin: String {
     var title: String {
         switch self {
         case .bundled:
-            "DsHarness 内置"
+            "HarnessDock 内置"
         case .codex:
             "Codex 宠物"
         case .managed:
-            "DsHarness 导入"
+            "HarnessDock 导入"
         }
     }
 }
@@ -135,7 +135,7 @@ final class PetPluginController: ObservableObject {
 
     func importPackage(language: AppLanguage = .system) {
         let panel = NSOpenPanel()
-        panel.title = AppLocalization.localized("导入 DsHarness 宠物包", language: language)
+        panel.title = AppLocalization.localized("导入 HarnessDock 宠物包", language: language)
         panel.message = AppLocalization.localized(
             "请选择包含 pet.json 与 spritesheet.webp 的宠物文件夹。",
             language: language

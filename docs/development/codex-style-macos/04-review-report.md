@@ -3,7 +3,7 @@
 ## 审核范围
 
 - `Package.swift`、`Sources/`、`Tests/`、`Resources/`、`scripts/`、`README.md`。
-- `dist/DsHarness.app` 的 release 构建、Info.plist 和 ad-hoc 签名。
+- `dist/HarnessDock.app` 的 release 构建、Info.plist 和 ad-hoc 签名。
 - 欢迎页与连接真实 DeepSeek Harness Web UI 后的 macOS 窗口。
 
 ## 问题发现
@@ -17,22 +17,22 @@
 
 | 用户故事 | 结果 | 证据 |
 | --- | --- | --- |
-| US-001 | 通过 | `swift build --product DsHarness` 成功 |
-| US-002 | 通过 | `DsHarnessCoreChecks: all checks passed` |
+| US-001 | 通过 | `swift build --product HarnessDock` 成功 |
+| US-002 | 通过 | `HarnessDockCoreChecks: all checks passed` |
 | US-003 | 部分通过 | PATH/Homebrew/Volta/`~/.local/bin` 已覆盖；NVM-only Finder 场景结转 |
 | US-004 | 通过 | 实机识别 3080 已有服务并进入不持有进程的附着状态 |
 | US-005 | 通过 | 原生目录选择器选择 `SDMMO`，侧边栏恢复并显示路径 |
 | US-006 | 通过 | `ui-running.jpeg` 显示真实 Harness 会话、模型与权限 UI |
-| US-007 | 通过 | `dist/DsHarness.app` 已生成，plist 和 codesign 均通过 |
+| US-007 | 通过 | `dist/HarnessDock.app` 已生成，plist 和 codesign 均通过 |
 | US-008 | 通过 | README、规划、交接和本审核报告齐全 |
 
 ## 验证结果
 
 - `./scripts/run_checks.sh`：通过，全部核心检查成功。
-- `swift build --product DsHarness`：通过。
+- `swift build --product HarnessDock`：通过。
 - `./scripts/build_app.sh`：通过，生成 release `.app`。
-- `plutil -lint dist/DsHarness.app/Contents/Info.plist`：通过。
-- `codesign --verify --deep --strict --verbose=2 dist/DsHarness.app`：通过。
+- `plutil -lint dist/HarnessDock.app/Contents/Info.plist`：通过。
+- `codesign --verify --deep --strict --verbose=2 dist/HarnessDock.app`：通过。
 - `git diff --check`：通过。
 - 完整 Xcode 未安装，Command Line Tools 不包含 XCTest/Testing 框架，因此 `swift test` 未作为本机完成门禁；等价核心检查已由独立 executable 执行。
 

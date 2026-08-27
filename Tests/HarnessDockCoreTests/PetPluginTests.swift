@@ -1,5 +1,5 @@
 import XCTest
-@testable import DsHarnessCore
+@testable import HarnessDockCore
 
 final class PetPluginTests: XCTestCase {
     func testMinimalManifestUsesCanonicalGeometry() throws {

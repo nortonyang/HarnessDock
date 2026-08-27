@@ -15,7 +15,7 @@
 
 ## AT-501：定义宠物清单模型
 
-用户故事 US-501：作为 DsHarness 用户，我希望应用能安全理解 Codex 宠物包，以便复用已有宠物而无需安装可执行扩展。
+用户故事 US-501：作为 HarnessDock 用户，我希望应用能安全理解 Codex 宠物包，以便复用已有宠物而无需安装可执行扩展。
 
 ### 范围
 
@@ -29,7 +29,7 @@
 
 ### 验证方式
 
-- XCTest 与 `DsHarnessCoreChecks` JSON 用例。
+- XCTest 与 `HarnessDockCoreChecks` JSON 用例。
 
 ### 完成定义
 
@@ -57,11 +57,11 @@
 
 ## AT-503：发现与校验宠物包
 
-用户故事 US-502：作为安装过 Codex 宠物的用户，我希望 DsHarness 自动发现它们，以便直接选择使用。
+用户故事 US-502：作为安装过 Codex 宠物的用户，我希望 HarnessDock 自动发现它们，以便直接选择使用。
 
 ### 范围
 
-- 扫描 `~/.codex/pets` 与 DsHarness Application Support 宠物目录。
+- 扫描 `~/.codex/pets` 与 HarnessDock Application Support 宠物目录。
 - 校验清单、图集存在性、图集像素尺寸，并按稳定 ID 去重。
 
 ### 验收标准
@@ -84,7 +84,7 @@
 
 ### 验收标准
 
-- Given 合法外部包，When 导入，Then 包进入 DsHarness 管理目录并立即选中。
+- Given 合法外部包，When 导入，Then 包进入 HarnessDock 管理目录并立即选中。
 - Given 应用重启，When 初始化控制器，Then 恢复之前的启用、选择和尺寸。
 - Given 非法包，When 导入，Then 不留下半成品目录并显示可理解错误。
 
@@ -145,7 +145,7 @@
 
 - 空列表、加载错误和已选宠物三种状态均有清晰界面。
 
-## AT-508：映射 DsHarness 运行状态
+## AT-508：映射 HarnessDock 运行状态
 
 用户故事 US-507：作为用户，我希望宠物反映 Harness 的工作状态，以便不打开日志也能感知启动、忙碌和错误。
 
@@ -200,7 +200,7 @@
 
 ## AT-511：让应用发现内置宠物
 
-用户故事 US-510：作为首次安装用户，我希望打开 DsHarness 就能看到 DeepWhale，以便不用了解宠物目录或手工导入。
+用户故事 US-510：作为首次安装用户，我希望打开 HarnessDock 就能看到 DeepWhale，以便不用了解宠物目录或手工导入。
 
 ### 范围
 
@@ -241,14 +241,14 @@
 
 - 复用已经通过 hatch-pet 最终化的 Marina 包，不重复生成或修改图集。
 - 将 `pet.json` 与 `spritesheet.webp` 一起安装到 `~/.codex/pets/marina`。
-- 将本机 DsHarness 的 Chat 原生宠物选择切换为 `codex:marina` 并保持启用。
+- 将本机 HarnessDock 的 Chat 原生宠物选择切换为 `codex:marina` 并保持启用。
 
 ### 验收标准
 
 - Given Marina 孵化运行，When 检查任务、QA 与图集，Then 10 个生成任务全部完成、QA 无 error/warning、图集为 1536×1872。
 - Given 包已安装，When 扫描 `~/.codex/pets`，Then `marina` 同时包含合法 `pet.json` 与 `spritesheet.webp`，原始包与安装包哈希一致。
-- Given DsHarness 重启，When 打开 Chat 页面，Then 已选包 ID 为 `codex:marina` 且宠物显示已启用；Harness 页插件选择不被改写。
+- Given HarnessDock 重启，When 打开 Chat 页面，Then 已选包 ID 为 `codex:marina` 且宠物显示已启用；Harness 页插件选择不被改写。
 
 ### 完成定义
 
-- Codex 宠物目录、DsHarness 偏好和重启后的 Chat 加载路径均有验证证据。
+- Codex 宠物目录、HarnessDock 偏好和重启后的 Chat 加载路径均有验证证据。

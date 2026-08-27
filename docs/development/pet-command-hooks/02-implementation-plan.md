@@ -4,8 +4,8 @@
 
 | 步骤 | 工作内容 | 文件或区域 | 验证方式 | 状态 |
 | --- | --- | --- | --- | --- |
-| 1 | 定义 `PetCommandActivity` 与动画映射/周期 | `DsHarnessCore/PetPlugin.swift` | Core 单测 | 进行中 |
-| 2 | Harness 插件注入 `sessions`，订阅列表和当前 Session | `plugins/dsh-pet/src/client.template.js` | 插件静态与纯函数检查 | 进行中 |
+| 1 | 定义 `PetCommandActivity` 与动画映射/周期 | `HarnessDockCore/PetPlugin.swift` | Core 单测 | 进行中 |
+| 2 | Harness 插件注入 `sessions`，订阅列表和当前 Session | `plugins/harnessdock-pet/src/client.template.js` | 插件静态与纯函数检查 | 进行中 |
 | 3 | 将命令状态以高优先级动画覆盖到 Web 宠物 | Web `PetOverlay` | running/review/failed 边沿测试 | 未开始 |
 | 4 | 编写 Chat 页面生成状态脚本与枚举桥 | Core 新脚本、`DeepSeekChatWebView` | Node VM 检查 | 未开始 |
 | 5 | AppModel 管理终态完整周期并驱动原生宠物 | `AppModel`、`ContentView` | Core 映射、Swift 构建 | 未开始 |

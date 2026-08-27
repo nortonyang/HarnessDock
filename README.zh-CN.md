@@ -1,4 +1,4 @@
-# DS Harness for macOS
+# HarnessDock for macOS
 
 [English](README.md) · [简体中文](README.zh-CN.md)
 
@@ -9,18 +9,18 @@
 
 **面向 DeepSeek Harness 的原生 macOS 工作空间：支持本地项目启动、API 余额与高峰/谷时价格、内嵌 DeepSeek Chat、自定义主题背景和动态宠物。**
 
-DS Harness 使用 SwiftUI 与 WebKit，将官方 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI 包装为桌面体验。选择本地项目后，应用会启动锁定版本的 Harness 运行时，无需手动管理终端命令或浏览器标签页。
+HarnessDock 使用 SwiftUI 与 WebKit，将官方 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI 包装为桌面体验。选择本地项目后，应用会启动锁定版本的 Harness 运行时，无需手动管理终端命令或浏览器标签页。
 
 > [!WARNING]
-> DS Harness 是独立的非官方项目，与 DeepSeek 没有隶属或背书关系。DeepSeek Harness 仍处于开发者预览阶段，上游更新可能需要兼容性调整。
+> HarnessDock 是独立的非官方项目，与 DeepSeek 没有隶属或背书关系。DeepSeek Harness 仍处于开发者预览阶段，上游更新可能需要兼容性调整。
 
 ## 界面截图（Screenshots）
 
-![带 API 余额面板的 DS Harness 工作区](docs/screenshots/full-bleed-balance.png)
+早期开发截图包含真实工作区和旧产品名，因此已从当前公开版本移除。正式发布到 Product Hunt 前会补充一组经过脱敏的 HarnessDock 截图。
 
 ## 产品概览（Overview）
 
-DS Harness 面向希望在 macOS 上自然使用官方 Harness 工作流的开发者。原生外壳负责项目选择、运行时启动、错误恢复、日志、快捷键、本地设置和界面呈现；会话、工具、审批与插件仍由官方 Harness UI 提供。
+HarnessDock 面向希望在 macOS 上自然使用官方 Harness 工作流的开发者。原生外壳负责项目选择、运行时启动、错误恢复、日志、快捷键、本地设置和界面呈现；会话、工具、审批与插件仍由官方 Harness UI 提供。
 
 ## 功能（Features）
 
@@ -33,10 +33,10 @@ DS Harness 面向希望在 macOS 上自然使用官方 Harness 工作流的开�
 - **自定义主题背景**：导入本地图片并调整内容遮罩，文件只保存在当前 Mac。
 - **中英文原生界面**：支持跟随系统、简体中文和 English。
 - **设置新手引导**：讲解预设、权限、外观、发送行为、模型和插件。
-- **任务感知的动态宠物**：`@dsharness/pet` Harness 插件会根据任务执行中、成功和失败播放不同动画，并为 Chat 提供可选的本地宠物预览层。
+- **任务感知的动态宠物**：`@harnessdock/pet` Harness 插件会根据任务执行中、成功和失败播放不同动画，并为 Chat 提供可选的本地宠物预览层。
 - **可靠的进程管理**：安全复用经过校验的已有 Harness 服务，并清理由本应用启动的进程。
 
-## DS Harness 不会做什么
+## HarnessDock 不会做什么
 
 - 不替代或重新实现 DeepSeek Harness。
 - 不绕过 DeepSeek Chat 登录；Chat 页打开的是官方网页，使用正常的账号会话。
@@ -65,20 +65,20 @@ npx --version
 当前仓库提供源码构建，尚未发布经过 Developer ID 签名与 Apple 公证的安装包。
 
 ```bash
-git clone https://github.com/nortonyang/DsHarness.git
-cd DsHarness
+git clone https://github.com/nortonyang/HarnessDock.git
+cd HarnessDock
 ./scripts/build_app.sh
-open dist/DsHarness.app
+open dist/HarnessDock.app
 ```
 
-构建脚本会生成 `dist/DsHarness.app`，嵌入宠物插件的 6 个发布文件，并为本地测试执行 ad-hoc 签名。不要把这个本机构建产物当成受信任的公众安装包分发。
+构建脚本会生成 `dist/HarnessDock.app`，嵌入宠物插件的 6 个发布文件，并为本地测试执行 ad-hoc 签名。不要把这个本机构建产物当成受信任的公众安装包分发。
 
 ## 使用方法（Usage）
 
-1. 打开 DS Harness。存在上次使用的工作区时，点击 **进入** 即可恢复；否则选择一个本地项目目录。
+1. 打开 HarnessDock。存在上次使用的工作区时，点击 **进入** 即可恢复；否则选择一个本地项目目录。
 2. 等待状态变为 **本地**，Harness 默认启动在 `127.0.0.1:3080`。
 3. 在 **Harness → 设置 → 模型** 中配置模型访问凭据。
-4. 如需显示账户余额，打开 **DS Harness → 设置 → API 与余额**，把单独的 DeepSeek API Key 存入钥匙串。
+4. 如需显示账户余额，打开 **HarnessDock → 设置 → API 与余额**，把单独的 DeepSeek API Key 存入钥匙串。
 5. 在官方 Harness 界面中开始任务，或切换到 **Chat** 使用 DeepSeek 官方网页聊天。
 
 首次进入 Harness 设置页时会显示 6 步引导，只解释各项设置，不会替你修改配置。以后可点击设置页顶部的 **新手引导** 再次查看。
@@ -107,12 +107,12 @@ Chat 中，中文输入法确认不会发送草稿；带修饰键的 Enter 会�
 
 ## 桌面宠物
 
-Harness 插件位于 `plugins/dsh-pet`，本地包名为 `@dsharness/pet`，入口 ID 为 `pet`。
+Harness 插件位于 `plugins/harnessdock-pet`，本地包名为 `@harnessdock/pet`，入口 ID 为 `pet`。
 
 ```bash
-npm --prefix plugins/dsh-pet run build
-npm --prefix plugins/dsh-pet run check
-dsh plugin --profile web add ./plugins/dsh-pet
+npm --prefix plugins/harnessdock-pet run build
+npm --prefix plugins/harnessdock-pet run check
+dsh plugin --profile web add ./plugins/harnessdock-pet
 ```
 
 安装后重启 Harness，在 **设置 → 插件 → 桌面宠物** 中选择 DeepWhale 或 Marina、隐藏宠物或更改停靠位置。
@@ -140,13 +140,13 @@ Harness 宠物会跟随官方会话状态：当前任务或后台任务运行时
 直接从源码运行：
 
 ```bash
-swift run DsHarness
+swift run HarnessDock
 ```
 
 开发时指定工作区与端口：
 
 ```bash
-swift run DsHarness --workspace /absolute/path/to/project --port 3095
+swift run HarnessDock --workspace /absolute/path/to/project --port 3095
 ```
 
 验证本地构建：
@@ -155,7 +155,7 @@ swift run DsHarness --workspace /absolute/path/to/project --port 3095
 ./scripts/run_checks.sh
 swift build
 ./scripts/build_app.sh
-plutil -lint dist/DsHarness.app/Contents/Info.plist
+plutil -lint dist/HarnessDock.app/Contents/Info.plist
 ```
 
 安装完整 Xcode 后还可以运行 `swift test`。仅安装 Command Line Tools 的系统可能缺少 XCTest/Testing 框架，因此 `run_checks.sh` 提供不依赖测试框架的核心检查。
@@ -163,18 +163,20 @@ plutil -lint dist/DsHarness.app/Contents/Info.plist
 ## 项目结构
 
 ```text
-DsHarness/
+HarnessDock/
 ├── Sources/                  # SwiftUI 外壳、WebKit 集成、应用状态与核心服务
 ├── Tests/                    # XCTest 单元测试
 ├── Resources/                # Info.plist 与应用图标资源
-├── plugins/dsh-pet/          # 使用官方插槽的 Harness 桌面宠物插件
+├── plugins/harnessdock-pet/          # 使用官方插槽的 Harness 桌面宠物插件
 ├── scripts/                  # 构建和验证脚本
 └── docs/                     # 截图、规划、审核与发布文档
 ```
 
 ## 更新与卸载
 
-更新源码构建时，先退出 DS Harness，再拉取最新代码、重新构建并打开 `dist/DsHarness.app`。正在运行的旧版本不会被自动替换。
+更新源码构建时，先退出 HarnessDock，再拉取最新代码、重新构建并打开 `dist/HarnessDock.app`。正在运行的旧版本不会被自动替换。
+
+从 DS Harness 升级时，已有 Chat Cookie、本地设置、主题背景、已导入宠物和余额凭据仍会保留。HarnessDock 有意继续使用兼容性 Bundle Identifier `app.dsharness.desktop`，并沿用现有本地目录与钥匙串服务名；这些内部标识不代表公开产品名称。
 
 卸载时退出应用并删除本地构建的 App。偏好设置、导入背景、WebKit Cookie 和钥匙串余额凭据等可选用户数据会保留，需单独删除。当前预览版不提供自动卸载器。
 
@@ -201,11 +203,11 @@ DsHarness/
 
 ## 支持与反馈（Support）
 
-发现问题或有功能建议？请提交 [GitHub Issue](https://github.com/nortonyang/DsHarness/issues)，并附上 macOS 版本、Mac 架构、复现步骤与相关 Harness 日志。请勿提交 API Key、登录 Cookie、私有代码或其他秘密信息。
+发现问题或有功能建议？请提交 [GitHub Issue](https://github.com/nortonyang/HarnessDock/issues)，并附上 macOS 版本、Mac 架构、复现步骤与相关 Harness 日志。请勿提交 API Key、登录 Cookie、私有代码或其他秘密信息。
 
 ## 许可证（License）
 
-项目目前尚未选择许可证。源码可见并不自动授予复制、修改或再分发权限。在把 DS Harness 宣传为开源项目或允许外部分发前，需要先选择并添加许可证。
+项目目前尚未选择许可证。源码可见并不自动授予复制、修改或再分发权限。在把 HarnessDock 宣传为开源项目或允许外部分发前，需要先选择并添加许可证。
 
 ## 致谢
 

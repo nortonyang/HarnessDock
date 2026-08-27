@@ -125,7 +125,7 @@ class FakeTextAreaElement extends FakeElement {
 }
 
 const source = await readFile(
-  new URL("../Sources/DsHarnessCore/DeepSeekChatEnterBehavior.swift", import.meta.url),
+  new URL("../Sources/HarnessDockCore/DeepSeekChatEnterBehavior.swift", import.meta.url),
   "utf8"
 );
 const match = source.match(/userScript = #"""([\s\S]*?)"""#/);

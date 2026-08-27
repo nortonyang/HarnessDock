@@ -1,10 +1,10 @@
-# DS Harness GitHub 公开发布审核
+# HarnessDock GitHub 公开发布审核
 
-审核日期：2026-08-20
+审核日期：2026-08-27
 
 ## 结论
 
-当前源码适合继续内部测试，但不建议直接把现有仓库和 `dist/DsHarness.app` 作为公开正式版发布。代码中未发现硬编码 API Key 或私钥；两个可立即修复的泄露面已经收口，但仍有图标授权、软件签名、公证、上游版本锁定、项目许可证和截图隐私等发布阻塞项。
+当前源码适合继续内部测试，但不建议直接把现有仓库和 `dist/HarnessDock.app` 作为公开正式版发布。代码中未发现硬编码 API Key 或私钥；两个可立即修复的泄露面已经收口，但仍有图标授权、软件签名、公证、上游版本锁定、项目许可证和截图隐私等发布阻塞项。
 
 这是一份工程风险审核，不替代法律意见。
 
@@ -18,6 +18,7 @@
 | 余额凭据持久化 | 已有保护 | Keychain 使用 `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`；Web 消息桥只接受固定动作 |
 | Harness 对外监听 | 已有保护 | 启动参数显式使用 `127.0.0.1`，附着前校验 `__DSH_BOOT__` |
 | Harness 上游版本漂移 | 已修复 | 默认锁定已验证的 `@deepseek-ai/dsh@0.1.0-rc.6`，并使用 `--prefer-offline` 优先复用本机缓存 |
+| 产品从 DS Harness 改名后丢失本机数据 | 已规避 | 公开名称、App 和包名改为 HarnessDock；兼容性 Bundle ID、Application Support、钥匙串服务保持不变，宠物偏好提供旧键迁移 |
 
 ## 发布阻塞项
 
@@ -34,7 +35,7 @@
 ## 品牌与上游授权
 
 - DeepSeek Harness 上游采用 MIT 许可证，并说明其处于 developer preview、可能发生兼容性破坏。
-- 上游品牌规范允许在描述中准确使用“DeepSeek Harness”，并建议生态项目用 “DSH” 命名；不得让用户误以为获得官方背书。当前 “DS Harness” 与“非官方客户端”说明方向正确，公开页面仍应持续醒目标注。
+- 上游品牌规范允许在描述中准确使用“DeepSeek Harness”，并建议生态项目用 “DSH” 命名；不得让用户误以为获得官方背书。当前 “HarnessDock” 与“非官方客户端”说明方向正确，公开页面仍应持续醒目标注。
 - 应用内显示的 DeepSeek 标志来自官方 Harness Web UI；宣传截图和仓库封面不要把它处理成自己的产品 Logo。
 
 ## 建议发布顺序

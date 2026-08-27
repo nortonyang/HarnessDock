@@ -2,7 +2,7 @@
 
 ## 目标
 
-为 DsHarness macOS 客户端增加原生桌面宠物插件：读取 Codex 兼容宠物包，在 Harness 与 Chat 页面上方显示透明动画宠物，根据应用运行状态切换动画，并提供启用、宠物选择、导入与尺寸设置。内置一只 DeepSeek 风格蓝色小鲸 `DeepWhale`，确保全新安装无需外部宠物包也能直接看到功能。
+为 HarnessDock macOS 客户端增加原生桌面宠物插件：读取 Codex 兼容宠物包，在 Harness 与 Chat 页面上方显示透明动画宠物，根据应用运行状态切换动画，并提供启用、宠物选择、导入与尺寸设置。内置一只 DeepSeek 风格蓝色小鲸 `DeepWhale`，确保全新安装无需外部宠物包也能直接看到功能。
 
 ## 非目标
 
@@ -13,9 +13,9 @@
 
 ## 当前证据
 
-- `Sources/DsHarnessApp/ContentView.swift` 以 SwiftUI `ZStack` 承载 Harness 与 Chat WebView，适合增加原生透明覆盖层。
-- `Sources/DsHarnessApp/DsHarnessApp.swift` 统一创建应用模型、菜单命令和设置 sheet。
-- `Sources/DsHarnessApp/AppModel.swift` 已暴露 Harness 状态、页面加载状态和错误，可映射为宠物动画状态。
+- `Sources/HarnessDockApp/ContentView.swift` 以 SwiftUI `ZStack` 承载 Harness 与 Chat WebView，适合增加原生透明覆盖层。
+- `Sources/HarnessDockApp/HarnessDockApp.swift` 统一创建应用模型、菜单命令和设置 sheet。
+- `Sources/HarnessDockApp/AppModel.swift` 已暴露 Harness 状态、页面加载状态和错误，可映射为宠物动画状态。
 - 当前 Swift Package 没有插件目标或资源目标，需要新增最小的宠物清单模型、运行时控制器和 SwiftUI 视图。
 - 本机 `~/.codex/pets` 中已有 `pet.json` 与 `1536×1872` WebP 图集，可作为只读兼容性验证样本；仓库不会复制这些文件。
 - Codex 宠物图集固定为 8 列 × 9 行，每格 192×208，并定义 idle、running、failed、waiting、review 等状态行。
@@ -23,7 +23,7 @@
 
 ## 假设
 
-- “宠物插件”解释为 DsHarness 内的可开关原生 UI 插件，不执行宠物包中的代码。
+- “宠物插件”解释为 HarnessDock 内的可开关原生 UI 插件，不执行宠物包中的代码。
 - 宠物包至少包含 `pet.json` 和清单指定的 `spritesheet.webp`；清单未声明尺寸时使用 Codex 固定尺寸。
 - 应用可以只读扫描 `~/.codex/pets`，导入的包复制到 `Application Support/app.dsharness.desktop/Pets`。
 - 内置宠物包随应用发布；没有用户宠物时默认选择 `DeepWhale`，已有有效选择时不覆盖用户偏好。
@@ -58,9 +58,9 @@
 - `./scripts/run_checks.sh`
 - `swift build`
 - `./scripts/build_app.sh`
-- `plutil -lint dist/DsHarness.app/Contents/Info.plist`
+- `plutil -lint dist/HarnessDock.app/Contents/Info.plist`
 - 使用本机只读 `~/.codex/pets` 样本验证发现、选择、透明裁切和动画行。
 - 人工检查宠物覆盖层只在宠物区域捕获点击，并验证“减少动态效果”。
 - 检查 DeepWhale `final/validation.json`、`qa/review.json`、联系表和逐行动画预览。
 - 用独立 Bundle ID 启动正式 `.app`，确认即使存在外部宠物也优先默认显示内置鲸鱼，并验证设置入口与来源标签。
-- 复核 Marina 的 10 个 imagegen job、联系表、验证 JSON 与包尺寸；安装到 Codex 宠物目录后重启 DsHarness，确认 Chat 偏好为 `codex:marina`。
+- 复核 Marina 的 10 个 imagegen job、联系表、验证 JSON 与包尺寸；安装到 Codex 宠物目录后重启 HarnessDock，确认 Chat 偏好为 `codex:marina`。

@@ -1,4 +1,4 @@
-import DsHarnessCore
+import HarnessDockCore
 import SwiftUI
 
 struct PetOverlayView: View {

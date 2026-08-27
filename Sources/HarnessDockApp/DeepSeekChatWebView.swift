@@ -1,5 +1,5 @@
 import AppKit
-import DsHarnessCore
+import HarnessDockCore
 import SwiftUI
 import WebKit
 

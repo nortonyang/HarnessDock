@@ -21,17 +21,17 @@
 
 预期改动区域：
 
-- `Sources/DsHarnessApp/AppModel.swift`
-- `Sources/DsHarnessApp/ContentView.swift`
-- `Sources/DsHarnessApp/DsHarnessApp.swift`
-- `Sources/DsHarnessApp/HarnessWebView.swift`
+- `Sources/HarnessDockApp/AppModel.swift`
+- `Sources/HarnessDockApp/ContentView.swift`
+- `Sources/HarnessDockApp/HarnessDockApp.swift`
+- `Sources/HarnessDockApp/HarnessWebView.swift`
 - `README.md`
 
 需要运行的验证：
 
 - `./scripts/run_checks.sh`
 - `./scripts/build_app.sh`
-- `codesign --verify --deep --strict dist/DsHarness.app`
+- `codesign --verify --deep --strict dist/HarnessDock.app`
 - 实机选择、调整、重启恢复和移除。
 
 返回内容：变更文件、实现摘要、验证结果、阻塞点和偏离计划之处。

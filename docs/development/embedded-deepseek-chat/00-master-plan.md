@@ -2,7 +2,7 @@
 
 ## 目标
 
-在 DS Harness 中增加 DeepSeek 官方免费聊天页面，并允许用户从 macOS 标题栏在 Harness 与官方 Chat 之间切换；两个页面的当前状态互不丢失。
+在 HarnessDock 中增加 DeepSeek 官方免费聊天页面，并允许用户从 macOS 标题栏在 Harness 与官方 Chat 之间切换；两个页面的当前状态互不丢失。
 
 ## 非目标
 
@@ -47,5 +47,5 @@
 
 - `./scripts/run_checks.sh`
 - `./scripts/build_app.sh`
-- `codesign --verify --deep --strict dist/DsHarness.app`
+- `codesign --verify --deep --strict dist/HarnessDock.app`
 - 实机确认标题栏切换、首次懒加载、返回后 Harness 状态保持、官网登录页和 Safari 回退入口。

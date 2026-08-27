@@ -26,11 +26,11 @@
 
 预期文件：
 
-- `Sources/DsHarnessCore/DeepSeekBalance.swift`
-- `Sources/DsHarnessApp/BalanceKeychain.swift`
-- `Sources/DsHarnessApp/AppModel.swift`
-- `Sources/DsHarnessApp/ContentView.swift`
-- `Sources/DsHarnessCoreChecks/main.swift`
+- `Sources/HarnessDockCore/DeepSeekBalance.swift`
+- `Sources/HarnessDockApp/BalanceKeychain.swift`
+- `Sources/HarnessDockApp/AppModel.swift`
+- `Sources/HarnessDockApp/ContentView.swift`
+- `Sources/HarnessDockCoreChecks/main.swift`
 - `README.md`
 
 返回内容：变更文件、实现摘要、验证结果、阻塞点和偏离项。

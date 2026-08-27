@@ -2,7 +2,7 @@
 
 ## 目标
 
-在 DS Harness macOS 客户端中持续展示 DeepSeek API 账户余额，并把当前重复的双侧栏布局改造成默认 64pt 的可折叠原生工具栏，给官方 Harness Web UI 留出更多可用宽度。
+在 HarnessDock macOS 客户端中持续展示 DeepSeek API 账户余额，并把当前重复的双侧栏布局改造成默认 64pt 的可折叠原生工具栏，给官方 Harness Web UI 留出更多可用宽度。
 
 ## 非目标
 
@@ -44,7 +44,7 @@
 
 ## 验证策略
 
-- 扩展 `DsHarnessCoreChecks`，验证官方余额 JSON 解码、币种选择和金额格式。
+- 扩展 `HarnessDockCoreChecks`，验证官方余额 JSON 解码、币种选择和金额格式。
 - 构建 release `.app`，校验 Info.plist 与 ad-hoc 签名。
 - 不使用真实 API Key 做自动化测试；通过未配置状态和可控示例数据验证 UI。
 - 实机打开已有 Harness 服务，检查窄栏、展开栏、余额入口和 Web UI 可用面积。

@@ -46,5 +46,5 @@
 
 - `./scripts/run_checks.sh`
 - `./scripts/build_app.sh`
-- `codesign --verify --deep --strict dist/DsHarness.app`
+- `codesign --verify --deep --strict dist/HarnessDock.app`
 - 实机选择图片，确认背景、遮罩调整、移除和重启恢复行为。

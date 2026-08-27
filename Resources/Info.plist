@@ -5,9 +5,9 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>zh-Hans</string>
     <key>CFBundleDisplayName</key>
-    <string>DS Harness</string>
+    <string>HarnessDock</string>
     <key>CFBundleExecutable</key>
-    <string>DsHarness</string>
+    <string>HarnessDock</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>DS Harness</string>
+    <string>HarnessDock</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

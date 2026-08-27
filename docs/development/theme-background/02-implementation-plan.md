@@ -5,7 +5,7 @@
 | 步骤 | 工作内容 | 负责人 | 文件或区域 | 验证方式 | 状态 |
 | --- | --- | --- | --- | --- | --- |
 | 1 | 增加主题状态、图片缩放、持久化和移除 | Codex | `AppModel.swift` | 构建/代码审核 | 已完成 |
-| 2 | 增加主题设置 sheet 和菜单入口 | Codex | `ContentView.swift`、`DsHarnessApp.swift` | 实机交互 | 已完成 |
+| 2 | 增加主题设置 sheet 和菜单入口 | Codex | `ContentView.swift`、`HarnessDockApp.swift` | 实机交互 | 已完成 |
 | 3 | 注入背景 CSS、实时更新桥和侧栏主题入口 | Codex | `HarnessWebView.swift` | 实机截图 | 已完成 |
 | 4 | 更新 README、构建并审核 | Codex | `README.md`、本目录 | 命令/实机 | 已完成 |
 | 5 | 将“完成”移至安全点击区并直接关闭模型状态 | Codex | `ContentView.swift` | 按钮/Esc 实机 | 已完成 |

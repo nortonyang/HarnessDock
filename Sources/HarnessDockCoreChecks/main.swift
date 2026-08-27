@@ -1,4 +1,4 @@
-import DsHarnessCore
+import HarnessDockCore
 import Foundation
 
 var failures: [String] = []
@@ -387,7 +387,7 @@ if let nodeURL = ExecutableLocator.locate("node") {
             // listeners. The production lookup is still exercised anywhere
             // the fixture server can bind successfully.
             server.waitUntilExit()
-            print("DsHarnessCoreChecks: skipped listener lookup (loopback bind unavailable)")
+            print("HarnessDockCoreChecks: skipped listener lookup (loopback bind unavailable)")
         }
     } catch {
         failures.append("Listener lookup check failed: \(error)")
@@ -397,7 +397,7 @@ if let nodeURL = ExecutableLocator.locate("node") {
 }
 
 if failures.isEmpty {
-    print("DsHarnessCoreChecks: all checks passed")
+    print("HarnessDockCoreChecks: all checks passed")
 } else {
     for failure in failures {
         FileHandle.standardError.write(Data("FAIL: \(failure)\n".utf8))

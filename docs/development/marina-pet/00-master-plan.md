@@ -2,7 +2,7 @@
 
 ## 目标
 
-在 DsHarness 仓库内开发一个可通过 `dsh plugin --profile web add` 安装的真正 DeepSeek Harness 插件。插件的 Loader 条目 ID 为 `pet`，安装后必须出现在 Harness 的“设置 → 插件 → 插件列表”中；浏览器端通过 `shell.overlay` 显示动画宠物，并在“插件”设置分区提供 DeepWhale / Marina 切换、显示开关与持久化偏好。
+在 HarnessDock 仓库内开发一个可通过 `dsh plugin --profile web add` 安装的真正 DeepSeek Harness 插件。插件的 Loader 条目 ID 为 `pet`，安装后必须出现在 Harness 的“设置 → 插件 → 插件列表”中；浏览器端通过 `shell.overlay` 显示动画宠物，并在“插件”设置分区提供 DeepWhale / Marina 切换、显示开关与持久化偏好。
 
 Marina 基于用户提供的鲸鱼女仆参考图生成，最终与现有 DeepWhale 一起打包进插件。
 
@@ -34,7 +34,7 @@ Marina 基于用户提供的鲸鱼女仆参考图生成，最终与现有 DeepWh
 
 ## 假设与决策
 
-- npm 包名采用 `@dsharness/pet`，Loader 条目 ID 为 `pet`，用户可见名称采用“桌面宠物”。
+- npm 包名采用 `@harnessdock/pet`，Loader 条目 ID 为 `pet`，用户可见名称采用“桌面宠物”。
 - 浏览器设置使用专属 localStorage 键保存宠物 ID 和显示开关；不伪造 Harness Host settings schema。
 - 插件客户端为预构建的单文件 bundle，图集以内嵌 data URL 交付，避免依赖 `/plugins` 路由未承诺的静态资源能力。
 - Marina 保留蓝色长发、蓝眼、鲸鳍耳、大鲸尾、白色褶边头饰、胸前蝴蝶结与深蓝白女仆裙；细小刺绣简化。
@@ -73,7 +73,7 @@ Marina 基于用户提供的鲸鱼女仆参考图生成，最终与现有 DeepWh
 - `qa/review.json` 无 error/warning，`final/validation.json` 确认 RGBA WebP 为 1536×1872。
 - 人工检查 Marina 联系表的身份一致、方向、透明空槽和无游离特效。
 - 对插件清单、patch、client bundle 与两个内嵌图集执行静态检查。
-- 使用 `dsh plugin --profile web add ./plugins/dsh-pet` 安装，并通过 `dsh --profile web --dump-config` 看到 `id: pet`、`name: '@dsharness/pet'`。
+- 使用 `dsh plugin --profile web add ./plugins/harnessdock-pet` 安装，并通过 `dsh --profile web --dump-config` 看到 `id: pet`、`name: '@harnessdock/pet'`。
 - 在真实 Harness UI 检查插件列表卡片、桌面宠物设置标签、即时切换和刷新后持久化。
 - 对左、右、底三边的吸附计算做自动检查；验证普通点击仍命中宠物下方控件，`⌥` 拖动才接管定位。
 - 检查应用内插件文件、代码签名、profile link 目标和重启后的 3080 启动图，确保部署不依赖开发仓库。

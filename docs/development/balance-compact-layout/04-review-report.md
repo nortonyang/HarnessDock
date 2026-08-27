@@ -33,7 +33,7 @@
 ## 验证结果
 
 - `./scripts/run_checks.sh`：通过；受限沙箱不允许创建 loopback fixture 时明确跳过该环境项。
-- `./scripts/build_app.sh`：通过，生成 `dist/DsHarness.app`。
+- `./scripts/build_app.sh`：通过，生成 `dist/HarnessDock.app`。
 - `plutil -lint`：通过。
 - `codesign --verify --deep --strict`：通过。
 - `swift test`：当前 CLT 缺少 `Testing` 模块，未作为失败门禁；等价余额解析由 CoreChecks 覆盖。

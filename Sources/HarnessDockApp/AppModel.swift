@@ -1,7 +1,7 @@
 import AppKit
 import Combine
 import Darwin
-import DsHarnessCore
+import HarnessDockCore
 import Foundation
 import ImageIO
 import UniformTypeIdentifiers

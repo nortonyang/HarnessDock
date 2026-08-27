@@ -3,31 +3,31 @@
 import PackageDescription
 
 let package = Package(
-    name: "DsHarness",
+    name: "HarnessDock",
     platforms: [
         .macOS(.v14),
     ],
     products: [
-        .library(name: "DsHarnessCore", targets: ["DsHarnessCore"]),
-        .executable(name: "DsHarness", targets: ["DsHarnessApp"]),
-        .executable(name: "DsHarnessCoreChecks", targets: ["DsHarnessCoreChecks"]),
+        .library(name: "HarnessDockCore", targets: ["HarnessDockCore"]),
+        .executable(name: "HarnessDock", targets: ["HarnessDockApp"]),
+        .executable(name: "HarnessDockCoreChecks", targets: ["HarnessDockCoreChecks"]),
     ],
     targets: [
-        .target(name: "DsHarnessCore"),
+        .target(name: "HarnessDockCore"),
         .executableTarget(
-            name: "DsHarnessApp",
-            dependencies: ["DsHarnessCore"],
+            name: "HarnessDockApp",
+            dependencies: ["HarnessDockCore"],
             resources: [
                 .copy("Resources/Pets"),
             ]
         ),
         .executableTarget(
-            name: "DsHarnessCoreChecks",
-            dependencies: ["DsHarnessCore"]
+            name: "HarnessDockCoreChecks",
+            dependencies: ["HarnessDockCore"]
         ),
         .testTarget(
-            name: "DsHarnessCoreTests",
-            dependencies: ["DsHarnessCore"]
+            name: "HarnessDockCoreTests",
+            dependencies: ["HarnessDockCore"]
         ),
     ],
     swiftLanguageModes: [.v5]

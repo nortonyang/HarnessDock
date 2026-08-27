@@ -1,12 +1,12 @@
 import SwiftUI
 
 @main
-struct DsHarnessApp: App {
+struct HarnessDockApp: App {
     @StateObject private var model = AppModel()
     @StateObject private var petPlugin = PetPluginController()
 
     var body: some Scene {
-        WindowGroup("DS Harness") {
+        WindowGroup("HarnessDock") {
             ContentView()
                 .environmentObject(model)
                 .environmentObject(petPlugin)

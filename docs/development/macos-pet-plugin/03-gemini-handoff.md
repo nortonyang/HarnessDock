@@ -12,7 +12,7 @@
 
 - US-501 至 US-508。
 - 增加 Codex 兼容宠物清单和 8×9 动画契约。
-- 增加 `~/.codex/pets` 与 DsHarness Application Support 宠物的发现、校验、选择、导入和偏好持久化。
+- 增加 `~/.codex/pets` 与 HarnessDock Application Support 宠物的发现、校验、选择、导入和偏好持久化。
 - 增加 SwiftUI 宠物动画覆盖层、运行状态映射、减少动态效果支持。
 - 增加菜单、快捷键、工具栏和设置 sheet。
 - 更新核心检查、单元测试和 README。
@@ -37,13 +37,13 @@
 
 预期改动区域：
 
-- `Sources/DsHarnessCore/PetPlugin.swift`
-- `Sources/DsHarnessApp/PetPluginController.swift`
-- `Sources/DsHarnessApp/PetPluginView.swift`
-- `Sources/DsHarnessApp/ContentView.swift`
-- `Sources/DsHarnessApp/DsHarnessApp.swift`
-- `Sources/DsHarnessCoreChecks/main.swift`
-- `Tests/DsHarnessCoreTests/PetPluginTests.swift`
+- `Sources/HarnessDockCore/PetPlugin.swift`
+- `Sources/HarnessDockApp/PetPluginController.swift`
+- `Sources/HarnessDockApp/PetPluginView.swift`
+- `Sources/HarnessDockApp/ContentView.swift`
+- `Sources/HarnessDockApp/HarnessDockApp.swift`
+- `Sources/HarnessDockCoreChecks/main.swift`
+- `Tests/HarnessDockCoreTests/PetPluginTests.swift`
 - `README.md`
 
 需要运行的验证：
@@ -51,7 +51,7 @@
 - `./scripts/run_checks.sh`
 - `swift build`
 - `./scripts/build_app.sh`
-- `plutil -lint dist/DsHarness.app/Contents/Info.plist`
+- `plutil -lint dist/HarnessDock.app/Contents/Info.plist`
 
 返回内容：
 
@@ -82,5 +82,5 @@
 
 - 复用 `artifacts/pets/marina-run/package`，不得重新绘制、镜像、编辑或伪造已完成的图像任务。
 - 安装时必须同时复制 `pet.json` 与 `spritesheet.webp`，并验证源/目标 SHA-256 一致。
-- DsHarness Chat 选择设为 `codex:marina`；不得修改 Harness Web 插件的 localStorage 选择或内置 DeepWhale 资源。
+- HarnessDock Chat 选择设为 `codex:marina`；不得修改 Harness Web 插件的 localStorage 选择或内置 DeepWhale 资源。
 - 重启后验证 Codex 包可发现、Chat 宠物启用和本机偏好持久化。

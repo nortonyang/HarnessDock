@@ -9,11 +9,11 @@ module_cache="${repository_root}/.build/clang-module-cache"
 cd "${repository_root}"
 mkdir -p "${module_cache}"
 
-npm --prefix "${repository_root}/plugins/dsh-pet" run check
+npm --prefix "${repository_root}/plugins/harnessdock-pet" run check
 node "${repository_root}/scripts/check-chat-enter.mjs"
 plutil -lint "${repository_root}"/Resources/*.lproj/Localizable.strings
 
-run_flags=(run --disable-sandbox DsHarnessCoreChecks)
+run_flags=(run --disable-sandbox HarnessDockCoreChecks)
 
 if [[ "$(xcode-select -p)" == "/Library/Developer/CommandLineTools" ]]; then
     # Prefer the SDK that matches this macOS 14-targeted app when a Command
