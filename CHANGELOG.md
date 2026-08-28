@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+
+- Managed Harness processes now inherit `DEEPSEEK_API_KEY` from the HarnessDock launch environment, allowing the official model settings page to use environment authentication instead of asking for the same key again.
+
+### Security and privacy
+
+- Keychain-only balance credentials remain native-only; credential values are not copied into WebView scripts, project files, or Harness logs.
+
 ### Release blockers
 
 - Select and add a repository license.

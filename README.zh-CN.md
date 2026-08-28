@@ -40,7 +40,7 @@ HarnessDock 面向希望在 macOS 上自然使用官方 Harness 工作流的开�
 
 - 不替代或重新实现 DeepSeek Harness。
 - 不绕过 DeepSeek Chat 登录；Chat 页打开的是官方网页，使用正常的账号会话。
-- 不读取 Harness 模型凭据，也不会把余额 API Key 传给 Harness 进程。
+- 不会把仅存于钥匙串的余额凭据复制给 Harness，也不会把凭据内容注入网页。
 - 目前不提供已签名、已公证并支持自动更新的公众安装包。
 
 ## 系统要求（Requirements）
@@ -77,7 +77,7 @@ open dist/HarnessDock.app
 
 1. 打开 HarnessDock。存在上次使用的工作区时，点击 **进入** 即可恢复；否则选择一个本地项目目录。
 2. 等待状态变为 **本地**，Harness 默认启动在 `127.0.0.1:3080`。
-3. 在 **Harness → 设置 → 模型** 中配置模型访问凭据。
+3. 如果 HarnessDock 启动时已有 `DEEPSEEK_API_KEY`，由它管理的 Harness 会继承该环境变量并使用官方环境认证；只有本机未配置时，才需要在 **Harness → 设置 → 模型** 中填写凭据。
 4. 如需显示账户余额，打开 **HarnessDock → 设置 → API 与余额**，把单独的 DeepSeek API Key 存入钥匙串。
 5. 在官方 Harness 界面中开始任务，或切换到 **Chat** 使用 DeepSeek 官方网页聊天。
 
@@ -91,10 +91,11 @@ Chat 中，中文输入法确认不会发送草稿；带修饰键的 Enter 会�
 
 ## 数据与隐私（Privacy）
 
-- 余额 Key 可以来自 `DEEPSEEK_API_KEY`，也可以存入 macOS 钥匙串。
-- Key 不会写入项目、配置文件或 Harness 日志。
+- HarnessDock 启动环境中的 `DEEPSEEK_API_KEY` 会由其管理的 Harness 子进程继承，用于官方环境认证，也可用于原生余额查询。
+- 只保存在 macOS 钥匙串中的余额凭据仍仅供原生余额查询，不会复制给 Harness。
+- 凭据内容不会写入项目、配置文件、Harness 日志或 WebView 脚本。
 - 查询余额时只向 `https://api.deepseek.com/user/balance` 发起只读请求。
-- 余额 Key 不会传给 Harness 子进程或 Chat 页面。
+- 环境凭据和钥匙串凭据都不会被注入 Harness 或 Chat 网页。
 - 背景图片副本只保存在当前 Mac 的 Application Support 目录。
 - 导入的宠物包仅作为 JSON 和图片资源读取，不执行其中的代码。
 - 当前预览版不包含数据分析或崩溃上报。

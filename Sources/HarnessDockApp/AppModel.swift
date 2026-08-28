@@ -832,9 +832,9 @@ final class AppModel: ObservableObject {
         environment["PATH"] = cachedRuntimeURL.map {
             ExecutableLocator.pathEnvironment(for: $0, inheritedPath: nodePath)
         } ?? nodePath
-        // This variable is accepted only as a credential source for the native
-        // balance client. Do not expose it to npm, Harness, or Harness plugins.
-        environment.removeValue(forKey: "DEEPSEEK_API_KEY")
+        // Preserve a launch-environment DEEPSEEK_API_KEY so the official
+        // Harness credential resolver can use environment authentication.
+        // A Keychain-only balance credential is never copied into this map.
         environment["NO_COLOR"] = "1"
         process.environment = environment
 

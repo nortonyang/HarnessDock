@@ -16,11 +16,11 @@ Official references:
 - Version: developer preview `0.1.0`.
 - Minimum system: macOS 14 Sonoma.
 - Current candidate architecture: arm64 only.
-- Local candidate archive: `HarnessDock-0.1.0-macOS-arm64.zip`, 8,435,845 bytes.
-- Local candidate SHA-256: `10369350380f3a9e01de649e18cbd7940e6821b3992c9fea912d4dd31ad72850`.
+- Local candidate archive: `HarnessDock-0.1.0-macOS-arm64.zip`, 8,435,459 bytes.
+- Local candidate SHA-256: `16ad43ab79ebc45d6e549fa04738bd5db399da65180faf0885e67d4b9effa12c`.
 - Candidate signature: valid ad-hoc signature only; no Developer ID team and no Apple notarization.
 - App price: **Pending license decision**. Intended launch choice is Free; DeepSeek API usage is billed separately by DeepSeek.
-- Privacy: balance credentials stay in macOS Keychain or the process environment; the app makes a read-only balance request to DeepSeek's official API.
+- Privacy: a launch-environment `DEEPSEEK_API_KEY` is inherited by managed Harness for official environment authentication; a Keychain-only balance credential remains native-only. Values are not injected into webpages or logs.
 - Upgrade compatibility: the public product is HarnessDock, while the legacy `app.dsharness.desktop` bundle identifier and related local service names are retained so existing sessions and settings survive the rename.
 - Product URL: **Pending usable GitHub Release or landing/download page**.
 - Download: **Pending Developer ID signing, Apple notarization, and clean-Mac smoke test**. The checksum above is for a local, non-public candidate and must be regenerated for the exact uploaded artifact.
@@ -35,9 +35,9 @@ HarnessDock
 
 DeepSeek Harness, made native for macOS
 
-### Description — 239 characters
+### Description — 233/260 characters
 
-HarnessDock is a native SwiftUI workspace for DeepSeek Harness. Open local projects, view API balance and RMB peak/off-peak pricing, switch to DeepSeek Chat, personalize backgrounds, and add task-aware pets. API keys stay in macOS Keychain.
+HarnessDock is a native SwiftUI workspace for DeepSeek Harness. Open local projects, view API balance and RMB peak/off-peak pricing, switch to DeepSeek Chat, personalize backgrounds, and add task-aware pets. Credentials remain local.
 
 ### Launch tags — confirm exact labels in the live form
 
@@ -55,7 +55,7 @@ Hi Product Hunt! I built HarnessDock because I wanted the official DeepSeek Harn
 
 The native SwiftUI shell opens local projects, starts the pinned Harness runtime, keeps Harness and DeepSeek Chat in one window, and adds the macOS details I missed: Keychain-backed balance checks, Beijing-time peak/off-peak RMB pricing, custom backgrounds, bilingual controls, and task-aware animated pets.
 
-Privacy was a deliberate boundary. The balance key stays in Keychain or the local process environment, is used only for DeepSeek's read-only balance endpoint, and is never passed to Harness or Chat. The pet observes task status only—not prompts, replies, command arguments, or tool output.
+Privacy was a deliberate boundary. A launch-environment `DEEPSEEK_API_KEY` is inherited only by the managed Harness process for official environment authentication; a Keychain-only balance credential stays native-only. Credential values are never injected into webpages or logs. The pet observes task status only—not prompts, replies, command arguments, or tool output.
 
 This is an independent, unofficial developer preview for macOS 14+. I would especially value feedback on the native workflow, setup experience, and which desktop features would make Harness more useful day to day.
 
@@ -71,7 +71,7 @@ HarnessDock
 
 ### 产品描述
 
-HarnessDock 是面向 DeepSeek Harness 的原生 SwiftUI 工作空间。它能打开本地项目、展示 API 余额和人民币高峰/谷时价格、切换 DeepSeek Chat、自定义主题背景，并加入能感知任务状态的动态宠物。API Key 安全保存在 macOS 钥匙串中。
+HarnessDock 是面向 DeepSeek Harness 的原生 SwiftUI 工作空间。它能打开本地项目、展示 API 余额和人民币高峰/谷时价格、切换 DeepSeek Chat、自定义主题背景，并加入能感知任务状态的动态宠物。凭据始终留在本机。
 
 ### 发布标签（以表单现场选项为准）
 
@@ -89,7 +89,7 @@ HarnessDock 是面向 DeepSeek Harness 的原生 SwiftUI 工作空间。它能�
 
 原生 SwiftUI 外壳可以打开本地项目、启动锁定版本的 Harness 运行时，把 Harness 与 DeepSeek Chat 放进同一个窗口，并补充更符合 macOS 使用习惯的能力：钥匙串余额查询、北京时间高峰/谷时人民币价格、自定义背景、中英文界面和能感知任务状态的动态宠物。
 
-隐私边界是我重点考虑的部分。余额 Key 只保存在钥匙串或本地进程环境中，仅用于 DeepSeek 官方只读余额接口，不会传给 Harness 或 Chat。宠物只观察任务状态，不读取提示词、回复正文、命令参数或工具输出。
+隐私边界是我重点考虑的部分。启动环境中的 `DEEPSEEK_API_KEY` 只由 HarnessDock 管理的 Harness 继承，用于官方环境认证；仅存于钥匙串的余额凭据仍只供原生查询。凭据内容不会注入网页或日志。宠物只观察任务状态，不读取提示词、回复正文、命令参数或工具输出。
 
 这是面向 macOS 14+ 的独立非官方开发者预览版。我特别希望听到大家对原生工作流、首次配置体验，以及哪些桌面功能能让 Harness 更适合日常使用的反馈。
 

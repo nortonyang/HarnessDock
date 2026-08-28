@@ -40,7 +40,7 @@ HarnessDock is designed for developers who want the official Harness workflow to
 
 - It does not replace or reimplement DeepSeek Harness.
 - It does not bypass DeepSeek Chat login; the Chat tab opens the official website and uses its normal account session.
-- It does not read Harness model credentials or share the balance API key with the Harness process.
+- It does not copy a Keychain-only balance credential into Harness or inject credential values into web pages.
 - It does not currently provide a signed, notarized, automatically updating consumer download.
 
 ## Requirements
@@ -77,7 +77,7 @@ The build script creates `dist/HarnessDock.app`, embeds the six release files fo
 
 1. Open HarnessDock. If a previous workspace exists, **Enter** reopens it; otherwise choose a local project folder.
 2. Wait until the status becomes **Local**. Harness starts on `127.0.0.1:3080` by default.
-3. Configure model access in **Harness → Settings → Models**.
+3. If `DEEPSEEK_API_KEY` was present when HarnessDock launched, its managed Harness process inherits it and the official model page uses environment authentication. Otherwise configure model access in **Harness → Settings → Models**.
 4. To display account balance, open **HarnessDock → Settings → API & Balance** and save a separate DeepSeek API key to Keychain.
 5. Start a task in the official Harness interface, or switch to **Chat** for the official DeepSeek web chat.
 
@@ -91,10 +91,11 @@ In Chat, IME confirmation does not send the draft, modified Enter inserts a newl
 
 ## Privacy
 
-- A balance key can come from `DEEPSEEK_API_KEY` or be saved in macOS Keychain.
-- The key is not written to the project, configuration files, or Harness logs.
+- `DEEPSEEK_API_KEY` from the HarnessDock launch environment is inherited by the managed Harness process for official environment authentication and can also be used for the native balance lookup.
+- A balance credential saved only in macOS Keychain remains native-only and is not copied into Harness.
+- Credential values are not written to the project, configuration files, Harness logs, or WebView scripts.
 - Balance lookup makes a read-only request to `https://api.deepseek.com/user/balance`.
-- The balance key is not passed to the Harness child process or the Chat page.
+- Neither environment nor Keychain credentials are injected into the Harness or Chat webpage.
 - Background image copies remain in this Mac's Application Support directory.
 - Imported pet packages are read as JSON and image assets; their code is not executed.
 - HarnessDock does not include analytics or crash reporting in the current preview.

@@ -11,6 +11,7 @@ mkdir -p "${module_cache}"
 
 npm --prefix "${repository_root}/plugins/harnessdock-pet" run check
 node "${repository_root}/scripts/check-chat-enter.mjs"
+node "${repository_root}/scripts/check-harness-environment.mjs"
 plutil -lint "${repository_root}"/Resources/*.lproj/Localizable.strings
 
 run_flags=(run --disable-sandbox HarnessDockCoreChecks)
