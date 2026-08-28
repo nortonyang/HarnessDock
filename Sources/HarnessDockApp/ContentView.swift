@@ -1519,9 +1519,9 @@ struct AppSettingsView: View {
         case .none:
             ""
         case .environment:
-            model.localized("已从启动环境读取 DEEPSEEK_API_KEY，无需再次输入。")
+            model.localized("已从本机环境读取 DEEPSEEK_API_KEY，无需再次输入。")
         case .keychain where model.hasEnvironmentBalanceAPIKey:
-            model.localized("当前优先使用钥匙串；启动环境中的 DEEPSEEK_API_KEY 已被覆盖。")
+            model.localized("当前优先使用钥匙串；本机环境中的 DEEPSEEK_API_KEY 已被覆盖。")
         case .keychain:
             model.localized("Key 已安全保存在 macOS 钥匙串中，现有内容不会回显。")
         }

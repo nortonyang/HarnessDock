@@ -174,6 +174,7 @@ final class AppModel: ObservableObject {
     private var outputPipe: Pipe?
     private var startupTask: Task<Void, Never>?
     private var balanceTask: Task<Void, Never>?
+    private var loginShellAPIKey: String?
     private var expectedTerminationProcessIDs = Set<Int32>()
     private var didRestoreWorkspace = false
     /// PID of the `node` process actually serving the port we launched
@@ -225,7 +226,7 @@ final class AppModel: ObservableObject {
     }
 
     var hasEnvironmentBalanceAPIKey: Bool {
-        Self.environmentBalanceAPIKey() != nil
+        environmentBalanceAPIKey() != nil
     }
 
     func balanceWebPresentation(at date: Date = Date()) -> BalanceWebPresentation {
@@ -687,7 +688,7 @@ final class AppModel: ObservableObject {
             balanceCredentialError = error.localizedDescription
         }
 
-        balanceCredentialSource = Self.environmentBalanceAPIKey() == nil ? .none : .environment
+        balanceCredentialSource = environmentBalanceAPIKey() == nil ? .none : .environment
     }
 
     private func balanceAPIKey() -> String? {
@@ -703,7 +704,7 @@ final class AppModel: ObservableObject {
             balanceCredentialError = error.localizedDescription
         }
 
-        if let credential = Self.environmentBalanceAPIKey() {
+        if let credential = environmentBalanceAPIKey() {
             balanceCredentialSource = .environment
             return credential
         }
@@ -712,7 +713,11 @@ final class AppModel: ObservableObject {
         return nil
     }
 
-    private static func environmentBalanceAPIKey() -> String? {
+    private func environmentBalanceAPIKey() -> String? {
+        Self.inheritedEnvironmentAPIKey() ?? loginShellAPIKey
+    }
+
+    private static func inheritedEnvironmentAPIKey() -> String? {
         guard let credential = ProcessInfo.processInfo.environment["DEEPSEEK_API_KEY"]?
             .trimmingCharacters(in: .whitespacesAndNewlines),
             !credential.isEmpty
@@ -772,6 +777,9 @@ final class AppModel: ObservableObject {
     }
 
     private func launchOrAttach(in workspace: URL) async {
+        var environment = await resolvedHarnessEnvironment()
+        guard !Task.isCancelled else { return }
+
         if await serverIsReachable() {
             guard await serverIsHarness() else {
                 let message = "端口 \(configuration.port) 上已有其他 HTTP 服务，但不是 DeepSeek Harness。请先停止该服务，再重新启动。"
@@ -824,7 +832,6 @@ final class AppModel: ObservableObject {
         process.standardOutput = pipe
         process.standardError = pipe
 
-        var environment = ProcessInfo.processInfo.environment
         let nodePath = ExecutableLocator.pathEnvironment(
             for: npxURL,
             inheritedPath: environment["PATH"]
@@ -898,6 +905,33 @@ final class AppModel: ObservableObject {
         appendLog(message)
         status = .failed(message)
         stopOwnedProcess()
+    }
+
+    private func resolvedHarnessEnvironment() async -> [String: String] {
+        var environment = ProcessInfo.processInfo.environment
+        if let inherited = Self.inheritedEnvironmentAPIKey() {
+            environment["DEEPSEEK_API_KEY"] = inherited
+            return environment
+        }
+
+        if let loginShellAPIKey {
+            environment["DEEPSEEK_API_KEY"] = loginShellAPIKey
+            return environment
+        }
+
+        let candidate = await Task.detached(priority: .utility) {
+            LoginShellEnvironment.value(
+                for: "DEEPSEEK_API_KEY",
+                environment: environment
+            )
+        }.value
+
+        guard let candidate else { return environment }
+        loginShellAPIKey = candidate
+        environment["DEEPSEEK_API_KEY"] = candidate
+        updateBalanceCredentialSource()
+        refreshBalance()
+        return environment
     }
 
     private func serverIsReachable() async -> Bool {

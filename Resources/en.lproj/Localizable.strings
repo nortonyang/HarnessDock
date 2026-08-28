@@ -114,8 +114,8 @@
 "尚未配置 API Key" = "API Key Not Configured";
 "已配置 · 环境变量" = "Configured · Environment Variable";
 "已配置 · macOS 钥匙串" = "Configured · macOS Keychain";
-"已从启动环境读取 DEEPSEEK_API_KEY，无需再次输入。" = "DEEPSEEK_API_KEY was read from the launch environment. No additional input is needed.";
-"当前优先使用钥匙串；启动环境中的 DEEPSEEK_API_KEY 已被覆盖。" = "The Keychain value takes priority over DEEPSEEK_API_KEY from the launch environment.";
+"已从本机环境读取 DEEPSEEK_API_KEY，无需再次输入。" = "DEEPSEEK_API_KEY was read from the local environment. No additional input is needed.";
+"当前优先使用钥匙串；本机环境中的 DEEPSEEK_API_KEY 已被覆盖。" = "The Keychain value takes priority over DEEPSEEK_API_KEY from the local environment.";
 "Key 已安全保存在 macOS 钥匙串中，现有内容不会回显。" = "The key is stored securely in macOS Keychain and is never displayed.";
 "现有 Key 不会回显；保存后，新 Key 将写入 macOS 钥匙串并优先使用。" = "The current key is never displayed. The new key will be stored in macOS Keychain and used first.";
 "保存后写入 macOS 钥匙串并优先使用，不进入项目文件或 Harness 日志。" = "The key is stored in macOS Keychain and never written to project files or Harness logs.";

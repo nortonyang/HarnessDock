@@ -214,6 +214,43 @@ do {
     failures.append("Temporary executable check failed: \(error)")
 }
 
+// Finder-launched apps need one exported credential from the user's login
+// shell without importing or exposing the rest of that shell environment.
+do {
+    let fixture = FileManager.default.temporaryDirectory
+        .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+    defer { try? FileManager.default.removeItem(at: fixture) }
+    try FileManager.default.createDirectory(at: fixture, withIntermediateDirectories: true)
+
+    let shell = fixture.appending(path: "test-shell")
+    try Data(
+        "#!/bin/sh\nprintf 'startup chatter\\n'\nexec /bin/sh -c \"$2\"\n".utf8
+    ).write(to: shell)
+    try FileManager.default.setAttributes(
+        [.posixPermissions: 0o755],
+        ofItemAtPath: shell.path
+    )
+
+    let resolved = LoginShellEnvironment.value(
+        for: "TEST_API_KEY",
+        environment: [
+            "SHELL": shell.path,
+            "TEST_API_KEY": "secret-from-shell",
+            "UNRELATED_VALUE": "must-not-be-returned",
+        ]
+    )
+    check(resolved == "secret-from-shell", "Login shell resolver must isolate one variable")
+    check(
+        LoginShellEnvironment.value(
+            for: "VALUE; /usr/bin/false",
+            environment: ["SHELL": shell.path]
+        ) == nil,
+        "Login shell resolver must reject unsafe variable names"
+    )
+} catch {
+    failures.append("Login shell environment check failed: \(error)")
+}
+
 // A Finder launch must honor the user's npm cache from ~/.npmrc and only
 // select a runtime whose package.json matches the pinned version.
 do {

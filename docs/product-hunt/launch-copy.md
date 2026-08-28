@@ -16,11 +16,11 @@ Official references:
 - Version: developer preview `0.1.0`.
 - Minimum system: macOS 14 Sonoma.
 - Current candidate architecture: arm64 only.
-- Local candidate archive: `HarnessDock-0.1.0-macOS-arm64.zip`, 8,435,459 bytes.
-- Local candidate SHA-256: `16ad43ab79ebc45d6e549fa04738bd5db399da65180faf0885e67d4b9effa12c`.
+- Local candidate archive: `HarnessDock-0.1.0-macOS-arm64.zip`, 8,438,894 bytes.
+- Local candidate SHA-256: `2f3d4405459aee169b4772e1b9e0572f4974808b73ebdd9e20eadafdef055f6e`.
 - Candidate signature: valid ad-hoc signature only; no Developer ID team and no Apple notarization.
 - App price: **Pending license decision**. Intended launch choice is Free; DeepSeek API usage is billed separately by DeepSeek.
-- Privacy: a launch-environment `DEEPSEEK_API_KEY` is inherited by managed Harness for official environment authentication; a Keychain-only balance credential remains native-only. Values are not injected into webpages or logs.
+- Privacy: managed Harness inherits `DEEPSEEK_API_KEY` from the app launch environment or resolves only that exported variable through the user's login shell for Finder launches; a Keychain-only balance credential remains native-only. Values are not injected into webpages or logs.
 - Upgrade compatibility: the public product is HarnessDock, while the legacy `app.dsharness.desktop` bundle identifier and related local service names are retained so existing sessions and settings survive the rename.
 - Product URL: **Pending usable GitHub Release or landing/download page**.
 - Download: **Pending Developer ID signing, Apple notarization, and clean-Mac smoke test**. The checksum above is for a local, non-public candidate and must be regenerated for the exact uploaded artifact.
@@ -55,7 +55,7 @@ Hi Product Hunt! I built HarnessDock because I wanted the official DeepSeek Harn
 
 The native SwiftUI shell opens local projects, starts the pinned Harness runtime, keeps Harness and DeepSeek Chat in one window, and adds the macOS details I missed: Keychain-backed balance checks, Beijing-time peak/off-peak RMB pricing, custom backgrounds, bilingual controls, and task-aware animated pets.
 
-Privacy was a deliberate boundary. A launch-environment `DEEPSEEK_API_KEY` is inherited only by the managed Harness process for official environment authentication; a Keychain-only balance credential stays native-only. Credential values are never injected into webpages or logs. The pet observes task status only—not prompts, replies, command arguments, or tool output.
+Privacy was a deliberate boundary. Managed Harness receives `DEEPSEEK_API_KEY` from the app launch environment or, for Finder launches, from a single-variable login-shell lookup. HarnessDock never imports the full shell environment, and a Keychain-only balance credential stays native-only. Credential values are never injected into webpages or logs. The pet observes task status only—not prompts, replies, command arguments, or tool output.
 
 This is an independent, unofficial developer preview for macOS 14+. I would especially value feedback on the native workflow, setup experience, and which desktop features would make Harness more useful day to day.
 
@@ -89,7 +89,7 @@ HarnessDock 是面向 DeepSeek Harness 的原生 SwiftUI 工作空间。它能�
 
 原生 SwiftUI 外壳可以打开本地项目、启动锁定版本的 Harness 运行时，把 Harness 与 DeepSeek Chat 放进同一个窗口，并补充更符合 macOS 使用习惯的能力：钥匙串余额查询、北京时间高峰/谷时人民币价格、自定义背景、中英文界面和能感知任务状态的动态宠物。
 
-隐私边界是我重点考虑的部分。启动环境中的 `DEEPSEEK_API_KEY` 只由 HarnessDock 管理的 Harness 继承，用于官方环境认证；仅存于钥匙串的余额凭据仍只供原生查询。凭据内容不会注入网页或日志。宠物只观察任务状态，不读取提示词、回复正文、命令参数或工具输出。
+隐私边界是我重点考虑的部分。HarnessDock 管理的 Harness 会接收应用启动环境中的 `DEEPSEEK_API_KEY`；Finder 启动缺失时，只通过登录 Shell 查询这一项变量，不导入完整环境。仅存于钥匙串的余额凭据仍只供原生查询，凭据内容不会注入网页或日志。宠物只观察任务状态，不读取提示词、回复正文、命令参数或工具输出。
 
 这是面向 macOS 14+ 的独立非官方开发者预览版。我特别希望听到大家对原生工作流、首次配置体验，以及哪些桌面功能能让 Harness 更适合日常使用的反馈。
 

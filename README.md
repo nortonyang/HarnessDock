@@ -77,8 +77,8 @@ The build script creates `dist/HarnessDock.app`, embeds the six release files fo
 
 1. Open HarnessDock. If a previous workspace exists, **Enter** reopens it; otherwise choose a local project folder.
 2. Wait until the status becomes **Local**. Harness starts on `127.0.0.1:3080` by default.
-3. If `DEEPSEEK_API_KEY` was present when HarnessDock launched, its managed Harness process inherits it and the official model page uses environment authentication. Otherwise configure model access in **Harness → Settings → Models**.
-4. To display account balance, open **HarnessDock → Settings → API & Balance** and save a separate DeepSeek API key to Keychain.
+3. HarnessDock first uses `DEEPSEEK_API_KEY` from its own launch environment. For Finder or Dock launches, it falls back to reading only that exported variable from your interactive login shell. Its managed Harness process then uses official environment authentication; only when neither source is configured must you add model access in **Harness → Settings → Models**.
+4. The same environment credential can power the native balance display. If it is unavailable, open **HarnessDock → Settings → API & Balance** and save a separate DeepSeek API key to Keychain.
 5. Start a task in the official Harness interface, or switch to **Chat** for the official DeepSeek web chat.
 
 The first visit to Harness settings shows a six-step guide. It explains the available controls without changing them. Select **Quick Start** in the settings header to reopen the guide at any time.
@@ -91,7 +91,8 @@ In Chat, IME confirmation does not send the draft, modified Enter inserts a newl
 
 ## Privacy
 
-- `DEEPSEEK_API_KEY` from the HarnessDock launch environment is inherited by the managed Harness process for official environment authentication and can also be used for the native balance lookup.
+- `DEEPSEEK_API_KEY` from the HarnessDock launch environment—or, when absent, that single exported variable resolved through the user's interactive login shell—is inherited by the managed Harness process for official environment authentication and can also be used for native balance lookup.
+- HarnessDock does not import the shell's full environment. The resolved value stays in memory and is not persisted by this fallback.
 - A balance credential saved only in macOS Keychain remains native-only and is not copied into Harness.
 - Credential values are not written to the project, configuration files, Harness logs, or WebView scripts.
 - Balance lookup makes a read-only request to `https://api.deepseek.com/user/balance`.

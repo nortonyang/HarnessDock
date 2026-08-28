@@ -8,11 +8,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- Managed Harness processes now inherit `DEEPSEEK_API_KEY` from the HarnessDock launch environment, allowing the official model settings page to use environment authentication instead of asking for the same key again.
+- Managed Harness processes now inherit `DEEPSEEK_API_KEY` from the HarnessDock launch environment. Finder and Dock launches fall back to resolving only that exported variable from the user's interactive login shell, so the official model settings page no longer asks for the same key again.
 
 ### Security and privacy
 
-- Keychain-only balance credentials remain native-only; credential values are not copied into WebView scripts, project files, or Harness logs.
+- Keychain-only balance credentials remain native-only. The login-shell fallback does not import the full environment, persist the resolved value, or copy credential values into WebView scripts, project files, or Harness logs.
 
 ### Release blockers
 

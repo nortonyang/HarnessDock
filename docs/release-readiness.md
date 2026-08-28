@@ -13,7 +13,7 @@
 | 风险 | 处理结果 | 证据 |
 | --- | --- | --- |
 | 本地 npm 缓存和测试 Home 被 `git add .` 收录 | 已修复 | `.gitignore` 忽略 `.smoke-npm-cache/` 与 `.test-dsh-home/` |
-| 环境凭据与钥匙串余额凭据边界不清 | 已修复 | 托管 Harness 只继承应用启动环境原有的 `DEEPSEEK_API_KEY`；Keychain-only 凭据不复制给 Harness，凭据值不进入 WebView 或日志 |
+| 环境凭据与钥匙串余额凭据边界不清 | 已修复 | 托管 Harness 继承应用启动环境中的 `DEEPSEEK_API_KEY`；Finder 启动缺失时仅从交互式登录 Shell 解析这一项导出变量。Keychain-only 凭据不复制给 Harness，凭据值不进入 WebView 或日志 |
 | 明文凭据进入源码 | 当前未发现 | 对可提交文本执行常见 Key、Bearer、私钥头扫描，无命中 |
 | 余额凭据持久化 | 已有保护 | Keychain 使用 `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`；Web 消息桥只接受固定动作 |
 | Harness 对外监听 | 已有保护 | 启动参数显式使用 `127.0.0.1`，附着前校验 `__DSH_BOOT__` |

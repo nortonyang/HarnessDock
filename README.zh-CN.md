@@ -77,8 +77,8 @@ open dist/HarnessDock.app
 
 1. 打开 HarnessDock。存在上次使用的工作区时，点击 **进入** 即可恢复；否则选择一个本地项目目录。
 2. 等待状态变为 **本地**，Harness 默认启动在 `127.0.0.1:3080`。
-3. 如果 HarnessDock 启动时已有 `DEEPSEEK_API_KEY`，由它管理的 Harness 会继承该环境变量并使用官方环境认证；只有本机未配置时，才需要在 **Harness → 设置 → 模型** 中填写凭据。
-4. 如需显示账户余额，打开 **HarnessDock → 设置 → API 与余额**，把单独的 DeepSeek API Key 存入钥匙串。
+3. HarnessDock 会先使用自身启动环境中的 `DEEPSEEK_API_KEY`；如果从 Finder 或 Dock 启动导致变量缺失，则只从用户的交互式登录 Shell 读取这一项导出变量。由它管理的 Harness 随后使用官方环境认证；两个来源都没有配置时，才需要在 **Harness → 设置 → 模型** 中填写凭据。
+4. 同一个环境凭据也可以用于原生余额显示。如果没有自动识别，打开 **HarnessDock → 设置 → API 与余额**，把单独的 DeepSeek API Key 存入钥匙串。
 5. 在官方 Harness 界面中开始任务，或切换到 **Chat** 使用 DeepSeek 官方网页聊天。
 
 首次进入 Harness 设置页时会显示 6 步引导，只解释各项设置，不会替你修改配置。以后可点击设置页顶部的 **新手引导** 再次查看。
@@ -91,7 +91,8 @@ Chat 中，中文输入法确认不会发送草稿；带修饰键的 Enter 会�
 
 ## 数据与隐私（Privacy）
 
-- HarnessDock 启动环境中的 `DEEPSEEK_API_KEY` 会由其管理的 Harness 子进程继承，用于官方环境认证，也可用于原生余额查询。
+- HarnessDock 启动环境中的 `DEEPSEEK_API_KEY`，或父环境缺失时从用户交互式登录 Shell 解析的同名导出变量，会由其管理的 Harness 子进程继承，用于官方环境认证，也可用于原生余额查询。
+- HarnessDock 不会导入 Shell 的完整环境；回退解析出的值只保留在内存中，不会因此落盘。
 - 只保存在 macOS 钥匙串中的余额凭据仍仅供原生余额查询，不会复制给 Harness。
 - 凭据内容不会写入项目、配置文件、Harness 日志或 WebView 脚本。
 - 查询余额时只向 `https://api.deepseek.com/user/balance` 发起只读请求。
