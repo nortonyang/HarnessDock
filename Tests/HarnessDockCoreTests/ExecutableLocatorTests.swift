@@ -127,4 +127,26 @@ struct ExecutableLocatorTests {
 
         #expect(path == "/opt/homebrew/bin:/usr/bin:/bin")
     }
+
+    @Test
+    func locateFindsNpmGlobalExecutableWithMinimalPath() throws {
+        let fixture = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: fixture) }
+
+        let home = fixture.appending(path: "home", directoryHint: .isDirectory)
+        let bin = home.appending(path: ".npm-global/bin", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+        let pnpm = bin.appending(path: "pnpm")
+        try Data("#!/bin/sh\nexit 0\n".utf8).write(to: pnpm)
+        try FileManager.default.setAttributes(
+            [.posixPermissions: 0o755],
+            ofItemAtPath: pnpm.path
+        )
+
+        #expect(ExecutableLocator.locate(
+            "pnpm",
+            environment: ["PATH": "/usr/bin", "HOME": home.path]
+        )?.standardizedFileURL == pnpm.standardizedFileURL)
+    }
 }

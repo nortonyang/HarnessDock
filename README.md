@@ -119,6 +119,8 @@ dsh plugin --profile web add ./plugins/harnessdock-pet
 
 Restart Harness after installation. Open **Settings → Plugins → Desktop Pet** to select DeepWhale or Marina, hide the pet, or change its dock position.
 
+When upgrading from the former DS Harness app, HarnessDock detects the exact legacy `@dsharness/pet` entry before starting a managed Harness service. It uses the official `dsh plugin` workflow to add the bundled `@harnessdock/pet` first and then remove the broken legacy link. If the App moves later, only an App-owned bundled-plugin link is updated to its current location; unrelated profiles and custom plugin sources are left unchanged.
+
 The Harness pet follows the official session state: it runs while the current task or a background job is active, plays one success or failure animation when the task ends, and then returns to idle. It observes status only—it does not read, store, or transmit prompts, replies, command arguments, or tool output. Hover and click trigger character reactions; drag from a non-control area to move it, or hold `⌥ Option` when starting a drag over a Harness control. The pet snaps to the nearest left, right, or bottom edge and remembers its position.
 
 The optional native pet layer is limited to Chat and reads compatible packages from `~/.codex/pets`, keeping it separate from the Harness plugin. Chat task-state reactions are not included in the current preview.

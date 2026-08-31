@@ -37,7 +37,7 @@ assert.match(
 );
 
 const resolverBlock = source.match(
-  /private func resolvedHarnessEnvironment\(\) async -> \[String: String\] \{[\s\S]*?\n    private func serverIsReachable/
+  /private func resolvedHarnessEnvironment\(\) async -> \[String: String\] \{[\s\S]*?\n    private func migrateLegacyPetProfileIfNeeded/
 )?.[0];
 
 assert.ok(resolverBlock, "Harness environment resolver must remain discoverable");

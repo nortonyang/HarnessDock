@@ -137,6 +137,11 @@ private enum ThemeBackgroundError: LocalizedError {
     }
 }
 
+private struct HarnessCommandResult: Sendable {
+    let exitCode: Int32
+    let output: String
+}
+
 @MainActor
 final class AppModel: ObservableObject {
     @Published private(set) var appLanguage: AppLanguage = .system
@@ -815,6 +820,23 @@ final class AppModel: ObservableObject {
             ? configuration.npxArguments
             : configuration.webArguments
 
+        let nodePath = ExecutableLocator.pathEnvironment(
+            for: npxURL,
+            inheritedPath: environment["PATH"]
+        )
+        environment["PATH"] = cachedRuntimeURL.map {
+            ExecutableLocator.pathEnvironment(for: $0, inheritedPath: nodePath)
+        } ?? nodePath
+        environment["NO_COLOR"] = "1"
+
+        guard let preparedEnvironment = await migrateLegacyPetProfileIfNeeded(
+            executableURL: executableURL,
+            cachedRuntimeURL: cachedRuntimeURL,
+            workspace: workspace,
+            environment: environment
+        ) else { return }
+        environment = preparedEnvironment
+
         appendLog("工作区：\(workspace.path)")
         if let cachedRuntimeURL {
             appendLog("已命中版本匹配的本地 DSH 缓存：\(cachedRuntimeURL.path)")
@@ -832,17 +854,9 @@ final class AppModel: ObservableObject {
         process.standardOutput = pipe
         process.standardError = pipe
 
-        let nodePath = ExecutableLocator.pathEnvironment(
-            for: npxURL,
-            inheritedPath: environment["PATH"]
-        )
-        environment["PATH"] = cachedRuntimeURL.map {
-            ExecutableLocator.pathEnvironment(for: $0, inheritedPath: nodePath)
-        } ?? nodePath
         // Preserve a launch-environment DEEPSEEK_API_KEY so the official
         // Harness credential resolver can use environment authentication.
         // A Keychain-only balance credential is never copied into this map.
-        environment["NO_COLOR"] = "1"
         process.environment = environment
 
         pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
@@ -932,6 +946,137 @@ final class AppModel: ObservableObject {
         updateBalanceCredentialSource()
         refreshBalance()
         return environment
+    }
+
+    private func migrateLegacyPetProfileIfNeeded(
+        executableURL: URL,
+        cachedRuntimeURL: URL?,
+        workspace: URL,
+        environment: [String: String]
+    ) async -> [String: String]? {
+        let manifestURL = HarnessPetProfileMigration.manifestURL(
+            environment: environment,
+            currentDirectory: workspace
+        )
+        guard let pluginURL = Bundle.main.resourceURL?
+            .appending(path: "Plugins/harnessdock-pet", directoryHint: .isDirectory)
+        else { return environment }
+        guard let manifestData = try? Data(contentsOf: manifestURL),
+              let initialState = HarnessPetProfileMigration.state(from: manifestData)
+        else { return environment }
+        let needsBundledRelink = initialState.needsBundledRelink(to: pluginURL)
+        guard initialState.needsMigration || needsBundledRelink else { return environment }
+
+        guard let pnpmURL = ExecutableLocator.locate("pnpm", environment: environment) else {
+            let message = "检测到旧版宠物插件配置，但找不到 pnpm，无法自动迁移。请先安装 pnpm 后重试。"
+            appendLog(message)
+            status = .failed(message)
+            return nil
+        }
+
+        var commandEnvironment = environment
+        commandEnvironment["PATH"] = ExecutableLocator.pathEnvironment(
+            for: pnpmURL,
+            inheritedPath: commandEnvironment["PATH"]
+        )
+        let commandPrefix = cachedRuntimeURL == nil
+            ? ["--yes", "--prefer-offline", configuration.packageName]
+            : []
+
+        appendLog(initialState.needsMigration
+            ? "检测到旧版 @dsharness/pet 配置，正在迁移到 @harnessdock/pet…"
+            : "检测到 HarnessDock 已移动，正在更新内嵌宠物插件链接…")
+
+        if !initialState.hasCurrentDependency
+            || !initialState.hasCurrentBundle
+            || needsBundledRelink
+        {
+            guard FileManager.default.fileExists(
+                atPath: pluginURL.appending(path: "package.json").path
+            ) else {
+                let message = "当前 HarnessDock 缺少内嵌宠物插件，无法更新 Harness profile。"
+                appendLog(message)
+                status = .failed(message)
+                return nil
+            }
+
+            let addResult = await Self.runHarnessCommand(
+                executableURL: executableURL,
+                arguments: commandPrefix + [
+                    "plugin", "--profile", "web", "add", pluginURL.path,
+                ],
+                currentDirectoryURL: workspace,
+                environment: commandEnvironment
+            )
+            guard addResult.exitCode == 0 else {
+                let message = "无法安装新版 @harnessdock/pet（状态码 \(addResult.exitCode)）。"
+                appendLog(message)
+                if !addResult.output.isEmpty { appendLog(addResult.output) }
+                status = .failed(message)
+                return nil
+            }
+        }
+
+        if initialState.needsMigration {
+            let removeResult = await Self.runHarnessCommand(
+                executableURL: executableURL,
+                arguments: commandPrefix + [
+                    "plugin", "--profile", "web", "remove",
+                    HarnessPetProfileMigration.legacyPackageName,
+                ],
+                currentDirectoryURL: workspace,
+                environment: commandEnvironment
+            )
+            if removeResult.exitCode != 0 {
+                appendLog("旧插件依赖清理失败，将在下次启动时重试（状态码 \(removeResult.exitCode)）。")
+            }
+        }
+
+        guard let migratedData = try? Data(contentsOf: manifestURL),
+              let migratedState = HarnessPetProfileMigration.state(from: migratedData),
+              migratedState.canBootCurrentPet,
+              !migratedState.needsBundledRelink(to: pluginURL)
+        else {
+            let message = "宠物插件 profile 迁移未完成，Harness 暂未启动。"
+            appendLog(message)
+            status = .failed(message)
+            return nil
+        }
+
+        appendLog("宠物插件 profile 已更新为当前 HarnessDock 内嵌版本。")
+        return commandEnvironment
+    }
+
+    private nonisolated static func runHarnessCommand(
+        executableURL: URL,
+        arguments: [String],
+        currentDirectoryURL: URL,
+        environment: [String: String]
+    ) async -> HarnessCommandResult {
+        await Task.detached(priority: .utility) {
+            let process = Process()
+            let pipe = Pipe()
+            process.executableURL = executableURL
+            process.arguments = arguments
+            process.currentDirectoryURL = currentDirectoryURL
+            process.environment = environment
+            process.standardInput = FileHandle.nullDevice
+            process.standardOutput = pipe
+            process.standardError = pipe
+
+            do {
+                try process.run()
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                process.waitUntilExit()
+                return HarnessCommandResult(
+                    exitCode: process.terminationStatus,
+                    output: String(decoding: data.prefix(12_000), as: UTF8.self)
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                )
+            } catch {
+                return HarnessCommandResult(exitCode: -1, output: error.localizedDescription)
+            }
+        }.value
     }
 
     private func serverIsReachable() async -> Bool {

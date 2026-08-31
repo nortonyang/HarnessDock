@@ -18,7 +18,7 @@
 | 余额凭据持久化 | 已有保护 | Keychain 使用 `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`；Web 消息桥只接受固定动作 |
 | Harness 对外监听 | 已有保护 | 启动参数显式使用 `127.0.0.1`，附着前校验 `__DSH_BOOT__` |
 | Harness 上游版本漂移 | 已修复 | 默认锁定已验证的 `@deepseek-ai/dsh@0.1.0-rc.6`，并使用 `--prefer-offline` 优先复用本机缓存 |
-| 产品从 DS Harness 改名后丢失本机数据 | 已规避 | 公开名称、App 和包名改为 HarnessDock；兼容性 Bundle ID、Application Support、钥匙串服务保持不变，宠物偏好提供旧键迁移 |
+| 产品从 DS Harness 改名后丢失本机数据或无法启动 | 已规避 | 公开名称、App 和包名改为 HarnessDock；兼容性 Bundle ID、Application Support、钥匙串服务保持不变，宠物偏好提供旧键迁移；启动前通过官方命令把精确旧 `@dsharness/pet` profile 引用迁移到 `@harnessdock/pet` |
 
 ## 发布阻塞项
 

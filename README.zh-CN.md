@@ -119,6 +119,8 @@ dsh plugin --profile web add ./plugins/harnessdock-pet
 
 安装后重启 Harness，在 **设置 → 插件 → 桌面宠物** 中选择 DeepWhale 或 Marina、隐藏宠物或更改停靠位置。
 
+从旧 DS Harness 升级时，HarnessDock 会在启动受管 Harness 前精确检测旧 `@dsharness/pet` 条目，并通过官方 `dsh plugin` 流程先添加内嵌的 `@harnessdock/pet`，再移除失效的旧链接。以后移动 App 时，只会把指向 App 内嵌插件的自有 link 更新到当前位置；其他 profile 和自定义插件来源不会被修改。
+
 Harness 宠物会跟随官方会话状态：当前任务或后台任务运行时持续执行动作，结束后播放一次成功或失败动画，再回到待机状态。它只观察状态，不读取、保存或传输提示词、回复正文、命令参数与工具输出。悬停和点击会触发角色动作；可从非控件区域直接拖动，若起点位于 Harness 控件上则按住 `⌥ Option` 拖动。松手后宠物会吸附到最近的左侧、右侧或底部边缘并保存位置。
 
 可选的原生宠物层只在 Chat 显示，从 `~/.codex/pets` 读取兼容宠物包，与 Harness 插件保持分离。当前预览版尚未提供 Chat 任务状态联动。

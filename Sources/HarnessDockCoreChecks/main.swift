@@ -177,6 +177,55 @@ check(
     "V4 Pro peak output price must match the Chinese official table"
 )
 
+let legacyPetProfile = Data(#"""
+{
+  "dependencies": {
+    "@dsharness/pet": "link:/Applications/DsHarness.app/Contents/Resources/Plugins/dsh-pet"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": ["@deepseek-ai/dsh-base", "@dsharness/pet"]
+    }
+  }
+}
+"""#.utf8)
+let currentPetProfile = Data(#"""
+{
+  "dependencies": {
+    "@harnessdock/pet": "link:/Applications/HarnessDock.app/Contents/Resources/Plugins/harnessdock-pet"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": ["@deepseek-ai/dsh-base", "@harnessdock/pet"]
+    }
+  }
+}
+"""#.utf8)
+check(
+    HarnessPetProfileMigration.state(from: legacyPetProfile)?.needsMigration == true,
+    "Legacy @dsharness/pet profiles must require migration"
+)
+check(
+    HarnessPetProfileMigration.state(from: currentPetProfile)?.canBootCurrentPet == true,
+    "Current @harnessdock/pet profiles must remain untouched"
+)
+check(
+    HarnessPetProfileMigration.state(from: currentPetProfile)?.needsBundledRelink(
+        to: URL(
+            fileURLWithPath: "/Applications/New/HarnessDock.app/Contents/Resources/Plugins/harnessdock-pet"
+        )
+    ) == true,
+    "Bundled pet links must follow the current HarnessDock app location"
+)
+check(
+    HarnessPetProfileMigration.manifestURL(
+        environment: ["DSH_HOME": "./custom-dsh"],
+        homeDirectory: URL(fileURLWithPath: "/Users/example", isDirectory: true),
+        currentDirectory: URL(fileURLWithPath: "/tmp/workspace", isDirectory: true)
+    ).path == "/tmp/workspace/custom-dsh/profiles/web/package.json",
+    "Relative DSH_HOME must resolve from the Harness working directory"
+)
+
 let temporaryDirectory = FileManager.default.temporaryDirectory
     .appending(path: UUID().uuidString, directoryHint: .isDirectory)
 
@@ -210,6 +259,28 @@ do {
         environment: ["PATH": temporaryDirectory.path, "HOME": temporaryDirectory.path]
     )
     check(rejected == nil, "Executable locator must reject a non-executable file")
+
+    let npmGlobalBin = temporaryDirectory.appending(
+        path: "home/.npm-global/bin",
+        directoryHint: .isDirectory
+    )
+    try FileManager.default.createDirectory(at: npmGlobalBin, withIntermediateDirectories: true)
+    let pnpm = npmGlobalBin.appending(path: "pnpm")
+    try Data("#!/bin/sh\nexit 0\n".utf8).write(to: pnpm)
+    try FileManager.default.setAttributes(
+        [.posixPermissions: 0o755],
+        ofItemAtPath: pnpm.path
+    )
+    check(
+        ExecutableLocator.locate(
+            "pnpm",
+            environment: [
+                "PATH": "/usr/bin",
+                "HOME": temporaryDirectory.appending(path: "home").path,
+            ]
+        )?.standardizedFileURL == pnpm.standardizedFileURL,
+        "Finder launches must find pnpm in ~/.npm-global/bin"
+    )
 } catch {
     failures.append("Temporary executable check failed: \(error)")
 }

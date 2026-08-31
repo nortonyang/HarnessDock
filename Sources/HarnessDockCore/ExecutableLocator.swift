@@ -28,6 +28,7 @@ public enum ExecutableLocator {
             let homeURL = URL(fileURLWithPath: home, isDirectory: true)
             candidates.append(homeURL.appending(path: ".volta/bin", directoryHint: .isDirectory))
             candidates.append(homeURL.appending(path: ".local/bin", directoryHint: .isDirectory))
+            candidates.append(homeURL.appending(path: ".npm-global/bin", directoryHint: .isDirectory))
             candidates.append(contentsOf: Self.versionedNodeDirectories(home: homeURL))
         }
 
