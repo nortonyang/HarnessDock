@@ -11,6 +11,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Managed Harness processes now inherit `DEEPSEEK_API_KEY` from the HarnessDock launch environment. Finder and Dock launches fall back to resolving only that exported variable from the user's interactive login shell, so the official model settings page no longer asks for the same key again.
 - Managed Harness startup now migrates the exact legacy `@dsharness/pet` web-profile entry to the bundled `@harnessdock/pet` through the official plugin command, preventing renamed or moved app bundles from blocking Harness startup.
 
+### Fixed
+
+- The balance panel now remains open when its compact-sidebar button is clicked instead of being immediately closed by the subsequent sidebar-state synchronization pass.
+
 ### Security and privacy
 
 - Keychain-only balance credentials remain native-only. The login-shell fallback does not import the full environment, persist the resolved value, or copy credential values into WebView scripts, project files, or Harness logs.

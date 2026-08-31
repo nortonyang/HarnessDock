@@ -16,8 +16,8 @@ Official references:
 - Version: developer preview `0.1.0`.
 - Minimum system: macOS 14 Sonoma.
 - Current candidate architecture: arm64 only.
-- Local candidate archive: `HarnessDock-0.1.0-macOS-arm64.zip`, 8,450,371 bytes.
-- Local candidate SHA-256: `943ad76e2bb477068ad165f97bb36ff12c363693632204dbdad0588ad3ef296c`.
+- Local candidate archive: `HarnessDock-0.1.0-macOS-arm64.zip`, 8,450,406 bytes.
+- Local candidate SHA-256: `527b29f5f50a7e70b41fb8caf425f8518c67dc24d614d86276424dfe8d5b20b5`.
 - Candidate signature: valid ad-hoc signature only; no Developer ID team and no Apple notarization.
 - App price: **Pending license decision**. Intended launch choice is Free; DeepSeek API usage is billed separately by DeepSeek.
 - Privacy: managed Harness inherits `DEEPSEEK_API_KEY` from the app launch environment or resolves only that exported variable through the user's login shell for Finder launches; a Keychain-only balance credential remains native-only. Values are not injected into webpages or logs.

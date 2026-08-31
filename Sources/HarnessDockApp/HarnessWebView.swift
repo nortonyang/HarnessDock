@@ -590,8 +590,9 @@ struct HarnessWebView: NSViewRepresentable {
           }
         }
         if (compact === null) return;
+        const wasCompact = root.dataset.sidebarCompact === 'true';
         root.dataset.sidebarCompact = compact ? 'true' : 'false';
-        if (compact) setExpanded(false);
+        if (compact && !wasCompact) setExpanded(false);
       };
 
       let sidebarUpdateQueued = false;
