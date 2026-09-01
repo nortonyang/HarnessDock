@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- Native **Version & Diagnostics** settings show the app build, pinned Harness runtime, macOS architecture, service state, workspace name, and Node/npx/dsh availability.
+- Diagnostics can be refreshed and copied as a privacy-safe report that excludes credentials, cookies, conversations, full logs, and full workspace paths.
+
 ### Changed
 
 - Managed Harness processes now inherit `DEEPSEEK_API_KEY` from the HarnessDock launch environment. Finder and Dock launches fall back to resolving only that exported variable from the user's interactive login shell, so the official model settings page no longer asks for the same key again.

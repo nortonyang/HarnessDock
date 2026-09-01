@@ -32,6 +32,7 @@ HarnessDock 面向希望在 macOS 上自然使用官方 Harness 工作流的开�
 - **高峰 / 谷时与人民币价格**：突出当前时段、对应模型单价，以及本地可读取的输入/输出 token 用量。
 - **自定义主题背景**：导入本地图片并调整内容遮罩，文件只保存在当前 Mac。
 - **中英文原生界面**：支持跟随系统、简体中文和 English。
+- **版本与诊断**：显示应用版本、锁定的 Harness 运行时、macOS 架构、服务状态和本机 Node/npx/dsh 可用性，并可复制隐私安全的诊断摘要。
 - **设置新手引导**：讲解预设、权限、外观、发送行为、模型和插件。
 - **任务感知的动态宠物**：`@harnessdock/pet` Harness 插件会根据任务执行中、成功和失败播放不同动画，并为 Chat 提供可选的本地宠物预览层。
 - **可靠的进程管理**：安全复用经过校验的已有 Harness 服务，并清理由本应用启动的进程。
@@ -100,6 +101,7 @@ Chat 中，中文输入法确认不会发送草稿；带修饰键的 Enter 会�
 - 背景图片副本只保存在当前 Mac 的 Application Support 目录。
 - 导入的宠物包仅作为 JSON 和图片资源读取，不执行其中的代码。
 - 当前预览版不包含数据分析或崩溃上报。
+- 复制的诊断摘要不包含 API Key、Cookie、聊天内容、完整日志和完整工作区路径；用户目录下的工具路径会缩写为 `~`。
 
 模型价格以人民币/百万 tokens 显示，并以 DeepSeek [中文官方价格页](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) 为参考。价格可能调整，最终以官方页面与账户账单为准。Token 统计来自 Harness 本地可读取的会话数据，不代表完整的账号累计用量。
 
@@ -187,6 +189,7 @@ HarnessDock/
 ## 常见问题
 
 - **Harness 无法启动：**确认 `node` 与 `npx` 满足版本要求，再按 `⇧⌘L` 查看 Harness 日志。
+- **需要确认本机环境：**打开 **设置 → 版本与诊断**，刷新检查后复制隐私安全的诊断摘要。
 - **3080 端口被占用：**只有页面包含官方 Harness 的 `__DSH_BOOT__` 标记时才会附着，否则会提示端口冲突。
 - **Chat 要求登录：**这是正常行为。该页加载官方 DeepSeek Chat，不能把 Harness API Key 当作网页登录凭据。
 - **余额不可用：**在设置中配置余额 Key、检查网络并刷新。这个 Key 与 Harness 模型配置相互独立。
@@ -207,7 +210,7 @@ HarnessDock/
 
 ## 支持与反馈（Support）
 
-发现问题或有功能建议？请提交 [GitHub Issue](https://github.com/nortonyang/HarnessDock/issues)，并附上 macOS 版本、Mac 架构、复现步骤与相关 Harness 日志。请勿提交 API Key、登录 Cookie、私有代码或其他秘密信息。
+发现问题或有功能建议？请提交 [GitHub Issue](https://github.com/nortonyang/HarnessDock/issues)，并附上复制的 **版本与诊断** 摘要、复现步骤和必要的 Harness 日志片段。请勿提交 API Key、登录 Cookie、私有代码或其他秘密信息。
 
 ## 许可证（License）
 

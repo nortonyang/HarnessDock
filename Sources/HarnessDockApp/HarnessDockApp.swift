@@ -87,6 +87,10 @@ struct HarnessDockApp: App {
                 }
                 .keyboardShortcut("t", modifiers: [.command, .shift])
 
+                Button(model.localized("版本与诊断…")) {
+                    model.requestSettings(.diagnostics)
+                }
+
                 Button(model.localized("查看 Harness 日志")) {
                     model.showLogs = true
                 }

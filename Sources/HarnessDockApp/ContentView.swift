@@ -1464,6 +1464,9 @@ struct AppSettingsView: View {
                 case .language:
                     LanguageSettingsPane()
                         .environmentObject(model)
+                case .diagnostics:
+                    DiagnosticsSettingsPane()
+                        .environmentObject(model)
                 }
             }
         }
@@ -1529,6 +1532,177 @@ struct AppSettingsView: View {
 
     private var credentialStatusIcon: String {
         model.balanceCredentialSource == .environment ? "terminal.fill" : "key.fill"
+    }
+}
+
+private struct DiagnosticsSettingsPane: View {
+    @EnvironmentObject private var model: AppModel
+    @State private var snapshot: HarnessDiagnostics?
+    @State private var didCopy = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Label {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("版本与诊断")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text("检查应用、服务和本机运行环境")
+                        .font(.system(size: 10.5))
+                        .foregroundStyle(.secondary)
+                }
+            } icon: {
+                Image(systemName: "stethoscope")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(.indigo)
+            }
+
+            if let snapshot {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        VStack(spacing: 0) {
+                            diagnosticsRow(
+                                icon: "shippingbox.fill",
+                                title: "应用版本",
+                                value: snapshot.appVersionDisplay
+                            )
+                            Divider().padding(.leading, 34)
+                            diagnosticsRow(
+                                icon: "terminal.fill",
+                                title: "Harness 运行时",
+                                value: snapshot.harnessPackage
+                            )
+                            Divider().padding(.leading, 34)
+                            diagnosticsRow(
+                                icon: "desktopcomputer",
+                                title: "系统",
+                                value: snapshot.systemDisplay
+                            )
+                            Divider().padding(.leading, 34)
+                            diagnosticsRow(
+                                icon: "network",
+                                title: "服务状态",
+                                value: snapshot.serviceStatus
+                            )
+                            Divider().padding(.leading, 34)
+                            diagnosticsRow(
+                                icon: "link",
+                                title: "本地地址",
+                                value: snapshot.serverURL
+                            )
+                            Divider().padding(.leading, 34)
+                            diagnosticsRow(
+                                icon: "folder.fill",
+                                title: "工作区",
+                                value: snapshot.workspaceName ?? model.localized("尚未选择")
+                            )
+                        }
+                        .padding(.horizontal, 12)
+                        .background {
+                            RoundedRectangle(cornerRadius: 11, style: .continuous)
+                                .fill(Color.primary.opacity(0.035))
+                        }
+
+                        Text("命令行运行环境")
+                            .font(.system(size: 10.5, weight: .semibold))
+                            .foregroundStyle(.secondary)
+
+                        VStack(spacing: 7) {
+                            runtimeRow(name: "Node", path: snapshot.nodeExecutable)
+                            runtimeRow(name: "npx", path: snapshot.npxExecutable)
+                            runtimeRow(name: "dsh", path: snapshot.cachedHarnessExecutable)
+                        }
+
+                        HStack(alignment: .top, spacing: 9) {
+                            Image(systemName: "hand.raised.fill")
+                                .foregroundStyle(.secondary)
+                            Text("复制内容不会包含 API Key、Cookie、聊天内容、完整日志或完整工作区路径。")
+                                .font(.system(size: 10))
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    Button {
+                        refresh()
+                    } label: {
+                        Label("刷新检查", systemImage: "arrow.clockwise")
+                    }
+
+                    Spacer()
+
+                    Button {
+                        model.copyDiagnostics(snapshot)
+                        didCopy = true
+                    } label: {
+                        Label(
+                            didCopy ? "已复制诊断信息" : "复制诊断信息",
+                            systemImage: didCopy ? "checkmark" : "doc.on.doc"
+                        )
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            } else {
+                Spacer()
+                ProgressView("正在检查运行环境…")
+                    .frame(maxWidth: .infinity)
+                Spacer()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(20)
+        .task {
+            refresh()
+        }
+    }
+
+    private func diagnosticsRow(icon: String, title: LocalizedStringKey, value: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+                .frame(width: 24)
+            Text(title)
+                .font(.system(size: 10.5, weight: .medium))
+            Spacer(minLength: 12)
+            Text(value)
+                .font(.system(size: 10.5, design: .monospaced))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .textSelection(.enabled)
+        }
+        .frame(height: 39)
+    }
+
+    private func runtimeRow(name: String, path: String?) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: path == nil ? "xmark.circle.fill" : "checkmark.circle.fill")
+                .foregroundStyle(path == nil ? Color.orange : Color.green)
+            Text(name)
+                .font(.system(size: 10.5, weight: .semibold, design: .monospaced))
+                .frame(width: 38, alignment: .leading)
+            Text(path ?? model.localized("未找到"))
+                .font(.system(size: 10, design: .monospaced))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .textSelection(.enabled)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 34)
+        .background {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color.primary.opacity(0.035))
+        }
+    }
+
+    private func refresh() {
+        snapshot = model.diagnosticsSnapshot()
+        didCopy = false
     }
 }
 

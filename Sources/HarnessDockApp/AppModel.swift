@@ -32,6 +32,7 @@ enum AppSettingsSection: String, CaseIterable, Identifiable {
     case apiBalance
     case themeBackground
     case language
+    case diagnostics
 
     var id: Self { self }
 
@@ -40,6 +41,7 @@ enum AppSettingsSection: String, CaseIterable, Identifiable {
         case .apiBalance: "API 与余额"
         case .themeBackground: "主题背景"
         case .language: "语言"
+        case .diagnostics: "版本与诊断"
         }
     }
 
@@ -48,6 +50,7 @@ enum AppSettingsSection: String, CaseIterable, Identifiable {
         case .apiBalance: "wallet.pass.fill"
         case .themeBackground: "photo.on.rectangle.angled"
         case .language: "globe"
+        case .diagnostics: "stethoscope"
         }
     }
 }
@@ -532,6 +535,58 @@ final class AppModel: ObservableObject {
         NSPasteboard.general.setString(logText, forType: .string)
     }
 
+    func diagnosticsSnapshot() -> HarnessDiagnostics {
+        let environment = ProcessInfo.processInfo.environment
+        let homeDirectory = environment["HOME"].map {
+            URL(fileURLWithPath: $0, isDirectory: true)
+        } ?? FileManager.default.homeDirectoryForCurrentUser
+        let nodeURL = ExecutableLocator.locate("node", environment: environment)
+        let npxURL = ExecutableLocator.locate("npx", environment: environment)
+        let cachedHarnessURL: URL?
+        if let pinnedPackage = configuration.pinnedPackage {
+            cachedHarnessURL = ExecutableLocator.locateNpxCachedPackageBinary(
+                "dsh",
+                packagePath: pinnedPackage.path,
+                version: pinnedPackage.version,
+                environment: environment
+            )
+        } else {
+            cachedHarnessURL = nil
+        }
+
+        return HarnessDiagnostics(
+            appVersion: Bundle.main.object(
+                forInfoDictionaryKey: "CFBundleShortVersionString"
+            ) as? String ?? "Development",
+            buildNumber: Bundle.main.object(
+                forInfoDictionaryKey: "CFBundleVersion"
+            ) as? String,
+            harnessPackage: configuration.packageName,
+            operatingSystem: ProcessInfo.processInfo.operatingSystemVersionString,
+            architecture: Self.currentArchitecture,
+            serviceStatus: diagnosticsServiceStatus,
+            serverURL: configuration.serverURL.absoluteString,
+            workspaceName: workspaceURL?.lastPathComponent,
+            nodeExecutable: HarnessDiagnostics.redactedPath(
+                nodeURL,
+                homeDirectory: homeDirectory
+            ),
+            npxExecutable: HarnessDiagnostics.redactedPath(
+                npxURL,
+                homeDirectory: homeDirectory
+            ),
+            cachedHarnessExecutable: HarnessDiagnostics.redactedPath(
+                cachedHarnessURL,
+                homeDirectory: homeDirectory
+            )
+        )
+    }
+
+    func copyDiagnostics(_ diagnostics: HarnessDiagnostics) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(diagnostics.report, forType: .string)
+    }
+
     func refreshBalance() {
         balanceTask?.cancel()
         balanceTask = nil
@@ -608,6 +663,33 @@ final class AppModel: ObservableObject {
 
     func selectSettingsSection(_ section: AppSettingsSection) {
         selectedSettingsSection = section
+    }
+
+    private var diagnosticsServiceStatus: String {
+        switch status {
+        case .idle:
+            localized("未启动")
+        case .locatingRuntime:
+            localized("正在检查运行环境")
+        case .launching:
+            localized("正在启动")
+        case .running(managed: true):
+            localized("已连接 · 由 HarnessDock 管理")
+        case .running(managed: false):
+            localized("已连接 · 外部服务")
+        case .failed:
+            localized("启动失败")
+        }
+    }
+
+    private static var currentArchitecture: String {
+#if arch(arm64)
+        "arm64"
+#elseif arch(x86_64)
+        "x86_64"
+#else
+        "unknown"
+#endif
     }
 
     private func loadThemeBackground() {

@@ -32,6 +32,7 @@ HarnessDock is designed for developers who want the official Harness workflow to
 - **Peak/off-peak indicator and RMB pricing** for supported models, plus locally available input/output token usage.
 - **Custom background image** with an adjustable content mask, stored only on the current Mac.
 - **Bilingual native interface** with System Default, Simplified Chinese, and English options.
+- **Version & Diagnostics** showing the app, pinned Harness runtime, macOS architecture, service state, and local Node/npx/dsh availability, with a privacy-safe copyable report.
 - **Guided settings tour** explaining presets, permissions, appearance, send behavior, models, and plugins.
 - **Task-aware animated pets** through the `@harnessdock/pet` Harness plugin: the pet reacts to running, successful, and failed tasks, with an optional local Chat preview layer.
 - **Reliable lifecycle management** that safely reuses a verified existing Harness service and cleans up processes started by the app.
@@ -100,6 +101,7 @@ In Chat, IME confirmation does not send the draft, modified Enter inserts a newl
 - Background image copies remain in this Mac's Application Support directory.
 - Imported pet packages are read as JSON and image assets; their code is not executed.
 - HarnessDock does not include analytics or crash reporting in the current preview.
+- Copied diagnostics exclude API keys, cookies, conversations, full logs, and full workspace paths; home-directory tool paths are shortened to `~`.
 
 Model pricing is displayed in RMB per million tokens using DeepSeek's [official Chinese pricing page](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) as the reference. Pricing can change; the official page and your account bill remain authoritative. Token counters are read from locally available Harness session statistics and may not represent complete account-wide usage.
 
@@ -187,6 +189,7 @@ To uninstall, quit the app and remove the locally built app. Optional user data 
 ## Troubleshooting
 
 - **Harness does not start:** confirm `node` and `npx` meet the requirements, then open Harness logs with `⇧⌘L`.
+- **Need help identifying the environment:** open **Settings → Version & Diagnostics**, refresh the check, and copy the privacy-safe report.
 - **Port 3080 is in use:** HarnessDock only attaches when the page contains the official Harness `__DSH_BOOT__` marker; otherwise it reports a conflict.
 - **Chat asks for login:** this is expected. The tab loads the official DeepSeek Chat service and cannot use the Harness API key as a web login.
 - **Balance is unavailable:** configure the balance key in Settings, check network access, and refresh. This key is separate from Harness model settings.
@@ -207,7 +210,7 @@ See the [public release readiness review](docs/release-readiness.md) for the det
 
 ## Support
 
-Found a bug or have a feature idea? Open a [GitHub issue](https://github.com/nortonyang/HarnessDock/issues) with your macOS version, Mac architecture, reproduction steps, and relevant Harness logs. Do not include API keys, login cookies, private code, or other secrets.
+Found a bug or have a feature idea? Open a [GitHub issue](https://github.com/nortonyang/HarnessDock/issues) with the copied **Version & Diagnostics** report, reproduction steps, and only the relevant Harness log lines. Do not include API keys, login cookies, private code, or other secrets.
 
 ## License
 

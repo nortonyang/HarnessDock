@@ -50,6 +50,39 @@ check(
     "Default package must expose its pinned path and version"
 )
 
+let diagnosticsHome = URL(fileURLWithPath: "/Users/example", isDirectory: true)
+let diagnostics = HarnessDiagnostics(
+    appVersion: "0.1.0",
+    buildNumber: "1",
+    harnessPackage: configuration.packageName,
+    operatingSystem: "macOS 15.0",
+    architecture: "arm64",
+    serviceStatus: "running",
+    serverURL: configuration.serverURL.absoluteString,
+    workspaceName: "Sample\nWorkspace",
+    nodeExecutable: HarnessDiagnostics.redactedPath(
+        URL(fileURLWithPath: "/Users/example/.nvm/current/bin/node"),
+        homeDirectory: diagnosticsHome
+    ),
+    npxExecutable: "/opt/homebrew/bin/npx",
+    cachedHarnessExecutable: nil
+)
+check(diagnostics.appVersionDisplay == "0.1.0 (1)", "Diagnostics must include the build number")
+check(diagnostics.workspaceName == "Sample Workspace", "Diagnostics values must stay on one line")
+check(
+    diagnostics.nodeExecutable == "~/.nvm/current/bin/node",
+    "Diagnostics must redact the current user's home directory"
+)
+check(
+    !diagnostics.report.contains("/Users/example"),
+    "Diagnostics report must not expose the user's home directory"
+)
+check(
+    diagnostics.report.contains("Workspace: Sample Workspace")
+        && diagnostics.report.contains("Cached dsh: Not found"),
+    "Diagnostics report must describe the workspace name and missing runtime"
+)
+
 let minimalPetManifestJSON = Data(#"""
 {
   "id": "sample-pet",
