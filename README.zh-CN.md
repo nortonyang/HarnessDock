@@ -16,7 +16,9 @@ HarnessDock 使用 SwiftUI 与 WebKit，将官方 [DeepSeek Harness](https://git
 
 ## 界面截图（Screenshots）
 
-早期开发截图包含真实工作区和旧产品名，因此已从当前公开版本移除。正式发布到 Product Hunt 前会补充一组经过脱敏的 HarnessDock 截图。
+![已隐藏私人工作区信息的 HarnessDock 主界面预览](docs/screenshots/sanitized/harnessdock-overview-redacted.png)
+
+该预览已遮盖工作区、模式、模型、输入内容和余额信息。正式发布到 Product Hunt 前会继续补充一组经过脱敏的产品截图。
 
 ## 产品概览（Overview）
 

@@ -11,6 +11,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Native **Version & Diagnostics** settings show the app build, pinned Harness runtime, macOS architecture, service state, workspace name, and Node/npx/dsh availability.
 - Diagnostics can be refreshed and copied as a privacy-safe report that excludes credentials, cookies, conversations, full logs, and full workspace paths.
 - Harness and native Chat pets now react consistently to running, successful, and failed tasks; terminal feedback starts at frame one and plays for one complete animation cycle.
+- The bilingual repository landing pages now include a sanitized HarnessDock workspace preview with private workspace and account details redacted.
 
 ### Changed
 
@@ -31,7 +32,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Select and add a repository license.
 - Produce a Developer ID-signed and Apple-notarized macOS package.
 - Verify the exact downloadable artifact on a clean Mac and record its SHA-256 checksum.
-- Capture a clean Product Hunt gallery without account balance or development-session content.
+- Expand the sanitized screenshot into a complete Product Hunt gallery without account balance or development-session content.
 
 ## [0.1.0] - 2026-08-27
 

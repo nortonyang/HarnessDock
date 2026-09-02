@@ -16,7 +16,9 @@ HarnessDock wraps the official [DeepSeek Harness](https://github.com/deepseek-ai
 
 ## Screenshots
 
-The earlier development screenshots were removed because they contained a real workspace and the previous product name. A sanitized HarnessDock gallery will be added before the public Product Hunt launch.
+![HarnessDock workspace preview with private workspace details redacted](docs/screenshots/sanitized/harnessdock-overview-redacted.png)
+
+This preview uses redacted workspace, mode, model, prompt, and balance details. A larger sanitized gallery will be added before the public Product Hunt launch.
 
 ## Overview
 
