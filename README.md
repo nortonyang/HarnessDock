@@ -22,6 +22,17 @@ The earlier development screenshots were removed because they contained a real w
 
 HarnessDock is designed for developers who want the official Harness workflow to feel at home on macOS. The native shell handles project selection, runtime startup, recovery, logs, shortcuts, local settings, and presentation while the Harness UI continues to provide conversations, tools, approvals, and plugins.
 
+## Latest Preview Update
+
+The latest development build makes animated pets task-aware across both work surfaces:
+
+- In **Harness**, the plugin follows the official current-session and background-job state.
+- In **Chat**, the native pet reacts when DeepSeek starts generating, finishes successfully, or reports a new error.
+- Success and failure feedback starts from the first frame, plays one complete animation cycle, and then returns to idle.
+- The Chat bridge sends only `idle`, `running`, `succeeded`, or `failed` to native Swift code. It never reads or forwards prompts, replies, or page text.
+
+These transitions are covered by the Harness plugin checks, Core checks, and a privacy-focused WebKit bridge simulation in `scripts/check-chat-pet-command.mjs`.
+
 ## Features
 
 - **Native macOS shell** built with SwiftUI and WebKit—not Electron.
@@ -81,6 +92,7 @@ The build script creates `dist/HarnessDock.app`, embeds the six release files fo
 3. HarnessDock first uses `DEEPSEEK_API_KEY` from its own launch environment. For Finder or Dock launches, it falls back to reading only that exported variable from your interactive login shell. Its managed Harness process then uses official environment authentication; only when neither source is configured must you add model access in **Harness → Settings → Models**.
 4. The same environment credential can power the native balance display. If it is unavailable, open **HarnessDock → Settings → API & Balance** and save a separate DeepSeek API key to Keychain.
 5. Start a task in the official Harness interface, or switch to **Chat** for the official DeepSeek web chat.
+6. To show the native pet in Chat, click the paw button in the upper-right toolbar and enable **Show native pet in Chat**. Harness pet settings remain under **Harness → Settings → Plugins → Desktop Pet**.
 
 The first visit to Harness settings shows a six-step guide. It explains the available controls without changing them. Select **Quick Start** in the settings header to reopen the guide at any time.
 
@@ -127,6 +139,15 @@ When upgrading from the former DS Harness app, HarnessDock detects the exact leg
 The Harness pet follows the official session state: it runs while the current task or a background job is active, plays one success or failure animation when the task ends, and then returns to idle. It observes status only—it does not read, store, or transmit prompts, replies, command arguments, or tool output. Hover and click trigger character reactions; drag from a non-control area to move it, or hold `⌥ Option` when starting a drag over a Harness control. The pet snaps to the nearest left, right, or bottom edge and remembers its position.
 
 The optional native pet layer is limited to Chat and reads compatible packages from `~/.codex/pets`, keeping it separate from the Harness plugin. It detects answer activity from semantic stop/error controls and sends only a fixed local status enum to Swift; message contents never cross the bridge.
+
+| Task state | Harness pet | Chat pet |
+| --- | --- | --- |
+| Idle | Returns to the selected idle/interaction animation | Returns to the selected idle/interaction animation |
+| Running | Follows the current session or active background job | Follows the visible answer-generation control |
+| Succeeded | Plays one complete `review` cycle | Plays one complete `review` cycle |
+| Failed | Plays one complete `failed` cycle for a new task error | Plays one complete `failed` cycle for a new semantic page error |
+
+Command activity temporarily takes visual priority over hover and click reactions, but it does not change dragging, edge docking, saved position, package selection, or the user's enabled/disabled preference.
 
 ## Keyboard Shortcuts
 
@@ -193,6 +214,7 @@ To uninstall, quit the app and remove the locally built app. Optional user data 
 - **Need help identifying the environment:** open **Settings → Version & Diagnostics**, refresh the check, and copy the privacy-safe report.
 - **Port 3080 is in use:** HarnessDock only attaches when the page contains the official Harness `__DSH_BOOT__` marker; otherwise it reports a conflict.
 - **Chat asks for login:** this is expected. The tab loads the official DeepSeek Chat service and cannot use the Harness API key as a web login.
+- **The Chat pet is not visible:** switch to Chat, click the paw button in the upper-right toolbar, enable the native pet, and confirm that a valid package is selected. The enabled state is remembered locally.
 - **Balance is unavailable:** configure the balance key in Settings, check network access, and refresh. This key is separate from Harness model settings.
 - **macOS blocks the app:** the current source build is ad-hoc signed and not notarized. Build it locally for testing; a public release still needs Developer ID signing and Apple notarization.
 
