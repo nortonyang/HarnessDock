@@ -11,6 +11,7 @@ mkdir -p "${module_cache}"
 
 npm --prefix "${repository_root}/plugins/harnessdock-pet" run check
 node "${repository_root}/scripts/check-chat-enter.mjs"
+node "${repository_root}/scripts/check-chat-pet-command.mjs"
 node "${repository_root}/scripts/check-balance-interaction.mjs"
 node "${repository_root}/scripts/check-harness-environment.mjs"
 node "${repository_root}/scripts/check-pet-profile-migration.mjs"

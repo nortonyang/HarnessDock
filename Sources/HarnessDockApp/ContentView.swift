@@ -103,7 +103,10 @@ struct ContentView: View {
             if model.chatWebViewError != nil {
                 return .failed
             }
-            return model.chatWebViewIsLoading ? .running : .idle
+            if model.chatWebViewIsLoading {
+                return .running
+            }
+            return model.chatCommandActivity.animationState
         case .harness:
             if model.webViewError != nil {
                 return .failed
@@ -206,7 +209,8 @@ private struct DeepSeekChatSurface: View {
                 reloadRequestID: model.chatReloadRequestID,
                 language: model.appLanguage,
                 isLoading: $model.chatWebViewIsLoading,
-                loadError: $model.chatWebViewError
+                loadError: $model.chatWebViewError,
+                onCommandActivity: model.handleChatCommandActivity
             )
 
             if model.chatWebViewIsLoading {

@@ -5,9 +5,9 @@
 | 子任务 | 交付结果 | 用户故事 | 状态 |
 | --- | --- | --- | --- |
 | ST-701 | 统一命令活动模型 | US-701 | 已完成 |
-| ST-702 | Harness 会话/任务钩子 | US-702 | 进行中 |
-| ST-703 | Chat WebKit 生成钩子 | US-703 | 进行中 |
-| ST-704 | 回归、部署和实机审核 | US-704 | 未开始 |
+| ST-702 | Harness 会话/任务钩子 | US-702 | 已完成 |
+| ST-703 | Chat WebKit 生成钩子 | US-703 | 已完成 |
+| ST-704 | 回归、部署和实机审核 | US-704 | 自动审核完成，实聊观感待用户验证 |
 
 ## US-701：两边使用一致的动作语义
 
@@ -48,5 +48,5 @@
 验收标准：
 
 - 插件、Core 与 Chat 脚本检查全部通过。
-- `./scripts/build_app.sh` 通过，`/Applications/HarnessDock.app` 更新后签名有效。
+- `./scripts/build_app.sh` 通过，`dist/HarnessDock.app` 的本地签名有效。
 - 删除 Harness 订阅 Hook 与 Chat 脚本消息处理即可回滚，不涉及用户数据迁移。

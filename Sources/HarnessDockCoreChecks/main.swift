@@ -133,6 +133,23 @@ check(PetAnimationState.idle.layout.frameCount == 6, "Idle pet animation must us
 check(PetAnimationState.running.layout.row == 7, "Running pet animation must use row 7")
 check(PetAnimationState.failed.layout.frameCount == 8, "Failed pet animation must use 8 frames")
 check(PetAnimationState.review.layout.row == 8, "Review pet animation must use row 8")
+check(
+    PetCommandActivity.running.animationState == .running,
+    "Running command activity must use the running animation"
+)
+check(
+    PetCommandActivity.succeeded.animationState == .review,
+    "Successful command activity must use the review animation"
+)
+check(
+    PetCommandActivity.failed.terminalResetDelayMilliseconds
+        == PetAnimationState.failed.layout.cycleDurationMilliseconds,
+    "Failed command activity must reset after one failed animation cycle"
+)
+check(
+    PetCommandActivity(rawValue: "prompt contents") == nil,
+    "Command activity must reject arbitrary bridge payloads"
+)
 
 let balanceJSON = Data(#"""
 {

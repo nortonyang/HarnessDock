@@ -34,7 +34,7 @@ HarnessDock is designed for developers who want the official Harness workflow to
 - **Bilingual native interface** with System Default, Simplified Chinese, and English options.
 - **Version & Diagnostics** showing the app, pinned Harness runtime, macOS architecture, service state, and local Node/npx/dsh availability, with a privacy-safe copyable report.
 - **Guided settings tour** explaining presets, permissions, appearance, send behavior, models, and plugins.
-- **Task-aware animated pets** through the `@harnessdock/pet` Harness plugin: the pet reacts to running, successful, and failed tasks, with an optional local Chat preview layer.
+- **Task-aware animated pets on both surfaces**: the `@harnessdock/pet` plugin follows Harness sessions and background jobs, while the native Chat pet reacts to answer generation, success, and failure.
 - **Reliable lifecycle management** that safely reuses a verified existing Harness service and cleans up processes started by the app.
 
 ## What HarnessDock Does Not Do
@@ -100,6 +100,7 @@ In Chat, IME confirmation does not send the draft, modified Enter inserts a newl
 - Neither environment nor Keychain credentials are injected into the Harness or Chat webpage.
 - Background image copies remain in this Mac's Application Support directory.
 - Imported pet packages are read as JSON and image assets; their code is not executed.
+- The Chat pet bridge accepts only `idle`, `running`, `succeeded`, or `failed`; it does not read or transmit prompts, replies, or page text.
 - HarnessDock does not include analytics or crash reporting in the current preview.
 - Copied diagnostics exclude API keys, cookies, conversations, full logs, and full workspace paths; home-directory tool paths are shortened to `~`.
 
@@ -125,7 +126,7 @@ When upgrading from the former DS Harness app, HarnessDock detects the exact leg
 
 The Harness pet follows the official session state: it runs while the current task or a background job is active, plays one success or failure animation when the task ends, and then returns to idle. It observes status only—it does not read, store, or transmit prompts, replies, command arguments, or tool output. Hover and click trigger character reactions; drag from a non-control area to move it, or hold `⌥ Option` when starting a drag over a Harness control. The pet snaps to the nearest left, right, or bottom edge and remembers its position.
 
-The optional native pet layer is limited to Chat and reads compatible packages from `~/.codex/pets`, keeping it separate from the Harness plugin. Chat task-state reactions are not included in the current preview.
+The optional native pet layer is limited to Chat and reads compatible packages from `~/.codex/pets`, keeping it separate from the Harness plugin. It detects answer activity from semantic stop/error controls and sends only a fixed local status enum to Swift; message contents never cross the bridge.
 
 ## Keyboard Shortcuts
 

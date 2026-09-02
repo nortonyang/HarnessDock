@@ -35,6 +35,37 @@ public enum PetAnimationState: String, CaseIterable, Codable, Sendable {
     }
 }
 
+/// The only command states allowed to cross the DeepSeek Chat WebKit bridge.
+public enum PetCommandActivity: String, CaseIterable, Codable, Sendable {
+    case idle
+    case running
+    case succeeded
+    case failed
+
+    public var animationState: PetAnimationState {
+        switch self {
+        case .idle:
+            .idle
+        case .running:
+            .running
+        case .succeeded:
+            .review
+        case .failed:
+            .failed
+        }
+    }
+
+    /// Terminal feedback remains visible for exactly one target animation cycle.
+    public var terminalResetDelayMilliseconds: Int? {
+        switch self {
+        case .idle, .running:
+            nil
+        case .succeeded, .failed:
+            animationState.layout.cycleDurationMilliseconds
+        }
+    }
+}
+
 public struct PetAnimationLayout: Equatable, Sendable {
     public let row: Int
     public let frameDurationsMilliseconds: [Int]

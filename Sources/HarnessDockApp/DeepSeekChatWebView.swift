@@ -9,6 +9,7 @@ struct DeepSeekChatWebView: NSViewRepresentable {
     let language: AppLanguage
     @Binding var isLoading: Bool
     @Binding var loadError: String?
+    let onCommandActivity: (PetCommandActivity) -> Void
 
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
@@ -25,6 +26,17 @@ struct DeepSeekChatWebView: NSViewRepresentable {
                 injectionTime: .atDocumentStart,
                 forMainFrameOnly: true
             )
+        )
+        configuration.userContentController.addUserScript(
+            WKUserScript(
+                source: DeepSeekChatCommandBehavior.userScript,
+                injectionTime: .atDocumentEnd,
+                forMainFrameOnly: true
+            )
+        )
+        configuration.userContentController.add(
+            context.coordinator,
+            name: DeepSeekChatCommandBehavior.messageHandlerName
         )
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
@@ -44,8 +56,16 @@ struct DeepSeekChatWebView: NSViewRepresentable {
         webView.reload()
     }
 
+    static func dismantleNSView(_ webView: WKWebView, coordinator: Coordinator) {
+        webView.configuration.userContentController.removeScriptMessageHandler(
+            forName: DeepSeekChatCommandBehavior.messageHandlerName
+        )
+    }
+
     @MainActor
-    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate,
+        WKScriptMessageHandler
+    {
         var parent: DeepSeekChatWebView
         var lastReloadRequestID = 0
 
@@ -56,6 +76,7 @@ struct DeepSeekChatWebView: NSViewRepresentable {
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
             parent.isLoading = true
             parent.loadError = nil
+            parent.onCommandActivity(.idle)
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -81,10 +102,23 @@ struct DeepSeekChatWebView: NSViewRepresentable {
 
         func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
             parent.isLoading = false
+            parent.onCommandActivity(.idle)
             parent.loadError = AppLocalization.localized(
                 "网页进程已停止，请重新加载。",
                 language: parent.language
             )
+        }
+
+        func userContentController(
+            _ userContentController: WKUserContentController,
+            didReceive message: WKScriptMessage
+        ) {
+            guard message.name == DeepSeekChatCommandBehavior.messageHandlerName,
+                  message.frameInfo.isMainFrame,
+                  let rawValue = message.body as? String,
+                  let activity = PetCommandActivity(rawValue: rawValue)
+            else { return }
+            parent.onCommandActivity(activity)
         }
 
         func webView(
@@ -160,6 +194,7 @@ struct DeepSeekChatWebView: NSViewRepresentable {
                 return
             }
             parent.isLoading = false
+            parent.onCommandActivity(.idle)
             parent.loadError = error.localizedDescription
         }
     }

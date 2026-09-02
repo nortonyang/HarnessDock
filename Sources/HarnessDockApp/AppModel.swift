@@ -157,6 +157,7 @@ final class AppModel: ObservableObject {
     @Published var webViewError: String?
     @Published var chatWebViewIsLoading = false
     @Published var chatWebViewError: String?
+    @Published private(set) var chatCommandActivity: PetCommandActivity = .idle
     @Published var showLogs = false
     @Published private(set) var selectedSettingsSection: AppSettingsSection = .apiBalance
     @Published private(set) var settingsRequestID = 0
@@ -182,6 +183,7 @@ final class AppModel: ObservableObject {
     private var outputPipe: Pipe?
     private var startupTask: Task<Void, Never>?
     private var balanceTask: Task<Void, Never>?
+    private var chatCommandResetTask: Task<Void, Never>?
     private var loginShellAPIKey: String?
     private var expectedTerminationProcessIDs = Set<Int32>()
     private var didRestoreWorkspace = false
@@ -517,9 +519,30 @@ final class AppModel: ObservableObject {
         case .harness:
             requestReload()
         case .chat:
+            resetChatCommandActivity()
             chatReloadRequestID += 1
             chatWebViewError = nil
         }
+    }
+
+    func handleChatCommandActivity(_ activity: PetCommandActivity) {
+        chatCommandResetTask?.cancel()
+        chatCommandResetTask = nil
+        chatCommandActivity = activity
+
+        guard let delay = activity.terminalResetDelayMilliseconds else { return }
+        chatCommandResetTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(delay) * 1_000_000)
+            guard !Task.isCancelled,
+                  self?.chatCommandActivity == activity
+            else { return }
+            self?.chatCommandActivity = .idle
+            self?.chatCommandResetTask = nil
+        }
+    }
+
+    func resetChatCommandActivity() {
+        handleChatCommandActivity(.idle)
     }
 
     func openDeepSeekChatInBrowser() {

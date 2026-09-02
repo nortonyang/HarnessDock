@@ -15,7 +15,7 @@ struct PetOverlayView: View {
         Button(action: wave) {
             PetSpriteView(
                 image: package.image,
-                state: interactionState ?? applicationState
+                state: displayedState
             )
             .frame(
                 width: 96 * controller.displayScale,
@@ -50,10 +50,20 @@ struct PetOverlayView: View {
             interactionState = nil
         }
     }
+
+    private var displayedState: PetAnimationState {
+        switch applicationState {
+        case .running, .review, .failed:
+            applicationState
+        default:
+            interactionState ?? applicationState
+        }
+    }
 }
 
 struct PetSpriteView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var animationStartedAt = Date()
 
     let image: NSImage
     let state: PetAnimationState
@@ -63,7 +73,7 @@ struct PetSpriteView: View {
             let layout = state.layout
             let frameIndex = reduceMotion
                 ? 0
-                : layout.frameIndex(at: context.date.timeIntervalSinceReferenceDate)
+                : layout.frameIndex(at: context.date.timeIntervalSince(animationStartedAt))
 
             GeometryReader { geometry in
                 Image(nsImage: image)
@@ -88,6 +98,9 @@ struct PetSpriteView: View {
                 / CGFloat(PetPluginManifest.canonicalFrameHeight),
             contentMode: .fit
         )
+        .onChange(of: state) {
+            animationStartedAt = Date()
+        }
     }
 }
 

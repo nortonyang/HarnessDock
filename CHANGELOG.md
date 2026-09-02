@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - Native **Version & Diagnostics** settings show the app build, pinned Harness runtime, macOS architecture, service state, workspace name, and Node/npx/dsh availability.
 - Diagnostics can be refreshed and copied as a privacy-safe report that excludes credentials, cookies, conversations, full logs, and full workspace paths.
+- Harness and native Chat pets now react consistently to running, successful, and failed tasks; terminal feedback starts at frame one and plays for one complete animation cycle.
 
 ### Changed
 
@@ -23,6 +24,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Security and privacy
 
 - Keychain-only balance credentials remain native-only. The login-shell fallback does not import the full environment, persist the resolved value, or copy credential values into WebView scripts, project files, or Harness logs.
+- The Chat pet WebKit bridge accepts only four fixed state values and never reads or forwards prompts, replies, command arguments, or page text.
 
 ### Release blockers
 
