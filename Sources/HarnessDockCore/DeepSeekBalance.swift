@@ -10,7 +10,13 @@ public struct DeepSeekBalanceResponse: Codable, Equatable, Sendable {
     }
 
     public var preferredInfo: DeepSeekBalanceInfo? {
-        balanceInfos.first { $0.currency.uppercased() == "CNY" } ?? balanceInfos.first
+        info(preferredCurrency: "CNY")
+    }
+
+    public func info(preferredCurrency: String) -> DeepSeekBalanceInfo? {
+        balanceInfos.first {
+            $0.currency.caseInsensitiveCompare(preferredCurrency) == .orderedSame
+        } ?? balanceInfos.first
     }
 
     private enum CodingKeys: String, CodingKey {

@@ -42,7 +42,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Local project selection, remembered workspaces, automatic Harness startup, recovery, logs, and process cleanup.
 - Harness and official DeepSeek Chat surfaces with retained WebKit sessions.
 - DeepSeek API balance display backed by macOS Keychain.
-- Beijing-time peak/off-peak status, RMB model pricing, and locally available session token counters.
+- Beijing-time peak/off-peak status, language-aware CNY/USD model pricing, and locally available session token counters.
 - Custom local background images with adjustable content dimming.
 - System Default, Simplified Chinese, and English native interface options.
 - Six-step settings guide for presets, permissions, appearance, send behavior, models, and plugins.

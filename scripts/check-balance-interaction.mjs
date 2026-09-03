@@ -31,5 +31,10 @@ assert.match(
   /setExpanded\(root\.dataset\.expanded !== 'true'\);/,
   "the balance button must keep toggling its expanded state"
 );
+assert.match(
+  source,
+  /compactIcon\.textContent = balanceCurrency === 'USD' \? '\$' : '¥';/,
+  "the compact balance icon must follow the displayed currency"
+);
 
 console.log("Balance interaction checks passed");

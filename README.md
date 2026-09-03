@@ -43,7 +43,7 @@ These transitions are covered by the Harness plugin checks, Core checks, and a p
 - **Pinned official runtime** using the verified `@deepseek-ai/dsh@0.1.0-rc.6` release and a matching local npm cache when available.
 - **Harness and Chat tabs** that keep independent page and session state.
 - **DeepSeek API balance** stored in macOS Keychain, with refresh and compact/collapsed sidebar states.
-- **Peak/off-peak indicator and RMB pricing** for supported models, plus locally available input/output token usage.
+- **Peak/off-peak indicator and localized pricing** for supported models—CNY in Chinese and USD in English—plus locally available input/output token usage.
 - **Custom background image** with an adjustable content mask, stored only on the current Mac.
 - **Bilingual native interface** with System Default, Simplified Chinese, and English options.
 - **Version & Diagnostics** showing the app, pinned Harness runtime, macOS architecture, service state, and local Node/npx/dsh availability, with a privacy-safe copyable report.
@@ -119,7 +119,7 @@ In Chat, IME confirmation does not send the draft, modified Enter inserts a newl
 - HarnessDock does not include analytics or crash reporting in the current preview.
 - Copied diagnostics exclude API keys, cookies, conversations, full logs, and full workspace paths; home-directory tool paths are shortened to `~`.
 
-Model pricing is displayed in RMB per million tokens using DeepSeek's [official Chinese pricing page](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) as the reference. Pricing can change; the official page and your account bill remain authoritative. Token counters are read from locally available Harness session statistics and may not represent complete account-wide usage.
+Balance and model pricing follow the selected interface language: Chinese uses CNY from DeepSeek's [official Chinese pricing page](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/), while English uses USD from the [official English pricing page](https://api-docs.deepseek.com/quick_start/pricing/). Pricing can change; the official page and your account bill remain authoritative. Token counters are read from locally available Harness session statistics and may not represent complete account-wide usage.
 
 ## Appearance and Language
 

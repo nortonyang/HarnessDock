@@ -43,7 +43,7 @@ HarnessDock 面向希望在 macOS 上自然使用官方 Harness 工作流的开�
 - **锁定官方运行时**：使用已验证的 `@deepseek-ai/dsh@0.1.0-rc.6`，存在完全匹配的 npm 缓存时优先复用。
 - **Harness / Chat 双入口**：两个页面独立保留页面状态和登录会话。
 - **DeepSeek API 余额**：凭据存入 macOS 钥匙串，支持刷新、紧凑态和侧栏折叠态。
-- **高峰 / 谷时与人民币价格**：突出当前时段、对应模型单价，以及本地可读取的输入/输出 token 用量。
+- **高峰 / 谷时与本地化价格**：中文显示人民币、英文显示美元，并展示当前时段、对应模型单价及本地可读取的输入/输出 token 用量。
 - **自定义主题背景**：导入本地图片并调整内容遮罩，文件只保存在当前 Mac。
 - **中英文原生界面**：支持跟随系统、简体中文和 English。
 - **版本与诊断**：显示应用版本、锁定的 Harness 运行时、macOS 架构、服务状态和本机 Node/npx/dsh 可用性，并可复制隐私安全的诊断摘要。
@@ -119,7 +119,7 @@ Chat 中，中文输入法确认不会发送草稿；带修饰键的 Enter 会�
 - 当前预览版不包含数据分析或崩溃上报。
 - 复制的诊断摘要不包含 API Key、Cookie、聊天内容、完整日志和完整工作区路径；用户目录下的工具路径会缩写为 `~`。
 
-模型价格以人民币/百万 tokens 显示，并以 DeepSeek [中文官方价格页](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) 为参考。价格可能调整，最终以官方页面与账户账单为准。Token 统计来自 Harness 本地可读取的会话数据，不代表完整的账号累计用量。
+余额与模型价格会跟随界面语言：中文使用人民币，并以 DeepSeek [中文官方价格页](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/) 为准；英文使用美元，并以 [英文官方价格页](https://api-docs.deepseek.com/quick_start/pricing/) 为准。价格可能调整，最终以官方页面与账户账单为准。Token 统计来自 Harness 本地可读取的会话数据，不代表完整的账号累计用量。
 
 ## 外观与语言
 

@@ -239,6 +239,14 @@ final class AppModel: ObservableObject {
         environmentBalanceAPIKey() != nil
     }
 
+    var displayCurrency: DeepSeekPricingCurrency {
+        appLanguage.resolvedIdentifier == AppLanguage.english.rawValue ? .usd : .cny
+    }
+
+    func displayedBalanceInfo(in response: DeepSeekBalanceResponse) -> DeepSeekBalanceInfo? {
+        response.info(preferredCurrency: displayCurrency.rawValue)
+    }
+
     func balanceWebPresentation(at date: Date = Date()) -> BalanceWebPresentation {
         let pricing = pricingWebPresentation(at: date)
         let labels = balanceWebLabels
@@ -281,8 +289,9 @@ final class AppModel: ObservableObject {
                 labels: labels
             )
         case let .loaded(response, refreshedAt):
+            let balanceInfo = displayedBalanceInfo(in: response)
             return BalanceWebPresentation(
-                title: response.preferredInfo?.displayTotal ?? localized("余额已同步"),
+                title: balanceInfo?.displayTotal ?? localized("余额已同步"),
                 subtitle: response.isAvailable
                     ? localized("API 余额可用")
                     : localized("API 暂不可用"),
@@ -293,14 +302,14 @@ final class AppModel: ObservableObject {
                     "更新于 %@",
                     refreshedAt.formatted(date: .omitted, time: .shortened)
                 ),
-                entries: response.balanceInfos.map {
-                    BalanceWebPresentation.Entry(
+                entries: balanceInfo.map {
+                    [BalanceWebPresentation.Entry(
                         currency: $0.currency.uppercased(),
                         total: $0.displayTotal,
                         granted: $0.displayGranted,
                         toppedUp: $0.displayToppedUp
-                    )
-                },
+                    )]
+                } ?? [],
                 pricing: pricing,
                 labels: labels
             )
@@ -333,6 +342,7 @@ final class AppModel: ObservableObject {
     }
 
     private func pricingWebPresentation(at date: Date) -> BalanceWebPresentation.Pricing {
+        let currency = displayCurrency
         let status = DeepSeekAPIPricing.status(at: date)
         let formatter = DateFormatter()
         formatter.locale = appLanguage.locale
@@ -352,9 +362,13 @@ final class AppModel: ObservableObject {
                 nextPeriod
             ),
             scheduleLabel: localized("工作日 09:00–12:00、14:00–18:00 高峰；其余谷时（北京时间）"),
-            unitLabel: localized("人民币 / 百万 tokens"),
-            sourceLabel: localized("DeepSeek 中文价格表"),
-            models: DeepSeekAPIPricing.models
+            unitLabel: currency == .usd
+                ? localized("美元 / 百万 tokens")
+                : localized("人民币 / 百万 tokens"),
+            sourceLabel: currency == .usd
+                ? localized("DeepSeek 英文价格表")
+                : localized("DeepSeek 中文价格表"),
+            models: DeepSeekAPIPricing.models(for: currency)
         )
     }
 
@@ -673,7 +687,7 @@ final class AppModel: ObservableObject {
         case "refresh":
             refreshBalance()
         case "pricing":
-            NSWorkspace.shared.open(DeepSeekAPIPricing.sourceURL)
+            NSWorkspace.shared.open(DeepSeekAPIPricing.sourceURL(for: displayCurrency))
         default:
             break
         }

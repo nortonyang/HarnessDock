@@ -698,7 +698,8 @@ private struct BalanceCard: View {
         switch model.balanceState {
         case .notConfigured: model.localized("配置 API 余额")
         case .loading: model.localized("正在查询余额")
-        case let .loaded(response, _): response.preferredInfo?.displayTotal ?? model.localized("余额已同步")
+        case let .loaded(response, _):
+            model.displayedBalanceInfo(in: response)?.displayTotal ?? model.localized("余额已同步")
         case .failed: model.localized("余额查询失败")
         }
     }
@@ -772,7 +773,8 @@ private struct BalanceToolbarButton: View {
         switch model.balanceState {
         case .notConfigured: model.localized("配置余额")
         case .loading: model.localized("余额")
-        case let .loaded(response, _): response.preferredInfo?.displayTotal ?? model.localized("余额")
+        case let .loaded(response, _):
+            model.displayedBalanceInfo(in: response)?.displayTotal ?? model.localized("余额")
         case .failed: model.localized("余额异常")
         }
     }
@@ -848,7 +850,7 @@ private struct BalanceDetailPopover: View {
                 .foregroundStyle(.orange)
         case let .loaded(response, refreshedAt):
             VStack(alignment: .leading, spacing: 12) {
-                ForEach(response.balanceInfos) { info in
+                if let info = model.displayedBalanceInfo(in: response) {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(alignment: .firstTextBaseline) {
                             Text(info.displayTotal)
@@ -864,9 +866,6 @@ private struct BalanceDetailPopover: View {
                             Spacer()
                             BalanceBreakdown(label: "充值余额", amount: info.displayToppedUp)
                         }
-                    }
-                    if info.id != response.balanceInfos.last?.id {
-                        Divider()
                     }
                 }
 

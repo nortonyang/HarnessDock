@@ -4,7 +4,7 @@ import Testing
 
 struct DeepSeekBalanceTests {
     @Test
-    func decodesOfficialResponseAndPrefersCNY() throws {
+    func decodesOfficialResponseAndSelectsRequestedCurrency() throws {
         let data = Data(#"""
         {
           "is_available": true,
@@ -29,8 +29,8 @@ struct DeepSeekBalanceTests {
 
         #expect(response.isAvailable)
         #expect(response.balanceInfos.count == 2)
-        #expect(response.preferredInfo?.currency == "CNY")
-        #expect(response.preferredInfo?.displayTotal == "¥110.00")
+        #expect(response.info(preferredCurrency: "CNY")?.displayTotal == "¥110.00")
+        #expect(response.info(preferredCurrency: "USD")?.displayTotal == "$12.50")
     }
 
     @Test

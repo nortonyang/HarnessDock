@@ -12,6 +12,11 @@ public enum DeepSeekPricingPeriod: String, Codable, Equatable, Sendable {
     }
 }
 
+public enum DeepSeekPricingCurrency: String, Codable, Equatable, Sendable {
+    case cny = "CNY"
+    case usd = "USD"
+}
+
 public struct DeepSeekTokenPrice: Codable, Equatable, Sendable {
     public let cacheHitInput: String
     public let cacheMissInput: String
@@ -64,33 +69,84 @@ public enum DeepSeekAPIPricing {
         string: "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
     )!
 
-    public static let models: [DeepSeekModelPricing] = [
+    public static let models = models(for: .cny)
+
+    public static func sourceURL(for currency: DeepSeekPricingCurrency) -> URL {
+        switch currency {
+        case .cny:
+            sourceURL
+        case .usd:
+            URL(string: "https://api-docs.deepseek.com/quick_start/pricing/")!
+        }
+    }
+
+    public static func models(for currency: DeepSeekPricingCurrency) -> [DeepSeekModelPricing] {
+        switch currency {
+        case .cny:
+            cnyModels
+        case .usd:
+            usdModels
+        }
+    }
+
+    private static let cnyModels: [DeepSeekModelPricing] = [
         DeepSeekModelPricing(
             id: "deepseek-v4-flash",
             displayName: "V4 Flash",
             offPeak: DeepSeekTokenPrice(
-                cacheHitInput: "¥0.01",
-                cacheMissInput: "¥0.50",
-                output: "¥1.00"
+                cacheHitInput: "¥0.05",
+                cacheMissInput: "¥1.50",
+                output: "¥4.50"
             ),
             peak: DeepSeekTokenPrice(
-                cacheHitInput: "¥0.02",
-                cacheMissInput: "¥1.00",
-                output: "¥2.00"
+                cacheHitInput: "¥0.10",
+                cacheMissInput: "¥3.00",
+                output: "¥9.00"
             )
         ),
         DeepSeekModelPricing(
             id: "deepseek-v4-pro",
             displayName: "V4 Pro",
             offPeak: DeepSeekTokenPrice(
-                cacheHitInput: "¥0.0125",
-                cacheMissInput: "¥1.50",
-                output: "¥3.00"
+                cacheHitInput: "¥0.15",
+                cacheMissInput: "¥4.50",
+                output: "¥13.50"
             ),
             peak: DeepSeekTokenPrice(
-                cacheHitInput: "¥0.025",
-                cacheMissInput: "¥3.00",
-                output: "¥6.00"
+                cacheHitInput: "¥0.30",
+                cacheMissInput: "¥9.00",
+                output: "¥27.00"
+            )
+        ),
+    ]
+
+    private static let usdModels: [DeepSeekModelPricing] = [
+        DeepSeekModelPricing(
+            id: "deepseek-v4-flash",
+            displayName: "V4 Flash",
+            offPeak: DeepSeekTokenPrice(
+                cacheHitInput: "$0.007",
+                cacheMissInput: "$0.22",
+                output: "$0.66"
+            ),
+            peak: DeepSeekTokenPrice(
+                cacheHitInput: "$0.014",
+                cacheMissInput: "$0.44",
+                output: "$1.32"
+            )
+        ),
+        DeepSeekModelPricing(
+            id: "deepseek-v4-pro",
+            displayName: "V4 Pro",
+            offPeak: DeepSeekTokenPrice(
+                cacheHitInput: "$0.022",
+                cacheMissInput: "$0.66",
+                output: "$1.98"
+            ),
+            peak: DeepSeekTokenPrice(
+                cacheHitInput: "$0.044",
+                cacheMissInput: "$1.32",
+                output: "$3.96"
             )
         ),
     ]

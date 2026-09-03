@@ -494,7 +494,6 @@ struct HarnessWebView: NSViewRepresentable {
 
       const compactIcon = document.createElement('span');
       compactIcon.id = 'dsh-native-balance-compact-icon';
-      compactIcon.textContent = '¥';
       icon.append(compactIcon, dot);
 
       const copy = document.createElement('span');
@@ -1180,6 +1179,9 @@ struct HarnessWebView: NSViewRepresentable {
 
       window.__dshBalanceUpdate = payload => {
         Object.assign(labels, payload.labels || {});
+        const balanceCurrency = payload.entries?.[0]?.currency
+          || (labels.language === 'en' ? 'USD' : 'CNY');
+        compactIcon.textContent = balanceCurrency === 'USD' ? '$' : '¥';
         updateSettingsGuideLanguage(labels.language);
         themeLabel.textContent = labels.themeBackground;
         themeButton.title = labels.themeBackground;

@@ -159,7 +159,9 @@
 "刷新" = "Refresh";
 "本机回环连接 · %@" = "Localhost · %@";
 "人民币 / 百万 tokens" = "CNY / 1M tokens";
+"美元 / 百万 tokens" = "USD / 1M tokens";
 "DeepSeek 中文价格表" = "DeepSeek Pricing";
+"DeepSeek 英文价格表" = "DeepSeek Pricing";
 "更新于 %@" = "Updated at %@";
 "当前%@" = "Current %@";
 "%@ 切换为%@" = "%@ switches to %@";

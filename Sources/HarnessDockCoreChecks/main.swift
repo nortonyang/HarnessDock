@@ -175,8 +175,14 @@ do {
     let balance = try JSONDecoder().decode(DeepSeekBalanceResponse.self, from: balanceJSON)
     check(balance.isAvailable, "Balance response must decode is_available")
     check(balance.balanceInfos.count == 2, "Balance response must decode all currencies")
-    check(balance.preferredInfo?.currency == "CNY", "CNY must be preferred for the compact summary")
-    check(balance.preferredInfo?.displayTotal == "¥110.00", "CNY balance must use a readable symbol")
+    check(
+        balance.info(preferredCurrency: "CNY")?.displayTotal == "¥110.00",
+        "Chinese balance display must select CNY"
+    )
+    check(
+        balance.info(preferredCurrency: "USD")?.displayTotal == "$12.50",
+        "English balance display must select USD"
+    )
     check(
         DeepSeekBalanceClient.endpoint.absoluteString == "https://api.deepseek.com/user/balance",
         "Balance client must use the official read-only endpoint"
@@ -217,14 +223,30 @@ check(
     weekendTransition == isoDate("2026-08-24T01:00:00Z"),
     "Friday after peak must transition next on Monday at 01:00 UTC"
 )
-check(DeepSeekAPIPricing.models.count == 2, "Pricing must match the Chinese V4 model table")
+let cnyPricing = DeepSeekAPIPricing.models(for: .cny)
+let usdPricing = DeepSeekAPIPricing.models(for: .usd)
+check(cnyPricing.count == 2, "CNY pricing must contain the supported V4 models")
+check(usdPricing.count == 2, "USD pricing must contain the supported V4 models")
 check(
-    DeepSeekAPIPricing.models.first?.peak.cacheHitInput == "¥0.02",
+    cnyPricing.first?.peak.cacheHitInput == "¥0.10",
     "V4 Flash peak cache-hit price must match the Chinese official table"
 )
 check(
-    DeepSeekAPIPricing.models.first { $0.id == "deepseek-v4-pro" }?.peak.output == "¥6.00",
+    cnyPricing.first { $0.id == "deepseek-v4-pro" }?.peak.output == "¥27.00",
     "V4 Pro peak output price must match the Chinese official table"
+)
+check(
+    usdPricing.first?.peak.cacheHitInput == "$0.014",
+    "V4 Flash peak cache-hit price must match the English official table"
+)
+check(
+    usdPricing.first { $0.id == "deepseek-v4-pro" }?.peak.output == "$3.96",
+    "V4 Pro peak output price must match the English official table"
+)
+check(
+    DeepSeekAPIPricing.sourceURL(for: .usd).absoluteString
+        == "https://api-docs.deepseek.com/quick_start/pricing/",
+    "USD pricing must open the official English source"
 )
 
 let legacyPetProfile = Data(#"""
