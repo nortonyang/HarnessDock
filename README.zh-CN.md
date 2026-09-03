@@ -6,6 +6,7 @@
 ![Swift](https://img.shields.io/badge/Swift-6.0-F05138?logo=swift&logoColor=white)
 ![Version](https://img.shields.io/badge/version-0.1.0-6D5DFC)
 ![Status](https://img.shields.io/badge/status-developer%20preview-7C3AED)
+![License](https://img.shields.io/badge/license-MIT-2EA44F)
 
 **面向 DeepSeek Harness 的原生 macOS 工作空间：支持本地项目启动、API 余额与高峰/谷时价格、内嵌 DeepSeek Chat、自定义主题背景和动态宠物。**
 
@@ -224,7 +225,6 @@ HarnessDock/
 
 版本 `0.1.0` 是开发者预览版。在 Product Hunt 上把公众下载描述为正式可用前，项目仍需完成：
 
-- 选择仓库许可证；
 - 准备清晰的版本变更记录；
 - 生成 Developer ID 签名并通过 Apple 公证的安装包；
 - 提供 Universal 2，或明确区分不同架构的安装包；
@@ -239,7 +239,7 @@ HarnessDock/
 
 ## 许可证（License）
 
-项目目前尚未选择许可证。源码可见并不自动授予复制、修改或再分发权限。在把 HarnessDock 宣传为开源项目或允许外部分发前，需要先选择并添加许可证。
+HarnessDock 采用 [MIT License](LICENSE) 开源。该许可证允许使用、修改、分发、再许可与商业使用，但必须保留版权和许可证声明；软件按现状提供，不附带担保。
 
 ## 致谢
 

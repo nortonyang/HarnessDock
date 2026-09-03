@@ -6,6 +6,7 @@
 ![Swift](https://img.shields.io/badge/Swift-6.0-F05138?logo=swift&logoColor=white)
 ![Version](https://img.shields.io/badge/version-0.1.0-6D5DFC)
 ![Status](https://img.shields.io/badge/status-developer%20preview-7C3AED)
+![License](https://img.shields.io/badge/license-MIT-2EA44F)
 
 **A native macOS workspace for DeepSeek Harness—with local project launching, API balance and peak/off-peak pricing, built-in DeepSeek Chat, custom backgrounds, and animated pets.**
 
@@ -224,7 +225,6 @@ To uninstall, quit the app and remove the locally built app. Optional user data 
 
 Version `0.1.0` is a developer preview. Before a public Product Hunt download is described as production-ready, the project still needs:
 
-- a selected repository license;
 - a clean release changelog;
 - a Developer ID-signed, Apple-notarized package;
 - Universal 2 or clearly separated architecture-specific artifacts;
@@ -239,7 +239,7 @@ Found a bug or have a feature idea? Open a [GitHub issue](https://github.com/nor
 
 ## License
 
-No license has been selected yet. Source availability alone does not grant permission to copy, modify, or redistribute the project. Choose and add a license before presenting HarnessDock as open source or accepting external redistribution.
+HarnessDock is open source under the [MIT License](LICENSE). The license permits use, modification, distribution, sublicensing, and commercial use while requiring the copyright and license notices to be retained. The software is provided without warranty.
 
 ## Acknowledgements
 

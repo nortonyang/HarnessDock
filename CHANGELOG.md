@@ -12,6 +12,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Diagnostics can be refreshed and copied as a privacy-safe report that excludes credentials, cookies, conversations, full logs, and full workspace paths.
 - Harness and native Chat pets now react consistently to running, successful, and failed tasks; terminal feedback starts at frame one and plays for one complete animation cycle.
 - The bilingual repository landing pages now include a sanitized HarnessDock workspace preview with private workspace and account details redacted.
+- HarnessDock is now released as open-source software under the MIT License.
 
 ### Changed
 
@@ -29,7 +30,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Release blockers
 
-- Select and add a repository license.
 - Produce a Developer ID-signed and Apple-notarized macOS package.
 - Verify the exact downloadable artifact on a clean Mac and record its SHA-256 checksum.
 - Expand the sanitized screenshot into a complete Product Hunt gallery without account balance or development-session content.
