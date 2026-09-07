@@ -12,7 +12,7 @@ public struct HarnessConfiguration: Equatable, Sendable {
     ///   - packageName: The official npm package used to start Harness.
     public init(
         port: Int = 3_080,
-        packageName: String = "@deepseek-ai/dsh@0.1.0-rc.6"
+        packageName: String = "@deepseek-ai/dsh@0.1.2-rc.1"
     ) {
         precondition((1...65_535).contains(port), "Port must be between 1 and 65535")
         self.port = port

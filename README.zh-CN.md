@@ -40,7 +40,7 @@ HarnessDock 面向希望在 macOS 上自然使用官方 Harness 工作流的开�
 
 - **原生 macOS 外壳**：基于 SwiftUI 与 WebKit，不是 Electron。
 - **一键进入本地工作区**：所选项目目录会作为 Harness 的工作目录。
-- **锁定官方运行时**：使用已验证的 `@deepseek-ai/dsh@0.1.0-rc.6`，存在完全匹配的 npm 缓存时优先复用。
+- **锁定官方运行时**：使用已验证、可从 npm 安装的 `@deepseek-ai/dsh@0.1.2-rc.1`，存在完全匹配的本地缓存时优先复用。GitHub 更新的 `0.1.3-alpha.1` 尚未同步到 npm。
 - **Harness / Chat 双入口**：两个页面独立保留页面状态和登录会话。
 - **DeepSeek API 余额**：凭据存入 macOS 钥匙串，支持刷新、紧凑态和侧栏折叠态。
 - **高峰 / 谷时与本地化价格**：中文显示人民币、英文显示美元，并展示当前时段、对应模型单价及本地可读取的输入/输出 token 用量。
@@ -64,7 +64,7 @@ HarnessDock 面向希望在 macOS 上自然使用官方 Harness 工作流的开�
 | --- | --- |
 | macOS | 14 Sonoma 或更高版本 |
 | Mac | 源码构建支持 Apple Silicon 或 Intel；当前本机构建产物为 arm64 |
-| Node.js | 推荐 24+；Node 22 至少需要 22.19 |
+| Node.js | 推荐 26+；当前运行时需要支持 zlib Zstandard 的 Node 版本 |
 | Swift | 源码构建需要 6.0+ |
 | 网络 | 本地没有锁定版本的 Harness 缓存时，首次运行需要联网 |
 

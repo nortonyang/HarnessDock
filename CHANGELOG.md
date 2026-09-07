@@ -16,6 +16,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- Upgraded the pinned official DSH runtime to the npm-available `0.1.2-rc.1`; Node 26+ is now recommended because older Node 22 builds can lack the zlib Zstandard APIs required by this runtime.
 - Managed Harness processes now inherit `DEEPSEEK_API_KEY` from the HarnessDock launch environment. Finder and Dock launches fall back to resolving only that exported variable from the user's interactive login shell, so the official model settings page no longer asks for the same key again.
 - Managed Harness startup now migrates the exact legacy `@dsharness/pet` web-profile entry to the bundled `@harnessdock/pet` through the official plugin command, preventing renamed or moved app bundles from blocking Harness startup.
 

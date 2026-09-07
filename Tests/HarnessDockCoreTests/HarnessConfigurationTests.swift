@@ -11,7 +11,7 @@ struct HarnessConfigurationTests {
         #expect(configuration.npxArguments == [
             "--yes",
             "--prefer-offline",
-            "@deepseek-ai/dsh@0.1.0-rc.6",
+            "@deepseek-ai/dsh@0.1.2-rc.1",
             "web",
             "--host",
             "127.0.0.1",

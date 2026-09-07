@@ -17,7 +17,7 @@
 | 明文凭据进入源码 | 当前未发现 | 对可提交文本执行常见 Key、Bearer、私钥头扫描，无命中 |
 | 余额凭据持久化 | 已有保护 | Keychain 使用 `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`；Web 消息桥只接受固定动作 |
 | Harness 对外监听 | 已有保护 | 启动参数显式使用 `127.0.0.1`，附着前校验 `__DSH_BOOT__` |
-| Harness 上游版本漂移 | 已修复 | 默认锁定已验证的 `@deepseek-ai/dsh@0.1.0-rc.6`，并使用 `--prefer-offline` 优先复用本机缓存 |
+| Harness 上游版本漂移 | 已修复 | 默认锁定已验证的 `@deepseek-ai/dsh@0.1.2-rc.1`，并使用 `--prefer-offline` 优先复用本机缓存 |
 | 用户无法确认实际应用与运行时环境 | 已修复 | 原生“版本与诊断”页显示应用构建、锁定的 Harness 版本、系统架构、服务状态和 Node/npx/dsh 可用性，并提供脱敏复制摘要 |
 | 产品从 DS Harness 改名后丢失本机数据或无法启动 | 已规避 | 公开名称、App 和包名改为 HarnessDock；兼容性 Bundle ID、Application Support、钥匙串服务保持不变，宠物偏好提供旧键迁移；启动前通过官方命令把精确旧 `@dsharness/pet` profile 引用迁移到 `@harnessdock/pet` |
 | 项目许可证缺失 | 已修复 | 根目录增加标准 MIT License，版权归 `nortonyang`；中英文 README 和发布文案同步声明许可范围与无担保条款 |

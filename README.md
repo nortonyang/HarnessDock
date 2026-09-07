@@ -40,7 +40,7 @@ These transitions are covered by the Harness plugin checks, Core checks, and a p
 
 - **Native macOS shell** built with SwiftUI and WebKit—not Electron.
 - **One-click local workspace launch** with the selected project used as the Harness working directory.
-- **Pinned official runtime** using the verified `@deepseek-ai/dsh@0.1.0-rc.6` release and a matching local npm cache when available.
+- **Pinned official runtime** using the verified npm `@deepseek-ai/dsh@0.1.2-rc.1` release and a matching local npm cache when available. GitHub's newer `0.1.3-alpha.1` is not yet published to npm.
 - **Harness and Chat tabs** that keep independent page and session state.
 - **DeepSeek API balance** stored in macOS Keychain, with refresh and compact/collapsed sidebar states.
 - **Peak/off-peak indicator and localized pricing** for supported models—CNY in Chinese and USD in English—plus locally available input/output token usage.
@@ -64,7 +64,7 @@ These transitions are covered by the Harness plugin checks, Core checks, and a p
 | --- | --- |
 | macOS | 14 Sonoma or later |
 | Mac | Apple Silicon or Intel for source builds; the current local artifact is arm64 |
-| Node.js | 24+ recommended; Node 22 requires 22.19+ |
+| Node.js | 26+ recommended; the current runtime requires Node with zlib Zstandard support |
 | Swift | 6.0+ for source builds |
 | Network | Required on first run if the pinned Harness package is not cached |
 
