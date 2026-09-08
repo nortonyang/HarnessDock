@@ -2,7 +2,7 @@
 
 ## 目标
 
-为 HarnessDock 增加 GitHub Actions 测试发布流程，生成仅支持 Apple Silicon 的未签名 `.zip`，并在双语 README 中说明下载、首次打开提示和当前限制。
+为 HarnessDock 增加 GitHub Actions 测试发布流程，生成仅支持 Apple Silicon 的未签名 `.dmg` 与 `.zip`，并在双语 README 中说明下载、首次打开提示和当前限制。
 
 ## 非目标
 
@@ -21,14 +21,14 @@
 
 | 阶段 | 目的 | 退出条件 | 状态 |
 | --- | --- | --- | --- |
-| S1 | 添加 arm64 测试发布 workflow | tag 或手动运行都能创建/补传 zip | 进行中 |
+| S1 | 添加 arm64 测试发布 workflow | tag 或手动运行都能创建/补传 dmg 与 zip | 进行中 |
 | S2 | 更新双语 README | 下载、首次打开和限制说明一致 | 进行中 |
 | S3 | 本地验证 | 文档门禁、构建和 workflow 静态检查通过 | 未开始 |
 
 ## 验收标准
 
 - `macos-15` Apple Silicon runner 构建并确认 `arm64` 与 Swift 6。
-- GitHub Release 上传 `HarnessDock-arm64-unsigned.zip`，并标记为 prerelease。
+- GitHub Release 上传 `HarnessDock-arm64-unsigned.dmg`、`.zip` 及其校验文件，并标记为 prerelease。
 - 已存在的 Release 可以通过手动运行 workflow 补传或覆盖附件。
 - README 明确说明 Gatekeeper 首次打开处理方式、Node.js 26+ 要求和未签名限制。
 - README 不再包含 Product Hunt 发布计划或下载表述。

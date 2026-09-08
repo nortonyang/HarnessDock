@@ -41,6 +41,7 @@ jobs:
             dist/HarnessDock-arm64-unsigned.zip
           shasum -a 256 dist/HarnessDock-arm64-unsigned.zip \
             | tee dist/HarnessDock-arm64-unsigned.zip.sha256
+          ./scripts/package_dmg.sh
 
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
@@ -49,6 +50,8 @@ jobs:
           path: |
             dist/HarnessDock-arm64-unsigned.zip
             dist/HarnessDock-arm64-unsigned.zip.sha256
+            dist/HarnessDock-arm64-unsigned.dmg
+            dist/HarnessDock-arm64-unsigned.dmg.sha256
 
       - name: Create GitHub prerelease
         env:
@@ -78,11 +81,15 @@ jobs:
             gh release upload "${release_tag}" \
               dist/HarnessDock-arm64-unsigned.zip \
               dist/HarnessDock-arm64-unsigned.zip.sha256 \
+              dist/HarnessDock-arm64-unsigned.dmg \
+              dist/HarnessDock-arm64-unsigned.dmg.sha256 \
               --clobber
           else
             gh release create "${release_tag}" \
               dist/HarnessDock-arm64-unsigned.zip \
               dist/HarnessDock-arm64-unsigned.zip.sha256 \
+              dist/HarnessDock-arm64-unsigned.dmg \
+              dist/HarnessDock-arm64-unsigned.dmg.sha256 \
               --title "HarnessDock ${release_tag}" \
               --notes-file dist/test-release-notes.md \
               --prerelease

@@ -77,9 +77,9 @@ npx --version
 
 ## Installation
 
-The current test release supports Apple Silicon Macs only. Download the latest `HarnessDock-arm64-unsigned.zip` from [GitHub Releases](https://github.com/nortonyang/HarnessDock/releases), unzip it, and move `HarnessDock.app` to Applications.
+The current test release supports Apple Silicon Macs only. Download the latest `HarnessDock-arm64-unsigned.dmg` from [GitHub Releases](https://github.com/nortonyang/HarnessDock/releases), open it, and drag `HarnessDock.app` to Applications. A `.zip` archive is also provided as a portable alternative.
 
-This preview is unsigned and not notarized. On the first launch, macOS may say that the developer cannot be verified. If that happens, right-click `HarnessDock.app`, choose **Open**, and confirm **Open**. If macOS still blocks it, open **System Settings → Privacy & Security**, find the blocked-app message, and choose **Open Anyway**. Only continue if you downloaded the archive from the official repository and its SHA-256 checksum matches the `.sha256` file in the release.
+This preview is unsigned and not notarized. On the first launch, macOS may say that the developer cannot be verified. If that happens, right-click `HarnessDock.app`, choose **Open**, and confirm **Open**. If macOS still blocks it, open **System Settings → Privacy & Security**, find the blocked-app message, and choose **Open Anyway**. Only continue if you downloaded the disk image or archive from the official repository and its SHA-256 checksum matches the corresponding `.sha256` file in the release.
 
 You still need Node.js 26+ installed so HarnessDock can start the official DSH runtime. The app does not bundle Node.js in this test release.
 

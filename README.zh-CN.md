@@ -77,9 +77,9 @@ npx --version
 
 ## 安装（Installation）
 
-当前测试版仅支持 Apple Silicon。请从 [GitHub Releases](https://github.com/nortonyang/HarnessDock/releases) 下载最新的 `HarnessDock-arm64-unsigned.zip`，解压后将 `HarnessDock.app` 拖到“应用程序”。
+当前测试版仅支持 Apple Silicon。请从 [GitHub Releases](https://github.com/nortonyang/HarnessDock/releases) 下载最新的 `HarnessDock-arm64-unsigned.dmg`，双击打开后将 `HarnessDock.app` 拖到“应用程序”。同时也提供 `.zip` 免安装压缩包。
 
-该测试版未签名、未经过 Apple 公证。首次打开时，macOS 可能提示“无法验证开发者”。此时请右键点击 `HarnessDock.app`，选择 **打开**，再确认 **打开**。如果仍被阻止，请打开 **系统设置 → 隐私与安全性**，在被阻止的应用提示旁点击 **仍要打开**。只有在确认压缩包来自官方仓库、且 SHA-256 校验值与 Release 中的 `.sha256` 文件一致时，才应继续打开。
+该测试版未签名、未经过 Apple 公证。首次打开时，macOS 可能提示“无法验证开发者”。此时请右键点击 `HarnessDock.app`，选择 **打开**，再确认 **打开**。如果仍被阻止，请打开 **系统设置 → 隐私与安全性**，在被阻止的应用提示旁点击 **仍要打开**。只有在确认磁盘映像或压缩包来自官方仓库、且 SHA-256 校验值与 Release 中对应的 `.sha256` 文件一致时，才应继续打开。
 
 还需要安装 Node.js 26+，HarnessDock 才能启动官方 DSH 运行时。本测试版不会把 Node.js 一起打包。
 
