@@ -19,7 +19,7 @@ HarnessDock 使用 SwiftUI 与 WebKit，将官方 [DeepSeek Harness](https://git
 
 ![已隐藏私人工作区信息的 HarnessDock 主界面预览](docs/screenshots/sanitized/harnessdock-overview-redacted.png)
 
-该预览已遮盖工作区、模式、模型、输入内容和余额信息。正式发布到 Product Hunt 前会继续补充一组经过脱敏的产品截图。
+该预览已遮盖工作区、模式、模型、输入内容和余额信息。
 
 ## 产品概览（Overview）
 
@@ -56,14 +56,14 @@ HarnessDock 面向希望在 macOS 上自然使用官方 Harness 工作流的开�
 - 不替代或重新实现 DeepSeek Harness。
 - 不绕过 DeepSeek Chat 登录；Chat 页打开的是官方网页，使用正常的账号会话。
 - 不会把仅存于钥匙串的余额凭据复制给 Harness，也不会把凭据内容注入网页。
-- 目前不提供已签名、已公证并支持自动更新的公众安装包。
+- 当前 GitHub 测试版仅支持 Apple Silicon，未签名、未公证，不是正式公众安装包。
 
 ## 系统要求（Requirements）
 
 | 依赖 | 要求 |
 | --- | --- |
 | macOS | 14 Sonoma 或更高版本 |
-| Mac | 源码构建支持 Apple Silicon 或 Intel；当前本机构建产物为 arm64 |
+| Mac | 可下载测试版仅支持 Apple Silicon |
 | Node.js | 推荐 26+；当前运行时需要支持 zlib Zstandard 的 Node 版本 |
 | Swift | 源码构建需要 6.0+ |
 | 网络 | 本地没有锁定版本的 Harness 缓存时，首次运行需要联网 |
@@ -77,7 +77,13 @@ npx --version
 
 ## 安装（Installation）
 
-当前仓库提供源码构建，尚未发布经过 Developer ID 签名与 Apple 公证的安装包。
+当前测试版仅支持 Apple Silicon。请从 [GitHub Releases](https://github.com/nortonyang/HarnessDock/releases) 下载最新的 `HarnessDock-arm64-unsigned.zip`，解压后将 `HarnessDock.app` 拖到“应用程序”。
+
+该测试版未签名、未经过 Apple 公证。首次打开时，macOS 可能提示“无法验证开发者”。此时请右键点击 `HarnessDock.app`，选择 **打开**，再确认 **打开**。如果仍被阻止，请打开 **系统设置 → 隐私与安全性**，在被阻止的应用提示旁点击 **仍要打开**。只有在确认压缩包来自官方仓库、且 SHA-256 校验值与 Release 中的 `.sha256` 文件一致时，才应继续打开。
+
+还需要安装 Node.js 26+，HarnessDock 才能启动官方 DSH 运行时。本测试版不会把 Node.js 一起打包。
+
+如需从源码构建：
 
 ```bash
 git clone https://github.com/nortonyang/HarnessDock.git
@@ -86,7 +92,7 @@ cd HarnessDock
 open dist/HarnessDock.app
 ```
 
-构建脚本会生成 `dist/HarnessDock.app`，嵌入宠物插件的 6 个发布文件，并为本地测试执行 ad-hoc 签名。不要把这个本机构建产物当成受信任的公众安装包分发。
+构建脚本会生成 `dist/HarnessDock.app`，嵌入宠物插件的 6 个发布文件，并为本地测试执行 ad-hoc 签名。不要把本机构建产物当成已公证的公众安装包。
 
 ## 使用方法（Usage）
 
@@ -223,11 +229,10 @@ HarnessDock/
 
 ## 当前发布状态
 
-版本 `0.1.0` 是开发者预览版。在 Product Hunt 上把公众下载描述为正式可用前，项目仍需完成：
+版本 `0.1.0` 是开发者预览版。当前可下载版本是仅支持 Apple Silicon 的未签名测试版。要称为面向公众的正式版本，项目仍需完成：
 
 - 准备清晰的版本变更记录；
 - 生成 Developer ID 签名并通过 Apple 公证的安装包；
-- 提供 Universal 2，或明确区分不同架构的安装包；
 - 在干净的 Mac 上完成安装和冒烟测试；
 - 提供校验和以及清晰的更新、卸载路径。
 

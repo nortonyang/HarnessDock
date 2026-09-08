@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- GitHub Actions now builds an Apple Silicon (`arm64`) unsigned prerelease archive and uploads its SHA-256 checksum to GitHub Releases for testing.
 - Native **Version & Diagnostics** settings show the app build, pinned Harness runtime, macOS architecture, service state, workspace name, and Node/npx/dsh availability.
 - Diagnostics can be refreshed and copied as a privacy-safe report that excludes credentials, cookies, conversations, full logs, and full workspace paths.
 - Harness and native Chat pets now react consistently to running, successful, and failed tasks; terminal feedback starts at frame one and plays for one complete animation cycle.
@@ -16,6 +17,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- The bilingual README now documents the Apple Silicon test download, first-launch Gatekeeper steps, checksum verification, and the Node.js requirement; Product Hunt launch wording was removed from the README.
 - Upgraded the pinned official DSH runtime to the npm-available `0.1.2-rc.1`; Node 26+ is now recommended because older Node 22 builds can lack the zlib Zstandard APIs required by this runtime.
 - Managed Harness processes now inherit `DEEPSEEK_API_KEY` from the HarnessDock launch environment. Finder and Dock launches fall back to resolving only that exported variable from the user's interactive login shell, so the official model settings page no longer asks for the same key again.
 - Managed Harness startup now migrates the exact legacy `@dsharness/pet` web-profile entry to the bundled `@harnessdock/pet` through the official plugin command, preventing renamed or moved app bundles from blocking Harness startup.

@@ -1,0 +1,80 @@
+name: Apple Silicon test release
+
+on:
+  push:
+    tags:
+      - "test-v*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Optional prerelease tag, for example test-v0.1.0"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-arm64:
+    runs-on: macos-14
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Select Node.js for the build tools
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify Apple Silicon runner
+        run: test "$(uname -m)" = "arm64"
+
+      - name: Build HarnessDock
+        run: ./scripts/build_app.sh
+
+      - name: Package unsigned test build
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            dist/HarnessDock.app \
+            dist/HarnessDock-arm64-unsigned.zip
+          shasum -a 256 dist/HarnessDock-arm64-unsigned.zip \
+            | tee dist/HarnessDock-arm64-unsigned.zip.sha256
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: HarnessDock-arm64-test-build
+          path: |
+            dist/HarnessDock-arm64-unsigned.zip
+            dist/HarnessDock-arm64-unsigned.zip.sha256
+
+      - name: Create GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            release_tag="${GITHUB_REF_NAME}"
+          else
+            release_tag="${INPUT_RELEASE_TAG}"
+          fi
+          if [ -z "${release_tag}" ]; then
+            echo "Build completed; no release tag was supplied."
+            exit 0
+          fi
+          case "${release_tag}" in
+            test-v*) ;;
+            *) echo "Release tag must start with test-v" >&2; exit 1 ;;
+          esac
+          printf '%s\n' \
+            'Apple Silicon test build for HarnessDock.' \
+            '' \
+            'This is an unsigned developer preview. macOS may show a warning on first launch.' \
+            'See the README for the required first-open steps and Node.js requirement.' \
+            > dist/test-release-notes.md
+          gh release create "${release_tag}" \
+            dist/HarnessDock-arm64-unsigned.zip \
+            dist/HarnessDock-arm64-unsigned.zip.sha256 \
+            --title "HarnessDock ${release_tag}" \
+            --notes-file dist/test-release-notes.md \
+            --prerelease

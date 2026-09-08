@@ -19,7 +19,7 @@ HarnessDock wraps the official [DeepSeek Harness](https://github.com/deepseek-ai
 
 ![HarnessDock workspace preview with private workspace details redacted](docs/screenshots/sanitized/harnessdock-overview-redacted.png)
 
-This preview uses redacted workspace, mode, model, prompt, and balance details. A larger sanitized gallery will be added before the public Product Hunt launch.
+This preview uses redacted workspace, mode, model, prompt, and balance details.
 
 ## Overview
 
@@ -56,14 +56,14 @@ These transitions are covered by the Harness plugin checks, Core checks, and a p
 - It does not replace or reimplement DeepSeek Harness.
 - It does not bypass DeepSeek Chat login; the Chat tab opens the official website and uses its normal account session.
 - It does not copy a Keychain-only balance credential into Harness or inject credential values into web pages.
-- It does not currently provide a signed, notarized, automatically updating consumer download.
+- The current GitHub test build is an unsigned Apple Silicon preview; it is not a notarized consumer installer.
 
 ## Requirements
 
 | Dependency | Requirement |
 | --- | --- |
 | macOS | 14 Sonoma or later |
-| Mac | Apple Silicon or Intel for source builds; the current local artifact is arm64 |
+| Mac | Apple Silicon only for the downloadable test build |
 | Node.js | 26+ recommended; the current runtime requires Node with zlib Zstandard support |
 | Swift | 6.0+ for source builds |
 | Network | Required on first run if the pinned Harness package is not cached |
@@ -77,7 +77,13 @@ npx --version
 
 ## Installation
 
-The repository currently supports source builds. It does **not** yet publish a Developer ID-signed and Apple-notarized installer.
+The current test release supports Apple Silicon Macs only. Download the latest `HarnessDock-arm64-unsigned.zip` from [GitHub Releases](https://github.com/nortonyang/HarnessDock/releases), unzip it, and move `HarnessDock.app` to Applications.
+
+This preview is unsigned and not notarized. On the first launch, macOS may say that the developer cannot be verified. If that happens, right-click `HarnessDock.app`, choose **Open**, and confirm **Open**. If macOS still blocks it, open **System Settings → Privacy & Security**, find the blocked-app message, and choose **Open Anyway**. Only continue if you downloaded the archive from the official repository and its SHA-256 checksum matches the `.sha256` file in the release.
+
+You still need Node.js 26+ installed so HarnessDock can start the official DSH runtime. The app does not bundle Node.js in this test release.
+
+For a source build instead:
 
 ```bash
 git clone https://github.com/nortonyang/HarnessDock.git
@@ -86,7 +92,7 @@ cd HarnessDock
 open dist/HarnessDock.app
 ```
 
-The build script creates `dist/HarnessDock.app`, embeds the six release files for the pet plugin, and applies an ad-hoc signature for local testing. Do not redistribute this local artifact as a trusted consumer release.
+The build script creates `dist/HarnessDock.app`, embeds the six release files for the pet plugin, and applies an ad-hoc signature for local testing. Do not treat a local build as a notarized consumer release.
 
 ## Usage
 
@@ -223,11 +229,10 @@ To uninstall, quit the app and remove the locally built app. Optional user data 
 
 ## Current Release Status
 
-Version `0.1.0` is a developer preview. Before a public Product Hunt download is described as production-ready, the project still needs:
+Version `0.1.0` is a developer preview. The current downloadable build is an Apple Silicon unsigned test release. Before calling it a production-ready public release, the project still needs:
 
 - a clean release changelog;
 - a Developer ID-signed, Apple-notarized package;
-- Universal 2 or clearly separated architecture-specific artifacts;
 - clean-Mac installation and smoke testing;
 - checksums and a documented upgrade/uninstall path.
 
