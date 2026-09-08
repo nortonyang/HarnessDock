@@ -17,7 +17,6 @@
 - [ ] Artifact filenames, architectures, versions, and SHA-256 checksums were recorded.
 - [ ] Current files and release artifacts passed sensitive-data review.
 - [ ] Any exposed credentials were revoked or rotated before cleanup.
-- [ ] Product Hunt copy describes only verified, available functionality.
 
 ## Risks and rollback
 

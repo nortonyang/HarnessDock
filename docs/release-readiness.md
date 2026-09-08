@@ -30,7 +30,6 @@
 | P1 | AppIcon 由 SF Symbols `sparkles` 生成 | Apple 明确禁止将 SF Symbols 用于 App 图标、Logo 或商标用途 | 替换为完全自有或已获得明确授权的原创图形，并重新生成 `AppIcon.icns` |
 | P1 | 构建仅为 ad-hoc 签名 | GitHub 下载后的 App 会触发 Gatekeeper 警告，用户无法验证发布者和包体完整性 | 使用 Developer ID、Hardened Runtime、Apple 公证并 stapling；再发布 ZIP/DMG |
 | P1 | 当前发布包只有 `arm64` | 现成 `.app` 无法在 README 声明支持的 Intel Mac 上运行 | 构建并验证 Universal 2（arm64 + x86_64），或明确只发布 Apple Silicon 版本 |
-| P2 | Product Hunt 画廊仍不完整 | 单张脱敏首页图不足以展示设置、价格和宠物状态 | 使用专用演示账户和合成数据继续补充 3–5 张脱敏截图，并清理图片元数据 |
 | P2 | 代理可在所选工作区读写文件和执行命令 | 用户可能误选包含私钥、生产配置或私人文档的目录 | 首次启动和 README 明确提示权限边界、审批责任与最小工作区原则 |
 | P2 | 当前没有自动更新、漏洞响应或完整固定依赖清单 | 用户可能长期停留在有风险的旧版 | 已显示应用与锁定的 Harness 版本；仍需记录发布包与上游校验值，并建立 `SECURITY.md` 和发布/撤回流程 |
 
