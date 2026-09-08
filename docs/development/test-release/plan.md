@@ -13,6 +13,7 @@
 ## 当前证据
 
 - `scripts/build_app.sh` 已能生成 arm64 的 `dist/HarnessDock.app`，但没有归档或上传步骤。
+- GitHub `macos-14` runner 的 Swift 版本为 5.10，与项目的 Swift tools 6.0 不兼容。
 - 仓库当前没有 release workflow，GitHub Releases 为空。
 - 当前构建为 ad-hoc 签名，首次打开可能触发 Gatekeeper 提示。
 
@@ -26,7 +27,7 @@
 
 ## 验收标准
 
-- `macos-14` runner 构建并确认 `arm64`。
+- `macos-15` Apple Silicon runner 构建并确认 `arm64` 与 Swift 6。
 - GitHub Release 上传 `HarnessDock-arm64-unsigned.zip`，并标记为 prerelease。
 - 已存在的 Release 可以通过手动运行 workflow 补传或覆盖附件。
 - README 明确说明 Gatekeeper 首次打开处理方式、Node.js 26+ 要求和未签名限制。

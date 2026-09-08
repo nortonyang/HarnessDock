@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build-arm64:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -27,7 +27,9 @@ jobs:
           node-version: 22
 
       - name: Verify Apple Silicon runner
-        run: test "$(uname -m)" = "arm64"
+        run: |
+          test "$(uname -m)" = "arm64"
+          swift --version | grep -E 'Swift version 6\.'
 
       - name: Build HarnessDock
         run: ./scripts/build_app.sh
