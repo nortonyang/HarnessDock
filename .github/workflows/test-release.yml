@@ -72,9 +72,16 @@ jobs:
             'This is an unsigned developer preview. macOS may show a warning on first launch.' \
             'See the README for the required first-open steps and Node.js requirement.' \
             > dist/test-release-notes.md
-          gh release create "${release_tag}" \
-            dist/HarnessDock-arm64-unsigned.zip \
-            dist/HarnessDock-arm64-unsigned.zip.sha256 \
-            --title "HarnessDock ${release_tag}" \
-            --notes-file dist/test-release-notes.md \
-            --prerelease
+          if gh release view "${release_tag}" >/dev/null 2>&1; then
+            gh release upload "${release_tag}" \
+              dist/HarnessDock-arm64-unsigned.zip \
+              dist/HarnessDock-arm64-unsigned.zip.sha256 \
+              --clobber
+          else
+            gh release create "${release_tag}" \
+              dist/HarnessDock-arm64-unsigned.zip \
+              dist/HarnessDock-arm64-unsigned.zip.sha256 \
+              --title "HarnessDock ${release_tag}" \
+              --notes-file dist/test-release-notes.md \
+              --prerelease
+          fi

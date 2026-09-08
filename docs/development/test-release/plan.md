@@ -20,7 +20,7 @@
 
 | 阶段 | 目的 | 退出条件 | 状态 |
 | --- | --- | --- | --- |
-| S1 | 添加 arm64 测试发布 workflow | tag 触发构建并上传 zip | 进行中 |
+| S1 | 添加 arm64 测试发布 workflow | tag 或手动运行都能创建/补传 zip | 进行中 |
 | S2 | 更新双语 README | 下载、首次打开和限制说明一致 | 进行中 |
 | S3 | 本地验证 | 文档门禁、构建和 workflow 静态检查通过 | 未开始 |
 
@@ -28,5 +28,6 @@
 
 - `macos-14` runner 构建并确认 `arm64`。
 - GitHub Release 上传 `HarnessDock-arm64-unsigned.zip`，并标记为 prerelease。
+- 已存在的 Release 可以通过手动运行 workflow 补传或覆盖附件。
 - README 明确说明 Gatekeeper 首次打开处理方式、Node.js 26+ 要求和未签名限制。
 - README 不再包含 Product Hunt 发布计划或下载表述。
