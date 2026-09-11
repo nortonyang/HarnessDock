@@ -153,6 +153,9 @@ final class AppModel: ObservableObject {
     @Published private(set) var workspaceURL: URL?
     @Published private(set) var status: HarnessStatus = .idle
     @Published private(set) var logText = ""
+    @Published private(set) var authenticatedLaunchURL: URL?
+    var harnessLaunchURL: URL { authenticatedLaunchURL ?? configuration.serverURL }
+    private var pendingLaunchOutput = ""
     @Published var webViewIsLoading = false
     @Published var webViewError: String?
     @Published var chatWebViewIsLoading = false
@@ -882,6 +885,8 @@ final class AppModel: ObservableObject {
         let previousProcess = process
         stopOwnedProcess()
         logText = ""
+        authenticatedLaunchURL = nil
+        pendingLaunchOutput = ""
         webViewError = nil
         status = .locatingRuntime
 
@@ -982,7 +987,7 @@ final class AppModel: ObservableObject {
             let data = handle.availableData
             guard !data.isEmpty, let chunk = String(data: data, encoding: .utf8) else { return }
             Task { @MainActor [weak self] in
-                self?.appendLog(chunk)
+                self?.receiveLaunchOutput(chunk)
             }
         }
 
@@ -1200,7 +1205,7 @@ final class AppModel: ObservableObject {
 
     private func serverIsReachable() async -> Bool {
         var request = URLRequest(
-            url: configuration.serverURL,
+            url: harnessLaunchURL,
             cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
             timeoutInterval: 1
         )
@@ -1220,7 +1225,7 @@ final class AppModel: ObservableObject {
     /// silently attaches to an unrelated service.
     private func serverIsHarness() async -> Bool {
         var request = URLRequest(
-            url: configuration.serverURL,
+            url: harnessLaunchURL,
             cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
             timeoutInterval: 2
         )
@@ -1286,8 +1291,29 @@ final class AppModel: ObservableObject {
         }
     }
 
+    private func receiveLaunchOutput(_ chunk: String) {
+        // Buffer complete lines: pipe reads can split a URL (or its secret).
+        pendingLaunchOutput += chunk
+        while let newline = pendingLaunchOutput.firstIndex(of: "\n") {
+            let line = String(pendingLaunchOutput[..<newline])
+            pendingLaunchOutput.removeSubrange(...newline)
+            if line.hasPrefix("dsh web: "),
+               let candidate = URL(string: String(line.dropFirst("dsh web: ".count)).trimmingCharacters(in: .whitespacesAndNewlines)),
+               let parts = URLComponents(url: candidate, resolvingAgainstBaseURL: false),
+               candidate.scheme == configuration.serverURL.scheme,
+               candidate.host == configuration.serverURL.host,
+               candidate.port == configuration.serverURL.port,
+               candidate.path == "/", parts.user == nil, parts.password == nil,
+               parts.queryItems?.contains(where: { $0.name == "token" && !($0.value ?? "").isEmpty }) == true {
+                authenticatedLaunchURL = candidate
+            }
+            appendLog(line)
+        }
+    }
+
     private func appendLog(_ value: String) {
         let normalized = value.replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "([?&]token=)[^\\s&#]+", with: "$1[REDACTED]", options: .regularExpression)
         if logText.isEmpty {
             logText = normalized.trimmingCharacters(in: .newlines)
         } else {

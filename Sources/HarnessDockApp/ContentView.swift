@@ -255,7 +255,7 @@ private struct FullBleedHarnessView: View {
         ZStack(alignment: .top) {
             TimelineView(.periodic(from: .now, by: 60)) { context in
                 HarnessWebView(
-                    url: model.configuration.serverURL,
+                    url: model.harnessLaunchURL,
                     homeRequestID: model.homeRequestID,
                     reloadRequestID: model.reloadRequestID,
                     balancePresentation: model.balanceWebPresentation(at: context.date),
@@ -1079,7 +1079,7 @@ private struct WorkspaceView: View {
     private var webWorkspace: some View {
         ZStack(alignment: .top) {
             HarnessWebView(
-                url: model.configuration.serverURL,
+                url: model.harnessLaunchURL,
                 homeRequestID: model.homeRequestID,
                 reloadRequestID: model.reloadRequestID,
                 isLoading: $model.webViewIsLoading,
