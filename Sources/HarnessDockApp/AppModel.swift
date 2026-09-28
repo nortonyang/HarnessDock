@@ -161,6 +161,7 @@ final class AppModel: ObservableObject {
     @Published var chatWebViewIsLoading = false
     @Published var chatWebViewError: String?
     @Published private(set) var chatCommandActivity: PetCommandActivity = .idle
+    @Published private(set) var harnessCommandActivity: PetCommandActivity = .idle
     @Published var showLogs = false
     @Published private(set) var selectedSettingsSection: AppSettingsSection = .apiBalance
     @Published private(set) var settingsRequestID = 0
@@ -560,6 +561,11 @@ final class AppModel: ObservableObject {
 
     func resetChatCommandActivity() {
         handleChatCommandActivity(.idle)
+    }
+
+    func handleHarnessCommandActivity(_ activity: PetCommandActivity) {
+        // The web plugin owns the complete animation cycle and sends idle on completion.
+        harnessCommandActivity = activity
     }
 
     func openDeepSeekChatInBrowser() {

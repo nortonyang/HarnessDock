@@ -2,11 +2,20 @@ import SwiftUI
 
 @main
 struct HarnessDockApp: App {
-    @StateObject private var model = AppModel()
-    @StateObject private var petPlugin = PetPluginController()
+    @StateObject private var model: AppModel
+    @StateObject private var petPlugin: PetPluginController
+    @StateObject private var menuBarPet: PetMenuBarAnimator
+
+    init() {
+        let model = AppModel()
+        let petPlugin = PetPluginController()
+        _model = StateObject(wrappedValue: model)
+        _petPlugin = StateObject(wrappedValue: petPlugin)
+        _menuBarPet = StateObject(wrappedValue: PetMenuBarAnimator(model: model, controller: petPlugin))
+    }
 
     var body: some Scene {
-        WindowGroup("HarnessDock") {
+        WindowGroup("HarnessDock", id: "main") {
             ContentView()
                 .environmentObject(model)
                 .environmentObject(petPlugin)
@@ -104,6 +113,21 @@ struct HarnessDockApp: App {
                 }
             }
         }
+
+        MenuBarExtra {
+            PetMenuBarView()
+                .environmentObject(model)
+                .environmentObject(petPlugin)
+                .environment(\.locale, model.appLanguage.locale)
+        } label: {
+            if let image = menuBarPet.image {
+                Image(nsImage: image)
+                    .accessibilityLabel("菜单栏宠物")
+            } else {
+                Image(systemName: "pawprint.fill")
+            }
+        }
+        .menuBarExtraStyle(.window)
 
         Settings {
             AppSettingsView()

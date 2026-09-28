@@ -240,6 +240,7 @@ window.__ModuleLoader__.load({
       const signal = commandSignal(listSnapshot, sessionSnapshot);
       const signalRef = React.useRef(signal);
       const previousRef = React.useRef(null);
+      const failedDuringRun = React.useRef(false);
       const terminalTimer = React.useRef(null);
       const terminalState = React.useRef(null);
       const [commandState, setCommandState] = React.useState(
@@ -269,17 +270,24 @@ window.__ModuleLoader__.load({
         const previous = previousRef.current;
         if (previous === null || previous.sessionId !== signal.sessionId) {
           clearTerminal();
+          failedDuringRun.current = false;
           setCommandState(signal.busy ? "commandRunning" : null);
         } else {
+          if (signal.busy && !previous.busy) failedDuringRun.current = false;
           const hasNewError = signal.errorToken !== null
             && signal.errorToken !== previous.errorToken;
           if (hasNewError) {
+            failedDuringRun.current = true;
             playTerminal("commandFailed");
           } else if (signal.busy && !previous.busy) {
             clearTerminal();
             setCommandState("commandRunning");
           } else if (!signal.busy && previous.busy) {
-            playTerminal("commandSucceeded");
+            if (!failedDuringRun.current) {
+              playTerminal("commandSucceeded");
+            } else if (terminalState.current === null) {
+              setCommandState(null);
+            }
           } else if (signal.busy && terminalState.current === null) {
             setCommandState("commandRunning");
           }
@@ -327,6 +335,14 @@ window.__ModuleLoader__.load({
       const current = usePreferences();
       const reducedMotion = useReducedMotion();
       const commandState = useHarnessCommandAnimation(sessions);
+      React.useEffect(() => {
+        const activity = {
+          commandRunning: "running",
+          commandSucceeded: "succeeded",
+          commandFailed: "failed"
+        }[commandState] ?? "idle";
+        window.webkit?.messageHandlers?.harnessPetCommand?.postMessage(activity);
+      }, [commandState]);
       const [state, setState] = React.useState("idle");
       const [peeking, setPeeking] = React.useState(false);
       const [dragPoint, setDragPoint] = React.useState(null);
@@ -817,7 +833,7 @@ window.__ModuleLoader__.load({
 
     exports.apply = apply;
     exports.inject = inject;
-    exports.__test = { commandSignal, nearestDock, normalizePreferences, readPreferences };
+    exports.__test = { commandSignal, useHarnessCommandAnimation, nearestDock, normalizePreferences, readPreferences };
     return module.exports;
   }
 });

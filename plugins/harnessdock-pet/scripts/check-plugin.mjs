@@ -165,4 +165,86 @@ assert.deepEqual(
 assert.equal(styleNodes.length, 1);
 for (const dispose of effects.reverse()) dispose();
 
+// Run the real hook through deterministic renders and timers to exercise event ordering.
+const hookSlots = [];
+let hookIndex = 0;
+let pendingEffects = [];
+const timers = new Map();
+let timerId = 0;
+windowMock.setTimeout = callback => {
+  timers.set(++timerId, callback);
+  return timerId;
+};
+windowMock.clearTimeout = id => timers.delete(id);
+const hookReact = {
+  useCallback(callback) { return callback; },
+  useSyncExternalStore(_subscribe, getSnapshot) { return getSnapshot(); },
+  useRef(initial) {
+    const index = hookIndex++;
+    return hookSlots[index] ??= { current: initial };
+  },
+  useState(initial) {
+    const index = hookIndex++;
+    if (!(index in hookSlots)) hookSlots[index] = initial;
+    return [hookSlots[index], value => { hookSlots[index] = value; }];
+  },
+  useEffect(effect, dependencies) {
+    const index = hookIndex++;
+    const previous = hookSlots[index];
+    if (!previous || dependencies.some((value, i) => value !== previous[i])) {
+      hookSlots[index] = dependencies;
+      pendingEffects.push(effect);
+    }
+  }
+};
+const hookedPlugin = handoff.factory(() => hookReact);
+let snapshot = { running: false, lastAgentError: "old error" };
+let currentSession = "one";
+const sessions = {
+  list: { getSnapshot: () => ({ current: currentSession, byId: {}, jobsBySession: {} }) },
+  binding: () => ({ session: { getSnapshot: () => snapshot } })
+};
+function renderHook() {
+  hookIndex = 0;
+  let state = hookedPlugin.__test.useHarnessCommandAnimation(sessions);
+  const effects = pendingEffects;
+  pendingEffects = [];
+  for (const effect of effects) effect();
+  if (effects.length) {
+    hookIndex = 0;
+    state = hookedPlugin.__test.useHarnessCommandAnimation(sessions);
+  }
+  return state;
+}
+function finishTimers() {
+  const callbacks = [...timers.values()];
+  timers.clear();
+  for (const callback of callbacks) callback();
+}
+assert.equal(renderHook(), null, "Old errors are a baseline");
+snapshot = { running: true, lastAgentError: null };
+assert.equal(renderHook(), "commandRunning");
+snapshot = { running: true, lastAgentError: "new error" };
+assert.equal(renderHook(), "commandFailed");
+snapshot = { running: false, lastAgentError: "new error" };
+assert.equal(renderHook(), "commandFailed", "A later stop must not overwrite failure with success");
+finishTimers();
+assert.equal(renderHook(), null);
+snapshot = { running: true, lastAgentError: null };
+assert.equal(renderHook(), "commandRunning");
+snapshot = { running: false, lastAgentError: null };
+assert.equal(renderHook(), "commandSucceeded", "A subsequent successful run clears prior failure");
+snapshot = { running: true, lastAgentError: null };
+assert.equal(renderHook(), "commandRunning");
+assert.equal(timers.size, 0, "New runs cancel old completion timers");
+snapshot = { running: true, lastAgentError: "another failure" };
+assert.equal(renderHook(), "commandFailed");
+finishTimers();
+assert.equal(renderHook(), "commandRunning");
+snapshot = { running: false, lastAgentError: "another failure" };
+assert.equal(renderHook(), null, "Already-played failures must not celebrate on stop");
+currentSession = "two";
+snapshot = { running: false, lastAgentError: "historical error" };
+assert.equal(renderHook(), null, "Switching sessions establishes a fresh baseline");
+
 console.log("@harnessdock/pet checks passed");

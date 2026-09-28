@@ -1,4 +1,5 @@
 import AppKit
+import HarnessDockCore
 import SwiftUI
 import WebKit
 
@@ -44,6 +45,7 @@ struct HarnessWebView: NSViewRepresentable {
     )
     var onBalanceAction: (String) -> Void = { _ in }
     var onThemeAction: () -> Void = {}
+    var onCommandActivity: (PetCommandActivity) -> Void = { _ in }
     @Binding var isLoading: Bool
     @Binding var loadError: String?
 
@@ -68,6 +70,10 @@ struct HarnessWebView: NSViewRepresentable {
         )
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
+        configuration.userContentController.add(
+            WeakScriptMessageHandler(delegate: context.coordinator),
+            name: "harnessPetCommand"
+        )
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         webView.allowsMagnification = true
@@ -93,6 +99,10 @@ struct HarnessWebView: NSViewRepresentable {
     }
 
     static func dismantleNSView(_ webView: WKWebView, coordinator: Coordinator) {
+        webView.configuration.userContentController.removeScriptMessageHandler(
+            forName: "harnessPetCommand"
+        )
+        coordinator.parent.onCommandActivity(.idle)
         webView.configuration.userContentController.removeScriptMessageHandler(
             forName: "dshBalance"
         )
@@ -1384,6 +1394,7 @@ struct HarnessWebView: NSViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            parent.onCommandActivity(.idle)
             parent.isLoading = true
             parent.loadError = nil
         }
@@ -1401,6 +1412,15 @@ struct HarnessWebView: NSViewRepresentable {
             _ userContentController: WKUserContentController,
             didReceive message: WKScriptMessage
         ) {
+            if message.name == "harnessPetCommand" {
+                guard message.frameInfo.isMainFrame,
+                      message.frameInfo.securityOrigin.host == parent.url.host,
+                      let value = message.body as? String,
+                      let activity = PetCommandActivity(rawValue: value)
+                else { return }
+                parent.onCommandActivity(activity)
+                return
+            }
             guard message.name == "dshBalance",
                   let action = message.body as? String
             else {

@@ -40,3 +40,18 @@
 ## 剩余工作
 
 - 在用户主动发起下一次 DeepSeek Chat 回答时，观察 `running → review/failed → idle` 的动态观感；该步骤不影响代码交付，也不应由自动审核擅自发送聊天内容。
+
+## 2026-09-08 续作与本地部署
+
+- 修复 Harness 事件顺序问题：错误先到、running 后变为 false 时，保留失败反馈，不再切换成成功动作。失败动画已经结束时直接恢复待机。
+- 增加真实 Hook 的确定性渲染与计时回归：旧错误基线、失败后停止、下一次成功、新任务取消旧计时、失败反馈播完后停止、切换会话全部通过。
+- `./scripts/run_checks.sh` 通过；沙箱无法绑定 loopback，Core 的 listener lookup 检查按现有规则跳过，其余检查通过。
+- `./scripts/build_app.sh`、`git diff --check` 通过；安装到 `/Applications/HarnessDock.app`，严格签名校验通过并启动。
+- 实机确认 Harness 页面加载且 Marina 显示，Chat 首页正常加载。Chat 宠物设置当前为关闭、选择为 Marina；保留用户偏好，没有为了验收修改开关。
+- 未发起真实模型请求；真实回答期间的动作观感仍待开启 Chat 原生宠物后观察。
+
+## 2026-09-09 菜单栏入口
+
+- 新增 macOS `MenuBarExtra`：菜单栏显示当前宠物的 22pt 图标，展开面板支持切换宠物、开关 Chat 原生宠物、打开主窗口和退出应用。
+- `./scripts/build_app.sh`、`git diff --check` 与 `/Applications/HarnessDock.app` 严格签名校验通过。
+- 重启后主窗口当前提示 Harness 依赖安装失败：本地 npm 缓存中没有 `@deepseek-ai/dsh@0.1.2-rc.1`；这不影响菜单栏 Swift 入口编译，但阻止 Harness 页面进入运行态。菜单栏场景已出现在应用辅助功能树中。

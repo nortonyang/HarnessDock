@@ -262,6 +262,7 @@ private struct FullBleedHarnessView: View {
                     themeBackgroundPresentation: model.themeBackgroundPresentation,
                     onBalanceAction: model.handleBalanceWebAction,
                     onThemeAction: { model.requestSettings(.themeBackground) },
+                    onCommandActivity: model.handleHarnessCommandActivity,
                     isLoading: $model.webViewIsLoading,
                     loadError: $model.webViewError
                 )
